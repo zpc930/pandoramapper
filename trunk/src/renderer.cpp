@@ -330,6 +330,11 @@ void RendererWidget::glDrawRoom(CRoom *p)
 
             r = Map.ids[p->exits[k]];
 
+            if (r == NULL) {
+                printf("RENDERER ERROR: Room #%d not found.\r\n", p->exits[k]);
+                continue;
+            }
+
             dx2 = r->x - curx;
             dy2 = r->y - cury;
             dz2 = (r->z - curz) /* * DIST_Z */;
