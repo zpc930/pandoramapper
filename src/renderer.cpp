@@ -118,8 +118,8 @@ void RendererWidget::initializeGL()
       glEndList();
     }
 
-    for (i = 0; i < conf.sectors.size(); i++) {
-        conf.load_texture(&conf.sectors[i]);
+    for (i = 0; i < conf->sectors.size(); i++) {
+        conf->load_texture(&conf->sectors[i]);
     }
 }
 
@@ -300,18 +300,18 @@ void RendererWidget::glDrawRoom(CRoom *p)
     distance = m_Frustum[FRONT][A] * dx + m_Frustum[FRONT][B] * dy + 
                m_Frustum[FRONT][C] * dz + m_Frustum[FRONT][D];
     
-    if (distance >= conf.get_details_vis()) 
+    if (distance >= conf->get_details_vis()) 
       lines = 0;
 
-    if (distance >= conf.get_texture_vis()) 
+    if (distance >= conf->get_texture_vis()) 
       texture = 0;
 
     
     glTranslatef(dx, dy, dz);
     if (p->sector && texture) {
       glEnable(GL_TEXTURE_2D);
-      glBindTexture(GL_TEXTURE_2D, conf.sectors[ p->sector].texture);
-      glCallList(conf.sectors[ p->sector].gllist);  
+      glBindTexture(GL_TEXTURE_2D, conf->sectors[ p->sector].texture);
+      glCallList(conf->sectors[ p->sector].gllist);  
       glDisable(GL_TEXTURE_2D);
     } else {
       glCallList(basic_gllist);
@@ -462,7 +462,7 @@ void RendererWidget::glDrawRoom(CRoom *p)
             glVertex3f(dx2 + kx, dy2 + ky, dz2);
             glEnd();
             
-            GLuint death_terrain = conf.get_texture_by_desc("DEATH");
+            GLuint death_terrain = conf->get_texture_by_desc("DEATH");
             if (death_terrain && p->exits[k] == EXIT_DEATH) {
               glTranslatef(dx2 + kx, dy2 + ky, dz2);
               

@@ -69,7 +69,7 @@ public:
 
 };
 
-extern class Userland userland_parser;
+extern class Userland *userland_parser;
 
 #define USER_PARSE_NONE 0 /* 0 - not my area - send the line futher */
 #define USER_PARSE_SKIP 1 /* skip this line */

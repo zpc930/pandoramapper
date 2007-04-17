@@ -60,12 +60,12 @@ void MainWindow::enable_online_actions()
 
 void MainWindow::delete_room()
 {
-    userland_parser.parse_user_input_line("mdelete");
+    userland_parser->parse_user_input_line("mdelete");
 }
 
 void MainWindow::merge_room()
 {
-    userland_parser.parse_user_input_line("mmerge");
+    userland_parser->parse_user_input_line("mmerge");
 }
 
 void MainWindow::open()
@@ -88,12 +88,12 @@ void MainWindow::open()
 
 void MainWindow::reload()
 {
-    userland_parser.parse_user_input_line("mload");
+    userland_parser->parse_user_input_line("mload");
 }
 
 void MainWindow::quit()
 {
-    if (conf.get_data_mod()) {
+    if (conf->get_data_mod()) {
         switch(QMessageBox::information(this, "Pandora",
                                         "The map contains unsaved changes\n"
                                         "Do you want to save the changes before exiting?",
@@ -113,7 +113,7 @@ void MainWindow::quit()
     
     } 
     
-    if (conf.get_conf_mod()) {
+    if (conf->get_conf_mod()) {
         switch(QMessageBox::information(this, "Pandora",
                                         "The configuration was changed\n"
                                         "Do you want to write it down on disc before exiting?",
@@ -121,7 +121,7 @@ void MainWindow::quit()
                                         0,      // Enter == button 0
                                         2)) { // Escape == button 2
         case 0: // Save clicked or Alt+S pressed or Enter pressed.
-            conf.save_config();
+            conf->save_config();
             break;
         case 1: // Discard clicked or Alt+D pressed
             // don't save but exit
@@ -138,7 +138,7 @@ void MainWindow::quit()
 
 void MainWindow::save()
 {
-    userland_parser.parse_user_input_line("msave");
+    userland_parser->parse_user_input_line("msave");
     QMessageBox::information(this, "Saving...", "Saved!\n", QMessageBox::Ok);
                                     
 }
@@ -168,9 +168,9 @@ void MainWindow::mapping_mode()
 {
   if (mappingAct->isChecked()) 
   {
-    userland_parser.parse_user_input_line("mmap on");
+    userland_parser->parse_user_input_line("mmap on");
   } else {
-    userland_parser.parse_user_input_line("mmap off");
+    userland_parser->parse_user_input_line("mmap off");
   }
 }
 
@@ -178,9 +178,9 @@ void MainWindow::automerge()
 {
   if (automergeAct->isChecked()) 
   {
-    userland_parser.parse_user_input_line("mautomerge on");
+    userland_parser->parse_user_input_line("mautomerge on");
   } else {
-    userland_parser.parse_user_input_line("mautomerge off");
+    userland_parser->parse_user_input_line("mautomerge off");
   }
 }
 
@@ -188,21 +188,21 @@ void MainWindow::angrylinker()
 {
   if (angryLinkerAct->isChecked()) 
   {
-    userland_parser.parse_user_input_line("mangrylinker on");
+    userland_parser->parse_user_input_line("mangrylinker on");
   } else {
-    userland_parser.parse_user_input_line("mangrylinker off");
+    userland_parser->parse_user_input_line("mangrylinker off");
   }
 }
 
 void MainWindow::calibrateColours()
 {
-    userland_parser.parse_user_input_line("mcalibrate");
+    userland_parser->parse_user_input_line("mcalibrate");
 }
 
 
 void MainWindow::saveConfig()
 {
-    conf.save_config();
+    conf->save_config();
     QMessageBox::information(this, "Saving...", "Saved!\n", QMessageBox::Ok);
 }
 
@@ -215,7 +215,7 @@ void MainWindow::saveAsConfig()
                     "XML config files (*.xml)");
     if (s.isEmpty())
         return;
-    conf.save_config_as("", s.toAscii());
+    conf->save_config_as("", s.toAscii());
     QMessageBox::information(this, "Saving...", "Saved!\n", QMessageBox::Ok);
 }
 
@@ -229,7 +229,7 @@ void MainWindow::loadConfig()
   if (s.isEmpty())
         return;
 
-  conf.load_config("", s.toAscii());
+  conf->load_config("", s.toAscii());
   QMessageBox::information(this, "Pandora", "Loaded!\n", QMessageBox::Ok);
 
 }    
@@ -352,13 +352,15 @@ void MainWindow::publish_map()
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow( parent)
 {
+  userland_parser = new Userland();
+
   setWindowTitle("Pandora");
   renderer =  new RendererWidget( this );
   setCentralWidget( renderer );
   resize(640, 480);
 
-  connect(proxy, SIGNAL(connectionEstablished()), this, SLOT(enable_online_actions()));
-  connect(proxy, SIGNAL(connectionLost()), this, SLOT(disable_online_actions()));
+  connect(proxy, SIGNAL(connectionEstablished()), this, SLOT(enable_online_actions()), Qt::AutoConnection );
+  connect(proxy, SIGNAL(connectionLost()), this, SLOT(disable_online_actions()), Qt::AutoConnection );
 
 
 
@@ -445,13 +447,13 @@ MainWindow::MainWindow(QWidget *parent)
   
   automergeAct= new QAction(tr("AutoMerge"), this);
   automergeAct->setCheckable(true);
-  conf.get_automerge() ? automergeAct->setChecked(true) : automergeAct->setChecked(false);
+  conf->get_automerge() ? automergeAct->setChecked(true) : automergeAct->setChecked(false);
   automergeAct->setStatusTip(tr("Automatically merge twin (same name/desc) rooms"));
   connect(automergeAct, SIGNAL(triggered()), this, SLOT(automerge()));    
 
   angryLinkerAct= new QAction(tr("AngryLinker"), this);
   angryLinkerAct->setCheckable(true);
-  conf.get_angrylinker() ? angryLinkerAct->setChecked(false) : angryLinkerAct->setChecked(false);
+  conf->get_angrylinker() ? angryLinkerAct->setChecked(false) : angryLinkerAct->setChecked(false);
   angryLinkerAct->setStatusTip(tr("Auto-link neightbour rooms"));
   connect(angryLinkerAct, SIGNAL(triggered()), this, SLOT(angrylinker()));    
 
@@ -488,7 +490,7 @@ MainWindow::MainWindow(QWidget *parent)
   always_on_top_action->setStatusTip(tr("Always on Top"));
   always_on_top_action->setCheckable(true);
   connect(always_on_top_action, SIGNAL(toggled(bool)), this, SLOT(always_on_top(bool)));
-  always_on_top_action->setChecked(conf.get_always_on_top());
+  always_on_top_action->setChecked(conf->get_always_on_top());
 
   emulationAct= new QAction(tr("Emulation Mode"), this);
   emulationAct->setStatusTip(tr("Offline MUME Emulation"));
@@ -566,16 +568,19 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::update_status_bar()
 {
-/*  char str[20];
+  char str[20];
   
-  if (conf.get_data_mod() )
+  printf("Updating status bar\r\n");
+
+  if (conf->get_data_mod() )
     modLabel->setText(tr("Data: MOD "));     
   else 
     modLabel->setText(tr("Data: --- "));
-*/  
+  
 
-//  stacker.get_current(str);
-//  locationLabel->setText(tr(str));
+  stacker.get_current(str);
+  locationLabel->setText(tr(str));
+  printf("Done!\r\n");
 }
 
 
@@ -617,7 +622,7 @@ void MainWindow::always_on_top(bool set_on_top)
   }
   setWindowFlags(flags);
   show();
-  conf.set_always_on_top(set_on_top);
+  conf->set_always_on_top(set_on_top);
 }
 
 
@@ -638,13 +643,13 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
 
     printf("Processing events in keyPressEvent\r\n");
     switch ( k->key() ) {
-        case Qt::Key_C :
-          if (userland_parser.is_empty())
-            engine->exec();
-          else 
-            userland_parser.parse_command();
-          
-          break;
+//         case Qt::Key_C :
+//           if (userland_parser->is_empty())
+//             engine->exec();
+//           else 
+//             userland_parser->parse_command();
+//           
+//           break;
 
 
          case Qt::CTRL+Qt::Key_Q:
@@ -682,10 +687,10 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
             glredraw = 1;
             break;
     
-         case Qt::Key_R:
+/*         case Qt::Key_R:
            print_debug(DEBUG_RENDERER, "got R (redraw) keypress event");
            glredraw = 1;
-           break;
+           break;*/
         case Qt::Key_Up:
           renderer->anglex += 5;
           glredraw = 1;
@@ -737,6 +742,7 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
 //            renderer_window->hide();
             break;	
     }
+//    update_status_bar();
     renderer_window->renderer->display();
     printf("Done processing events at keyEventPress\r\n");
 }

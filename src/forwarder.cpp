@@ -89,7 +89,7 @@ int Proxy::init()
 
     proxy_name.sin_family=AF_INET;
     proxy_name.sin_addr.s_addr=INADDR_ANY;
-    proxy_name.sin_port=htons(conf.get_local_port());
+    proxy_name.sin_port=htons(conf->get_local_port());
 
     if (bind(proxy_hangsock, (struct sockaddr *)&proxy_name, sizeof(struct sockaddr_in))) {
         fprintf (stderr, "proxy: Cannot bind socket\n");
@@ -102,7 +102,6 @@ int Proxy::init()
 
   return 0;
 }
-
 
 int Proxy::loop(void)
 {
@@ -149,7 +148,7 @@ int Proxy::loop(void)
             
             size = user.read();
             if (size > 0) {
-                size = dispatcher.analyze_user_stream(user);
+                size = dispatcher->analyze_user_stream(user);
                 if (!mudEmulation) {
                     mud.write(user.buffer, size);
                 }
@@ -168,7 +167,7 @@ int Proxy::loop(void)
             
             size = mud.read();
             if (size>0) {
-                size = dispatcher.analyze_mud_stream(mud);
+                size = dispatcher->analyze_mud_stream(mud);
                 user.write( mud.buffer, size );      
             } else { 
                 if (WSAGetLastError() == WSAEWOULDBLOCK) 
@@ -186,6 +185,9 @@ int Proxy::loop(void)
 
 void Proxy::run()
 {
+    mud.clear();
+    user.clear();
+    dispatcher = new Cdispatcher();
     loop();
 }
 
@@ -210,7 +212,7 @@ bool Proxy::connectToMud()
 {
     printf("Trying to connect to MUD...\r\n");
 
-    if (mud.openConnection(conf.get_remote_host(), conf.get_remote_port()) != true) {
+    if (mud.openConnection(conf->get_remote_host(), conf->get_remote_port()) != true) {
         user.send_line( "----[ Pandora: Failed to connect to remote host. See terminal log for details.\r\n");
         return false;
     } else {

@@ -29,8 +29,8 @@ void SpellsDialog::run()
     disableFrame();
     editing_index = 0;
     
-    for (i = 0; i < conf.spells.size(); i++) 
-        spells.push_back( conf.spells[i] ); 
+    for (i = 0; i < conf->spells.size(); i++) 
+        spells.push_back( conf->spells[i] ); 
     
     redraw();
     show();
@@ -135,9 +135,9 @@ void SpellsDialog::accept()
 {
     unsigned int i;
     
-    conf.spells.clear();
+    conf->spells.clear();
     for (i = 0; i < spells.size(); i++) {
-        conf.add_spell(spells[i]);
+        conf->add_spell(spells[i]);
     }
     spells.clear();        
     done(Accepted);

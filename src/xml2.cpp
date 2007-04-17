@@ -203,7 +203,7 @@ bool StructureParser::startElement( const QString& , const QString& ,
       r->z = s.toInt();
 
       s = attributes.value("terrain");
-      r->sector = conf.get_sector_by_desc(s.toAscii());
+      r->sector = conf->get_sector_by_desc(s.toAscii());
   }  
     
   return TRUE;
@@ -234,7 +234,7 @@ void xml_writebase(QString filename)
         fprintf(f,  "  <room id=\"%i\" x=\"%i\" y=\"%i\" z=\"%i\" "
                 "terrain=\"%s\">\n",
                 p->id, p->x, p->y, p->z, 
-                (const char *) conf.sectors[p->sector].desc);
+                (const char *) conf->sectors[p->sector].desc);
             
             
         fprintf(f, "    <roomname>%s</roomname>\n", p->name ? p->name : "");

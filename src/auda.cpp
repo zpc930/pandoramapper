@@ -167,40 +167,40 @@ int main(int argc, char *argv[])
 
     /* set analyzer engine defaults */
     //engine_init();
-    
     printf("Using config file : %s.\r\n", configfile);
-    conf.load_config(resPath, configfile);
+    conf = new Cconfigurator();
+    conf->load_config(resPath, configfile);
     
     
     if (override_base_file[0] != 0) {
-      conf.set_base_file(override_base_file);
-    } else if ( conf.get_base_file() == "") {
-      conf.set_base_file(default_base_file);
+      conf->set_base_file(override_base_file);
+    } else if ( conf->get_base_file() == "") {
+      conf->set_base_file(default_base_file);
     }
-    printf("Using database file : %s.\r\n", (const char*) conf.get_base_file() );
+    printf("Using database file : %s.\r\n", (const char*) conf->get_base_file() );
     
     if (override_remote_host[0] != 0) {
-      conf.set_remote_host(override_remote_host);
-    } else if ( conf.get_remote_host().isEmpty() ) {
-      conf.set_remote_host(default_remote_host);
+      conf->set_remote_host(override_remote_host);
+    } else if ( conf->get_remote_host().isEmpty() ) {
+      conf->set_remote_host(default_remote_host);
     }
-    printf("Using target hostname : %s.\r\n", (const char*) conf.get_remote_host() );
+    printf("Using target hostname : %s.\r\n", (const char*) conf->get_remote_host() );
 
     if (override_local_port != 0) {
-      conf.set_local_port(override_local_port);
-    } else if ( conf.get_local_port() == 0) {
-      conf.set_local_port(default_local_port);
+      conf->set_local_port(override_local_port);
+    } else if ( conf->get_local_port() == 0) {
+      conf->set_local_port(default_local_port);
     }
-    printf("Using local port : %i.\r\n", conf.get_local_port());
+    printf("Using local port : %i.\r\n", conf->get_local_port());
 
     if (override_remote_port != 0) {
-      conf.set_remote_port(override_remote_port);
-    } else if (conf.get_remote_port() == 0) {
-      conf.set_remote_port(default_remote_port);
+      conf->set_remote_port(override_remote_port);
+    } else if (conf->get_remote_port() == 0) {
+      conf->set_remote_port(default_remote_port);
     }
-    printf("Using target port : %i.\r\n", conf.get_remote_port());
+    printf("Using target port : %i.\r\n", conf->get_remote_port());
 
-    conf.set_conf_mod( false );
+    conf->set_conf_mod( false );
 
     printf("-- Starting Pandora\n");
   
@@ -208,7 +208,7 @@ int main(int argc, char *argv[])
     proxy = new Proxy();  
 
     printf("Loading the database ... \r\n");
-    xml_readbase( conf.get_base_file() );
+    xml_readbase( conf->get_base_file() );
     printf("Successfuly loaded %i rooms!\n", Map.size());
 
     /* special init for the mud emulation */

@@ -118,6 +118,6 @@ public:
     Cdispatcher();
 };
 
-extern class Cdispatcher dispatcher;
+//extern class Cdispatcher *dispatcher;
 
 #endif

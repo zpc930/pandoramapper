@@ -105,6 +105,6 @@ void stackmanager::swap()
     sb = t;
     sb->clear();
   
-    if (renderer_window)
-      renderer_window->update_status_bar();
+//    if (renderer_window)
+//      renderer_window->update_status_bar();
 }

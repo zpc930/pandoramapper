@@ -40,7 +40,7 @@
 #include <QMutex>
 #include <QThread>
 
-
+class Cdispatcher;
 
 
 class ProxySocket {
@@ -95,7 +95,9 @@ class Proxy : public QThread {
         
         ProxySocket             mud;
         ProxySocket             user;
-        SOCKET                    proxy_hangsock;
+        SOCKET                  proxy_hangsock;
+        Cdispatcher             *dispatcher;
+
 
         int      loop();
         bool    mudEmulation;
@@ -113,10 +115,9 @@ public:
         bool isMudEmulation() { return mudEmulation; }
         void setMudEmulation(bool b) { mudEmulation = b; }
         void shutdown();
-        
+
         void startEngineCall() { emit startEngine(); }
         void startRendererCall() { emit startRenderer(); }
-
 
 signals:
     void connectionEstablished();

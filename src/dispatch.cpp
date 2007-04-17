@@ -26,7 +26,6 @@
 #include "userfunc.h"
 #include "forwarder.h"
 
-class Cdispatcher dispatcher;
 
 Cdispatcher::Cdispatcher() 
 {
@@ -536,7 +535,7 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
                                                 break;
             case STATE_DESC :
                                                 event.desc.append(buffer[i].line);
-                                                if (conf.get_brief_mode())
+                                                if (conf->get_brief_mode())
                                                     continue;
                                                 break;
             case STATE_EXITS:
@@ -549,7 +548,7 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
         };
         
         // mbrief additional check (for look/scout and similar) 
-        if (mbrief_state == STATE_DESC && conf.get_brief_mode()) 
+        if (mbrief_state == STATE_DESC && conf->get_brief_mode()) 
             continue;
         
         if (buffer[i].type == IS_NORMAL && buffer[i].line.indexOf("\r\n") != -1) {
@@ -573,20 +572,20 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
                 unsigned int p;
             
 //                printf("Checking spells on %s.\r\n", a_line);
-                for (p = 0; p < conf.spells.size(); p++) {
-                    if ( (conf.spells[p].up_mes != "" && conf.spells[p].up_mes == a_line) || 
-                         (conf.spells[p].refresh_mes != "" && conf.spells[p].refresh_mes == a_line )) {
-                        printf("SPELL %s Starting/Restaring timer.\r\n",  (const char *) conf.spells[p].name);
-                        conf.spells[p].timer.start();   // start counting 
-                        conf.spells[p].up = true;        
+                for (p = 0; p < conf->spells.size(); p++) {
+                    if ( (conf->spells[p].up_mes != "" && conf->spells[p].up_mes == a_line) || 
+                         (conf->spells[p].refresh_mes != "" && conf->spells[p].refresh_mes == a_line )) {
+                        printf("SPELL %s Starting/Restaring timer.\r\n",  (const char *) conf->spells[p].name);
+                        conf->spells[p].timer.start();   // start counting 
+                        conf->spells[p].up = true;        
                         break;
                     }
                     
                     // if some spell is up - only then we check if its down 
-                    if (conf.spells[p].up && conf.spells[p].down_mes != "" && conf.spells[p].down_mes == a_line) {
-                        conf.spells[p].up = false;
-                        printf("SPELL: %s is DOWN. Uptime: %s.\r\n", (const char *) conf.spells[p].name, 
-                                                qPrintable( conf.spell_up_for(p) ) );
+                    if (conf->spells[p].up && conf->spells[p].down_mes != "" && conf->spells[p].down_mes == a_line) {
+                        conf->spells[p].up = false;
+                        printf("SPELL: %s is DOWN. Uptime: %s.\r\n", (const char *) conf->spells[p].name, 
+                                                qPrintable( conf->spell_up_for(p) ) );
                         break;                                    
                     }
                 }
@@ -595,18 +594,18 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
                             
                 if (spells_print_mode && (strlen(a_line) > 3)) {
                     // we are somewhere between the lines "Affected by:" and prompt 
-                    for (p = 0; p < conf.spells.size(); p++) {
-//                        printf("Spell name %s, line %s\r\n", (const char *) conf.spells[p].name, (const char*) a_line );    
-                        if (a_line.indexOf(conf.spells[p].name) == 2) {
+                    for (p = 0; p < conf->spells.size(); p++) {
+//                        printf("Spell name %s, line %s\r\n", (const char *) conf->spells[p].name, (const char*) a_line );    
+                        if (a_line.indexOf(conf->spells[p].name) == 2) {
                             QString s;
                             
-                            if (conf.spells[p].up)
+                            if (conf->spells[p].up)
                                 s = QString("- %1 (up for %2)\r\n")
-                                    .arg( (const char *)conf.spells[p].name )
-                                    .arg( conf.spell_up_for(p) );
+                                    .arg( (const char *)conf->spells[p].name )
+                                    .arg( conf->spell_up_for(p) );
                             else 
                                 s = QString("- %1 (unknown time)\r\n")
-                                    .arg( (const char *)conf.spells[p].name );
+                                    .arg( (const char *)conf->spells[p].name );
  
                             memcpy(buf + new_len, qPrintable(s), s.length());
                             new_len += s.length();
@@ -614,7 +613,7 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
                             break;    
                         }
                     }
-                    if (p != conf.spells.size())
+                    if (p != conf->spells.size())
                         continue; // dont print this line if we got a match for it 
                         
                         
@@ -622,7 +621,7 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
             
             }
           
-            if (conf.spells_pattern == a_line) {
+            if (conf->spells_pattern == a_line) {
                 unsigned int spell;
                 QByteArray message = "Timers:";
                 
@@ -633,14 +632,14 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
                 memcpy(buf + new_len, "\r\n", 2);
                 new_len += 2;
 
-                for (spell = 0; spell < conf.spells.size(); spell++) 
-                    if (conf.spells[spell].addon && conf.spells[spell].up) {
+                for (spell = 0; spell < conf->spells.size(); spell++) 
+                    if (conf->spells[spell].addon && conf->spells[spell].up) {
                         // there is a timer ticking 
                         QString s;
                            
                         s = QString("- %1 (up for %2)\r\n")
-                            .arg( (const char *)conf.spells[spell].name )
-                            .arg( conf.spell_up_for(spell) );
+                            .arg( (const char *)conf->spells[spell].name )
+                            .arg( conf->spell_up_for(spell) );
 
                         memcpy(buf + new_len, qPrintable(s), s.length());
                         new_len += s.length();
@@ -705,7 +704,7 @@ int Cdispatcher::analyze_user_stream(ProxySocket &c)
             len = buffer[i].line.length();
             commandBuffer[len] = 0;
         
-            result = userland_parser.parse_user_input_line(commandBuffer);
+            result = userland_parser->parse_user_input_line(commandBuffer);
             if (result == USER_PARSE_SKIP) 
                 continue;
                
@@ -730,7 +729,7 @@ char Cdispatcher::parse_terrain(QByteArray prompt)
     char terrain;
         
     terrain = prompt[1];  /*second charecter is terrain*/
-    if (conf.get_sector_by_pattern(terrain) == 0) 
+    if (conf->get_sector_by_pattern(terrain) == 0) 
         return -1;
     
     return terrain;

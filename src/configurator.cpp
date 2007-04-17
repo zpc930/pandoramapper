@@ -16,7 +16,7 @@
 #include "engine.h"
 //#include "renderer.h"
 
-class Cconfigurator conf;
+class Cconfigurator *conf;
 
 Cconfigurator::Cconfigurator()
 {
@@ -470,8 +470,8 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         }        
         
         s = attributes.value("port");
-        conf.set_local_port(s.toInt() );
-//        printf("Using local port %i. \r\n", conf.get_local_port() );
+        conf->set_local_port(s.toInt() );
+//        printf("Using local port %i. \r\n", conf->get_local_port() );
 
         return TRUE;
     } else if (qName == "remotehost") {
@@ -481,12 +481,12 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         }        
         
         s = attributes.value("hostname");
-        conf.set_remote_host(s.toAscii() );
+        conf->set_remote_host(s.toAscii() );
         
         s = attributes.value("port");
-        conf.set_remote_port(s.toInt() );
-//        printf("Using remote host %s:%i\r\n", (const char *)conf.get_remote_host(), 
-//                                            conf.get_remote_port() );
+        conf->set_remote_port(s.toInt() );
+//        printf("Using remote host %s:%i\r\n", (const char *)conf->get_remote_host(), 
+//                                            conf->get_remote_port() );
 
         return TRUE;
     } else if (qName == "basefile") {
@@ -496,7 +496,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         }        
         
         s = attributes.value("filename");
-        conf.set_base_file(s.toAscii() );
+        conf->set_base_file(s.toAscii() );
 //        printf("Using the database file: %s\r\n", qPrintable(s) );
         
         return TRUE;
@@ -507,12 +507,12 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         }        
         
         s = attributes.value("textures");
-        conf.set_texture_vis(s.toInt() );
+        conf->set_texture_vis(s.toInt() );
         s = attributes.value("details");
-        conf.set_details_vis(s.toInt() );
+        conf->set_details_vis(s.toInt() );
         
         printf("OpenGL visibility ranges set to %i (texture) and %i (details).\r\n",
-                    conf.get_texture_vis(), conf.get_details_vis() );
+                    conf->get_texture_vis(), conf->get_details_vis() );
         
         return TRUE;
     } else if (qName == "analyzers") {
@@ -524,20 +524,20 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         s = attributes.value("exits");
         s = s.toLower();
         if (s == "on") 
-            conf.set_exits_check(true);
+            conf->set_exits_check(true);
         else 
-            conf.set_exits_check(false);
+            conf->set_exits_check(false);
         
         s = attributes.value("terrain");
         s = s.toLower();
         if (s == "on") 
-            conf.set_terrain_check(true);
+            conf->set_terrain_check(true);
         else 
-            conf.set_terrain_check(false);
+            conf->set_terrain_check(false);
         
         
         printf("Analyzers: desc ON, exits %s, terrain %s.\r\n",
-                    ON_OFF(conf.get_exits_check() ), ON_OFF(conf.get_terrain_check()) );
+                    ON_OFF(conf->get_exits_check() ), ON_OFF(conf->get_terrain_check()) );
         
         return TRUE;
     } else if (qName == "guisettings") {
@@ -549,11 +549,11 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         s = attributes.value("always_on_top");
         s = s.toLower();
         if (s == "on") 
-            conf.set_always_on_top(true);
+            conf->set_always_on_top(true);
         else 
-            conf.set_always_on_top(false);
+            conf->set_always_on_top(false);
 
-        printf("GUI settings: always_on_top %s.\r\n", ON_OFF(conf.get_always_on_top()) );
+        printf("GUI settings: always_on_top %s.\r\n", ON_OFF(conf->get_always_on_top()) );
 
         return TRUE;
     } else if (qName == "engineflags") {
@@ -566,27 +566,27 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         s = s.toLower();
 //        printf("The brief mode setting : %s\r\n", qPrintable(s) );
         if (s == "on") 
-            conf.set_brief_mode(true);
+            conf->set_brief_mode(true);
         else 
-            conf.set_brief_mode(false);
+            conf->set_brief_mode(false);
         
         s = attributes.value("automerge");
         s = s.toLower();
         if (s == "on") 
-            conf.set_automerge(true);
+            conf->set_automerge(true);
         else 
-            conf.set_automerge(false);
+            conf->set_automerge(false);
 
         s = attributes.value("angrylinker");
         s = s.toLower();
         if (s == "on") 
-            conf.set_angrylinker(true);
+            conf->set_angrylinker(true);
         else 
-            conf.set_angrylinker(false);
+            conf->set_angrylinker(false);
 
         printf("Engine flags: briefmode %s, automerge %s, angrylinker %s.\r\n",
-               ON_OFF(conf.get_brief_mode()), ON_OFF(conf.get_automerge()), 
-                ON_OFF(conf.get_angrylinker()) );
+               ON_OFF(conf->get_brief_mode()), ON_OFF(conf->get_automerge()), 
+                ON_OFF(conf->get_angrylinker()) );
         
         return TRUE;
     } else if (qName == "refresh") {
@@ -598,18 +598,18 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         s = attributes.value("auto");
         s = s.toLower();
         if (s == "on") 
-            conf.set_autorefresh(true);
+            conf->set_autorefresh(true);
         else 
-            conf.set_autorefresh(false);
+            conf->set_autorefresh(false);
         
         s = attributes.value("roomnamequote");
-        conf.set_name_quote(s.toInt());
+        conf->set_name_quote(s.toInt());
         s = attributes.value("descquote");
-        conf.set_desc_quote(s.toInt());
+        conf->set_desc_quote(s.toInt());
 
         printf("Autorefresh settings: automatic refresh %s, roomname quote %i, desc quote %i.\r\n",
-                ON_OFF(conf.get_autorefresh()), conf.get_name_quote(), 
-                conf.get_desc_quote() );
+                ON_OFF(conf->get_autorefresh()), conf->get_name_quote(), 
+                conf->get_desc_quote() );
         return TRUE;
     } else if (qName == "texture") {
         if (attributes.length() < 2) {
@@ -627,7 +627,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         s = attributes.value("pattern");
         texture.pattern = s[0].toAscii();
 
-        conf.add_texture(texture.desc, texture.filename, texture.pattern);
+        conf->add_texture(texture.desc, texture.filename, texture.pattern);
 //        printf("Added texture: desc %s, file %s, pattern %c.\r\n", 
 //              (const char *) texture.desc, (const char *) texture.filename, texture.pattern);
 
@@ -660,7 +660,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         s = attributes.value("down");
         spell.down_mes = s.toAscii();
 
-        conf.add_spell(spell);
+        conf->add_spell(spell);
         return TRUE;
     } else if (qName == "debug") {
         if (attributes.length() < 1) {
