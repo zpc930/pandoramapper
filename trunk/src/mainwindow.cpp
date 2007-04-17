@@ -16,15 +16,18 @@
 
 void toggle_renderer_reaction()
 {
+    printf("Toggling renderer reaction\r\n");
+    proxy->startRendererCall();
 //    print_debug(DEBUG_RENDERER, "toggle_renderer_reaction called()");
-    QKeyEvent *k = new QKeyEvent(QEvent::KeyPress, Qt::Key_R,0, "r", false , 1);
-    QApplication::postEvent( renderer_window->renderer, k );
+//    QKeyEvent *k = new QKeyEvent(QEvent::KeyPress, Qt::Key_R,0, "r", false , 1);
+//    QApplication::postEvent( renderer_window->renderer, k );
 }
 
 void notify_analyzer()
 {
-    QKeyEvent *k = new QKeyEvent(QEvent::KeyPress, Qt::Key_C,0, "c", false , 1);
-    QApplication::postEvent( renderer_window->renderer, k );
+    proxy->startEngineCall();
+//    QKeyEvent *k = new QKeyEvent(QEvent::KeyPress, Qt::Key_C,0, "c", false , 1);
+//    QApplication::postEvent( renderer_window->renderer, k );
 }
 
 
@@ -254,12 +257,12 @@ void MainWindow::emulation_mode()
                               QString("You have to disconnect from the game first!"));
             return;        
         }
-        proxy.setMudEmulation( true );
-        Engine.set_prompt("-->");
+        proxy->setMudEmulation( true );
+        engine->set_prompt("-->");
         stacker.put(1);
         stacker.swap();
     } else {
-        proxy.setMudEmulation( false );
+        proxy->setMudEmulation( false );
     
     }
 
@@ -354,9 +357,10 @@ MainWindow::MainWindow(QWidget *parent)
   setCentralWidget( renderer );
   resize(640, 480);
 
-  connect(&proxy, SIGNAL(connectionEstablished()), this, SLOT(enable_online_actions()));
-  connect(&proxy, SIGNAL(connectionLost()), this, SLOT(disable_online_actions()));
-  
+  connect(proxy, SIGNAL(connectionEstablished()), this, SLOT(enable_online_actions()));
+  connect(proxy, SIGNAL(connectionLost()), this, SLOT(disable_online_actions()));
+
+
 
   /* creating actions and connecting them here */
   newAct = new QAction(tr("&New"), this);
@@ -562,16 +566,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::update_status_bar()
 {
-  char str[20];
+/*  char str[20];
   
   if (conf.get_data_mod() )
     modLabel->setText(tr("Data: MOD "));     
   else 
     modLabel->setText(tr("Data: --- "));
-  
+*/  
 
-  stacker.get_current(str);
-  locationLabel->setText(tr(str));
+//  stacker.get_current(str);
+//  locationLabel->setText(tr(str));
 }
 
 
@@ -631,10 +635,12 @@ void MainWindow::hide_status()
 
 void MainWindow::keyPressEvent( QKeyEvent *k )
 {
+
+    printf("Processing events in keyPressEvent\r\n");
     switch ( k->key() ) {
         case Qt::Key_C :
           if (userland_parser.is_empty())
-            Engine.exec();
+            engine->exec();
           else 
             userland_parser.parse_command();
           
@@ -732,6 +738,7 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
             break;	
     }
     renderer_window->renderer->display();
+    printf("Done processing events at keyEventPress\r\n");
 }
 
 void MainWindow::mousePressEvent( QMouseEvent *e)

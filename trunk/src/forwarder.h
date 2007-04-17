@@ -114,14 +114,20 @@ public:
         void setMudEmulation(bool b) { mudEmulation = b; }
         void shutdown();
         
+        void startEngineCall() { emit startEngine(); }
+        void startRendererCall() { emit startRenderer(); }
+
+
 signals:
     void connectionEstablished();
     void connectionLost();
+    void startEngine();
+    void startRenderer();
 };
 
 /* PROX THREAD ENDS */
 
-extern class Proxy proxy;
+extern class Proxy *proxy;
 
 
 #endif

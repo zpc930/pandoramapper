@@ -435,8 +435,9 @@ QByteArray Cdispatcher::cutColours(QByteArray line)
 
 #define SEND_EVENT_TO_ENGINE \
                     {   \
+                    printf("Sendin geven to engine!\r\n");\
                     awaitingData = false;               \
-                    Engine.add_event(event);                            \
+                    engine->add_event(event);                            \
                     event.clear();                  \
                     notify_analyzer();      \
                     xmlState = STATE_NORMAL;                       \
@@ -450,14 +451,16 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
     char *buf;
     
     
-//    printf("---------- mud input -----------\r\n");
-//    printf("Buffer size %i\r\n", c.length);
+    printf("---------- mud input -----------\r\n");
+    printf("Buffer size %i\r\n", c.length);
 
+    printf("Calling dispatch buffer\r\n");
     dispatch_buffer(c);
     
     buf = c.buffer;
     new_len = 0;
-    
+
+    printf("Parsing buffer\r\n");    
     // else we simply recreate our buffer and parse lines 
     for (i = 0; i< amount; i++) {
     
@@ -517,7 +520,7 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
                 continue;
             } else if (buffer[i].xmlType == XML_END_PROMPT) {
                 event.prompt = cutColours(event.prompt);
-                Engine.set_prompt(event.prompt);
+                engine->set_prompt(event.prompt);
                 event.terrain = parse_terrain(event.prompt);
                 SEND_EVENT_TO_ENGINE;
                 xmlState = STATE_NORMAL;
@@ -565,6 +568,7 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
             }
           
             // now do all necessary spells checks 
+            printf("Preparing spell checks\r\n");
             {
                 unsigned int p;
             
@@ -649,15 +653,16 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
         
         if (buffer[i].type == IS_PROMPT) {
             spells_print_mode = false;      // 
-            Engine.set_prompt(buffer[i].line);
+            printf("Setting prompt in engine.\r\n");
+            engine->set_prompt(buffer[i].line);
         }
         
         // recreating this line in buffer 
         memcpy(buf + new_len, buffer[i].line, buffer[i].line.length());
         new_len += buffer[i].line.length();
     }
-  
-//    printf("New length: %i\r\n", new_len);
+
+    printf("Done with this buffer. New length: %i\r\n", new_len);
     return new_len;
 }
 
@@ -676,11 +681,12 @@ int Cdispatcher::analyze_user_stream(ProxySocket &c)
     new_len = 0;
     
 
-//    printf("---------- user input -----------\r\n");
-//    printf("Buffer size %i\r\n", c.length);
+    printf("---------- user input -----------\r\n");
+    printf("Buffer size %i\r\n", c.length);
 
     dispatch_buffer(c);
-    
+
+    printf("Proceeding user input\r\n");    
     for (i = 0; i< amount; i++) {
         if (buffer[i].type == IS_NORMAL) {
             
@@ -714,7 +720,7 @@ int Cdispatcher::analyze_user_stream(ProxySocket &c)
         }
     }
         
-//    printf("Resulting buffer length: %i\r\n", new_len);
+    printf("DOne proceeding user input. Resulting buffer length: %i\r\n", new_len);
         
     return new_len;
 }

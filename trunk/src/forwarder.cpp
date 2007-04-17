@@ -46,7 +46,7 @@
 #include "forwarder.h"
 
 
-class Proxy       proxy;
+class Proxy       *proxy;
 
 #ifdef DEBUG
   #define DEBUG_FILE_NAME "completelog.txt"
@@ -169,7 +169,7 @@ int Proxy::loop(void)
             size = mud.read();
             if (size>0) {
                 size = dispatcher.analyze_mud_stream(mud);
-                user.write( mud.buffer, size );               
+                user.write( mud.buffer, size );      
             } else { 
                 if (WSAGetLastError() == WSAEWOULDBLOCK) 
                     continue;
@@ -241,7 +241,7 @@ void Proxy::incomingConnection()
                 user.close();
 
         emit connectionEstablished();
-        Engine.clear(); /* clear event pipes */   
+        engine->clear(); /* clear event pipes */   
     } else {
 //        printf("Connection to user failed! New  socket is not valid.\r\n");
 //          printf(".");

@@ -6,7 +6,7 @@
 #include <cstring>
 #include <QThread>
 #include <QMutex>
-
+#include <QObject>
 
 
 
@@ -204,6 +204,9 @@ int main(int argc, char *argv[])
 
     printf("-- Starting Pandora\n");
   
+    engine = new CEngine();
+    proxy = new Proxy();  
+
     printf("Loading the database ... \r\n");
     xml_readbase( conf.get_base_file() );
     printf("Successfuly loaded %i rooms!\n", Map.size());
@@ -212,12 +215,12 @@ int main(int argc, char *argv[])
     if (mud_emulation) {
       printf("Starting in MUD emulation mode...\r\n");
       
-      Engine.set_prompt("-->");
+      engine->set_prompt("-->");
       stacker.put(1);
       stacker.swap();
     }
 
-    proxy.setMudEmulation( mud_emulation );
+    proxy->setMudEmulation( mud_emulation );
 
 
     printf("Starting renderer ...\n");
@@ -243,8 +246,12 @@ int main(int argc, char *argv[])
 
     renderer_window->show();
 
-    proxy.init();
-    proxy.start();
+    proxy->init();
+    proxy->start();
+    QObject::connect(proxy, SIGNAL(startEngine()), engine, SLOT(slotRunEngine()), Qt::QueuedConnection );
+    QObject::connect(proxy, SIGNAL(startRenderer()), renderer_window->renderer, SLOT(draw()), Qt::QueuedConnection);
+
+
     
     return app.exec();
 }

@@ -44,7 +44,7 @@ class Userland userland_parser;
 #define GET_INT_ARGUMENT(arg, value) \
   if (!is_integer(arg)) {               \
     send_to_user("--[ argument %s is not an integer as its supposed to be.\r\n", arg); \
-    send_to_user( (const char *) Engine.get_prompt()); \
+    send_to_user( (const char *) engine->get_prompt()); \
     return USER_PARSE_SKIP;             \
   }                                             \
   value = atoi(arg);
@@ -53,7 +53,7 @@ class Userland userland_parser;
 #define MISSING_ARGUMENTS \
   { \
     send_to_user("--[Pandora: Missing arguments.\n");      \
-    send_to_user((const char *) Engine.get_prompt());                          \
+    send_to_user((const char *) engine->get_prompt());                          \
     return USER_PARSE_SKIP;                             \
   }
   
@@ -62,14 +62,14 @@ class Userland userland_parser;
     dir = parse_dir(arg);               \
     if (dir == -1) {                            \
       send_to_user("--[ %s is not a dirrection.\r\n", arg);     \
-      send_to_user( (const char *) Engine.get_prompt()); \
+      send_to_user( (const char *) engine->get_prompt()); \
       return USER_PARSE_SKIP;             \
     }                                             
 
 #define CHECK_SYNC \
         if (stacker.amount() != 1) {      \
           send_to_user("--[Pandora: Current position is undefined(out of sync).\n");       \
-          send_to_user( (const char *) Engine.get_prompt());    \
+          send_to_user( (const char *) engine->get_prompt());    \
           return USER_PARSE_SKIP;       \
         }
 
@@ -352,9 +352,9 @@ int Userland::parse_user_input_line(char *line)
       return result;
     }
   
-  if (proxy.isMudEmulation()) {
+  if (proxy->isMudEmulation()) {
     send_to_user("Arglebargle...No such command\r\n");
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }    
   
@@ -388,7 +388,7 @@ USERCMD(usercmd_mdebug)
   p = skip_spaces(line);
   if (!*p) {
     display_debug_settings();
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
   
@@ -403,7 +403,7 @@ USERCMD(usercmd_mdebug)
         send_to_user("--[ Setting %s to %s.\r\n", debug_data[i].desc, 
                                                   ON_OFF(debug_data[i].state) );
     
-        send_to_user( (const char *) Engine.get_prompt());
+        send_to_user( (const char *) engine->get_prompt());
         return USER_PARSE_SKIP;
       }
       p = one_argument(p, arg, 0);
@@ -412,13 +412,13 @@ USERCMD(usercmd_mdebug)
       debug_data[i].state = desired;
       send_to_user("--[  Setting %s to %s.\r\n", debug_data[i].desc, 
                                                 ON_OFF(debug_data[i].state) );
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     }
   
   display_debug_settings();
 
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -427,9 +427,9 @@ USERCMD(usercmd_maddroom)
 {
   CRoom *r;
 
-  if (proxy.isMudEmulation()) {
+  if (proxy->isMudEmulation()) {
     send_to_user("Disabled in MUD emulation.\r\n");
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
   
@@ -437,21 +437,21 @@ USERCMD(usercmd_maddroom)
   
   userfunc_print_debug;
 
-  if (Engine.get_roomname().isEmpty()) {
+  if (engine->get_roomname().isEmpty()) {
     send_to_user("--[ Missing room name.\r\n");
     
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
 
-  if (Engine.get_desc().isEmpty() ) {
+  if (engine->get_desc().isEmpty() ) {
     send_to_user("--[ Missing description!\r\n");
   }
 
-  if (Engine.get_exits().isEmpty() ) {
+  if (engine->get_exits().isEmpty() ) {
     send_to_user("--[ Missing exits.\r\n");
     
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
 
@@ -466,13 +466,13 @@ USERCMD(usercmd_maddroom)
   
 
   r->id = Map.next_free;
-  r->name = strdup(Engine.get_roomname() );
-  r->desc = strdup(Engine.get_desc() );
-  r->refresh_terrain(Engine.get_terrain() );
+  r->name = strdup(engine->get_roomname() );
+  r->desc = strdup(engine->get_desc() );
+  r->refresh_terrain(engine->get_terrain() );
   
   
-  Engine.addedroom = r;
-  do_exits(Engine.get_exits());
+  engine->addedroom = r;
+  do_exits(engine->get_exits());
   
   r->x = 100;
   r->y = 100;
@@ -483,7 +483,7 @@ USERCMD(usercmd_maddroom)
   stacker.put(r);
   stacker.swap();
 
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -529,7 +529,7 @@ USERCMD(usercmd_maction)
       dir = -1;
     } else {
       send_to_user("--[ %s is not a direction.\r\n", arg);
-      send_to_user( (const char *) Engine.get_prompt()); 
+      send_to_user( (const char *) engine->get_prompt()); 
       return USER_PARSE_SKIP;             
     }
   }                                             
@@ -543,14 +543,14 @@ USERCMD(usercmd_maction)
   if (stacker.amount() == 0) {
     if (dir == -1) {
       send_to_user("--[ undefined position. can not operate with secrets.\r\n");     
-      send_to_user( (const char *) Engine.get_prompt()); 
+      send_to_user( (const char *) engine->get_prompt()); 
       return USER_PARSE_SKIP;             
     }
     
     send_to_user("%s exit %s\r\n", arg, short_exits[dir]);
     
     if (local) {
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     } else  {
 //      send_to_mud("%s exit %s\n", arg, short_exits[dir]);
@@ -608,7 +608,7 @@ USERCMD(usercmd_maction)
   }
   
   if (local) {
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   } else {
     return USER_PARSE_DONE;
@@ -644,7 +644,7 @@ USERCMD(usercmd_mdelete)
   stacker.swap();
   
   send_to_user("--[ Removed.\r\n");
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -659,7 +659,7 @@ USERCMD(usercmd_mtreestats)
 
   NameMap.print_tree_stats();
   
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -669,12 +669,12 @@ USERCMD(usercmd_mrefresh)
   userfunc_print_debug;
   skip_spaces(line);
 
-  stacker.first()->refresh_roomname(Engine.get_roomname());
-  stacker.first()->refresh_desc(Engine.get_desc());
-  stacker.first()->refresh_terrain(Engine.get_terrain()); 
+  stacker.first()->refresh_roomname(engine->get_roomname());
+  stacker.first()->refresh_desc(engine->get_desc());
+  stacker.first()->refresh_terrain(engine->get_terrain()); 
 
   send_to_user("--[ Refreshed.\r\n");
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -697,11 +697,11 @@ USERCMD(usercmd_mgoto)
     id = atoi(arg);
     if (Map.getroom(id) == NULL) {
       send_to_user("--[ There is no room with id %s.\r\n", arg);
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     }
       
-    Engine.setMgoto(true);  /* ignore prompt while we are in mgoto mode */
+    engine->setMgoto(true);  /* ignore prompt while we are in mgoto mode */
     stacker.put(Map.getroom(id));
     stacker.swap();
   } else {
@@ -713,16 +713,16 @@ USERCMD(usercmd_mgoto)
 
     if ( !r->is_connected(dir) ) {
       send_to_user("--[ Bad direction - there is no connection.\r\n", arg);
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     }
 
-    Engine.setMgoto(true);  /* ignore prompt while we are in mgoto mode */
+    engine->setMgoto(true);  /* ignore prompt while we are in mgoto mode */
     stacker.put(r->exits[dir]);
     stacker.swap();
   }
     
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -769,7 +769,7 @@ USERCMD(usercmd_mdetach)
     }
   } else {
     send_to_user("--[ %s is not marked nor linked.\r\n", exits[dir] );
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
 
@@ -787,7 +787,7 @@ USERCMD(usercmd_mdetach)
       }
   }
   
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -824,7 +824,7 @@ USERCMD(usercmd_mlink)
   
   if (second == NULL) {
     send_to_user("--[ There is no room with id %i.\r\n", id);
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
   
@@ -849,7 +849,7 @@ USERCMD(usercmd_mlink)
   /* first room */
   if (r->is_connected(dir) && !force) {
     send_to_user("--[ There is an existing connection to the %s.\r\n", exits[dir]);
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
 
@@ -866,7 +866,7 @@ USERCMD(usercmd_mlink)
     
     if (second->is_connected(backdir) && !force) {
       send_to_user("--[ There is an existing connection to the %s in second room.\r\n", exits[backdir]);
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     }
     
@@ -876,7 +876,7 @@ USERCMD(usercmd_mlink)
       
   }
   
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -913,13 +913,13 @@ USERCMD(usercmd_mmark)
       
       r->modified();
       
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     }
     i++;
   }
   send_to_user("--[ no such flag.\r\n");
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -968,7 +968,7 @@ USERCMD(usercmd_mdoor)
     r->add_door(i, arg);
     send_to_user("--[Pandora: Added the door %s to the %s\n", arg, exits[i]);
   }
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -988,7 +988,7 @@ USERCMD(usercmd_mcoord)
   p = skip_spaces(line);
   if (!*p) {
     send_to_user("--[ Current coordinates : X %i, Y %i, Z %i.\r\n", r->x, r->y, r->z);
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
   
@@ -1000,7 +1000,7 @@ USERCMD(usercmd_mcoord)
   
   p = skip_spaces(p);
   if (!*p) {
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
 
@@ -1012,7 +1012,7 @@ USERCMD(usercmd_mcoord)
   
   p = skip_spaces(p);
   if (!*p) {
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
   
@@ -1021,7 +1021,7 @@ USERCMD(usercmd_mcoord)
   r->setz(value);
   send_to_user("--[ Z set to %i.\r\n", r->z);
 
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -1069,7 +1069,7 @@ USERCMD(usercmd_mdec)
   }
 
   send_to_user("--[Pandora: Changed.\n");
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -1091,11 +1091,11 @@ USERCMD(usercmd_mhelp)
       {
         send_to_user("---[Help file : %s.\r\n", user_commands[i].name);
         
-        proxy.send_line_to_user((char *)user_commands[i].help);
+        proxy->send_line_to_user((char *)user_commands[i].help);
         
         send_to_user("\r\n");
         
-        send_to_user( (const char *) Engine.get_prompt());
+        send_to_user( (const char *) engine->get_prompt());
 
         return USER_PARSE_SKIP;
       }
@@ -1111,7 +1111,7 @@ USERCMD(usercmd_mhelp)
   
   send_to_user("\r\n");
 
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
     
   return USER_PARSE_SKIP;
 }
@@ -1143,23 +1143,23 @@ USERCMD(usercmd_config)
                   
                 }
         
-                if ((desired == 0) || (desired == -1 && Engine.isMapping())) {
-                    Engine.setMapping(false);
+                if ((desired == 0) || (desired == -1 && engine->isMapping())) {
+                    engine->setMapping(false);
                     send_to_user("--[Pandora: Mapping is now OFF!\r\n");
             
-                    send_to_user( (const char *) Engine.get_prompt());
+                    send_to_user( (const char *) engine->get_prompt());
                     return USER_PARSE_SKIP;
-                } else if (desired == 1 || (desired == -1 && !Engine.isMapping()) )
+                } else if (desired == 1 || (desired == -1 && !engine->isMapping()) )
                   
                 {
-                  if ( !Engine.empty() ) {
+                  if ( !engine->empty() ) {
                     send_to_user("--[Pandora: mreset is required to clear the Cause-Result stacks.\n");
-                    send_to_user( (const char *) Engine.get_prompt());
+                    send_to_user( (const char *) engine->get_prompt());
             
                     return USER_PARSE_SKIP;
                   }
                     
-                  Engine.setMapping(true);
+                  engine->setMapping(true);
                   conf.set_exits_check(false);
                   send_to_mud("brief OFF\n");
                   send_to_mud("spam ON\n");
@@ -1168,7 +1168,7 @@ USERCMD(usercmd_config)
                   send_to_user("--[Pandora: Exits analyzer is now OFF\n");
                   send_to_user("--[Pandora: Mapping is now on!\n");
 
-                  send_to_user( (const char *) Engine.get_prompt());
+                  send_to_user( (const char *) engine->get_prompt());
             
                   return USER_PARSE_SKIP;
                 }
@@ -1222,7 +1222,7 @@ USERCMD(usercmd_config)
 		break;
   }
 
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
 
   return USER_PARSE_SKIP;
 }
@@ -1245,7 +1245,7 @@ USERCMD(usercmd_msave)
     conf.set_data_mod(false);
 
     
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   } else {
     p = one_argument(p, arg, 1);        /* do not lower or upper case - filename */
@@ -1255,7 +1255,7 @@ USERCMD(usercmd_msave)
     
     conf.set_data_mod(false);
 
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }  
 }  
@@ -1278,10 +1278,10 @@ USERCMD(usercmd_mload)
   stacker.reset();  /* resetting stacks */
   
   send_to_user(" * Clearing events stacks...\r\n");
-  Engine.clear();
+  engine->clear();
   
-  Engine.addedroom = NULL;       /* possible memory leak, but who cares ... */
-  Engine.setMapping(false);
+  engine->addedroom = NULL;       /* possible memory leak, but who cares ... */
+  engine->setMapping(false);
   
 
   p = skip_spaces(line);
@@ -1308,7 +1308,7 @@ USERCMD(usercmd_mload)
   conf.set_data_mod(true);
 
   
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -1318,13 +1318,13 @@ USERCMD(usercmd_mreset)
   userfunc_print_debug;
   skip_spaces(line);
 
-  Engine.clear();
+  engine->clear();
   
   stacker.reset();
 
   send_to_user("--[Pandora: Resetted!\n");
   
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -1340,15 +1340,15 @@ USERCMD(usercmd_mmerge)
   
   userfunc_print_debug;
 
-  if (Engine.addedroom == NULL) {
+  if (engine->addedroom == NULL) {
     send_to_user("--[There is new added room to merge.\r\n");
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }
 
   /* find the only defined exit in new room - the one we came from */
   for (i = 0; i <= 5; i++)
-    if (Engine.addedroom->exits[i] > 0 && Engine.addedroom->exits[i] < MAX_ROOMS) {
+    if (engine->addedroom->exits[i] > 0 && engine->addedroom->exits[i] < MAX_ROOMS) {
       j = i;
       break;
     }
@@ -1362,13 +1362,13 @@ USERCMD(usercmd_mmerge)
     
     for (i = 0; i < Map.size(); i++) {
         t = Map.rooms[i];
-        if (Engine.addedroom->id == t->id || t->desc == NULL || t->name == NULL) {
+        if (engine->addedroom->id == t->id || t->desc == NULL || t->name == NULL) {
           continue;
         }
         
         /* in this case we do an exact match for both roomname and description */
-        if (strcmp(Engine.addedroom->desc, t->desc) == 0) 
-            if (strcmp(Engine.addedroom->name, t->name) == 0) {
+        if (strcmp(engine->addedroom->desc, t->desc) == 0) 
+            if (strcmp(engine->addedroom->name, t->name) == 0) {
                 id = t->id;
                 break;
             }	
@@ -1376,7 +1376,7 @@ USERCMD(usercmd_mmerge)
 
     if (id == EXIT_UNDEFINED) {
       send_to_user("--[ No matching room found.\r\n");
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     }
     
@@ -1387,14 +1387,14 @@ USERCMD(usercmd_mmerge)
     
     if (id <= 0 || id > MAX_ROOMS) {
       send_to_user("--[ %s is not a room id.\r\n", arg);
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     }
 
     t = Map.getroom(id);
     if (t == NULL) {
       send_to_user("--[ There is no room with this id %i.\r\n", id);
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     }      
 
@@ -1407,28 +1407,28 @@ USERCMD(usercmd_mmerge)
     }
     
     if (!force) 
-      if ((strcmp(Engine.addedroom->desc, t->desc) != 0) || 
-          (strcmp(Engine.addedroom->name, t->name) != 0) ) 
+      if ((strcmp(engine->addedroom->desc, t->desc) != 0) || 
+          (strcmp(engine->addedroom->name, t->name) != 0) ) 
       {
         send_to_user("--[ Roomname or description do not match.\r\n");
-        send_to_user( (const char *) Engine.get_prompt());
+        send_to_user( (const char *) engine->get_prompt());
         return USER_PARSE_SKIP;
       }
     
   } 
 
-  if (Map.try_merge_rooms(t, Engine.addedroom, j)) {
+  if (Map.try_merge_rooms(t, engine->addedroom, j)) {
     send_to_user("--[ merged.\r\n");
   } else {
     send_to_user("--[ failed.\r\n");
-    stacker.put(Engine.addedroom);
+    stacker.put(engine->addedroom);
   }
 
   stacker.swap();
 
   /* now make sure we have a room in stack */
   
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -1438,9 +1438,9 @@ USERCMD(usercmd_mstat)
   userfunc_print_debug;
   skip_spaces(line);
 
-  Engine.printstacks();
+  engine->printstacks();
   
-  send_to_user( (const char *) Engine.get_prompt());
+  send_to_user( (const char *) engine->get_prompt());
   return USER_PARSE_SKIP;
 }
 
@@ -1464,19 +1464,19 @@ USERCMD(usercmd_minfo)
 
     if (id <= 0 || id > MAX_ROOMS) {
       send_to_user("--[ %s is not a room id.\r\n", arg);
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     }
       
     t = Map.getroom(id);
     if (t == NULL) {
       send_to_user("--[ There is no room with this id %i.\r\n", id);
-      send_to_user( (const char *) Engine.get_prompt());
+      send_to_user( (const char *) engine->get_prompt());
       return USER_PARSE_SKIP;
     }      
     
     t->send_room();
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
   }  
 
@@ -1487,7 +1487,7 @@ USERCMD(usercmd_minfo)
      t->send_room();
    }
    
-   send_to_user( (const char *) Engine.get_prompt());
+   send_to_user( (const char *) engine->get_prompt());
    return USER_PARSE_SKIP;
 }
 
@@ -1502,7 +1502,7 @@ USERCMD(usercmd_move)
   /*firstly - send the command futher to mud, as if it matches */
   /* used commands - it wont be automatically send futher */
   
-  if (proxy.isMudEmulation()) {
+  if (proxy->isMudEmulation()) {
     r = stacker.first();
 
     dir = -1;
@@ -1531,7 +1531,7 @@ USERCMD(usercmd_move)
           case USER_MOVE_LOOK:
           case USER_MOVE_EXAMINE:
                   r->send_room();
-                  send_to_user( (const char *) Engine.get_prompt());
+                  send_to_user( (const char *) engine->get_prompt());
                   return USER_PARSE_SKIP;
 
                   break;
@@ -1552,7 +1552,7 @@ USERCMD(usercmd_move)
     }
             
     
-    send_to_user( (const char *) Engine.get_prompt());
+    send_to_user( (const char *) engine->get_prompt());
     
     return USER_PARSE_SKIP;
     
