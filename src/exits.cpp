@@ -23,7 +23,7 @@ void do_exits(const char *exits_line)
 
     parse_exits(exits_line, exits);
 
-    r = Engine.addedroom;
+    r = engine->addedroom;
     if (r == NULL)
         return;
         
@@ -55,7 +55,7 @@ void do_exits(const char *exits_line)
             r->exits[i] = EXIT_UNDEFINED;
         }
 
-        stacker.put(Engine.addedroom);
+        stacker.put(engine->addedroom);
             
         return;
 }

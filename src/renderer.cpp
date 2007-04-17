@@ -537,7 +537,7 @@ void RendererWidget::draw(void)
     
     int z = 0;
     
-    print_debug(DEBUG_RENDERER, "in draw()");
+//    print_debug(DEBUG_RENDERER, "in draw()");
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glLoadIdentity();

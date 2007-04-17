@@ -237,7 +237,7 @@ void CRoom::send_room()
 
     line[0] = 0;
     pos = 0;
-    if (!(proxy.isMudEmulation() && conf.get_brief_mode() ) ) {
+    if (!(proxy->isMudEmulation() && conf.get_brief_mode() ) ) {
       for (i = 0; i <= strlen(desc); i++)
 	if (desc[i] == '|') {
 	    line[pos] = 0;
@@ -261,7 +261,7 @@ void CRoom::send_room()
     send_to_user("%s\r\n", line);
 
     
-    if (conf.get_brief_mode() && proxy.isMudEmulation()) {
+    if (conf.get_brief_mode() && proxy->isMudEmulation()) {
       sprintf(line, "Exits: ");
       for (i = 0; i <= 5; i++)
           if (exits[i] > 0) {

@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include <QQueue>
+#include <QObject>
 
 #include "CRoom.h"
 
@@ -54,7 +55,9 @@ class Event   {
         QByteArray prompt;
 };
 
-class CEngine {
+class CEngine : public QObject {
+Q_OBJECT
+
   /* flags */
     bool mapping;                 /* mapping is On/OFF */
     bool mgoto;
@@ -117,9 +120,11 @@ public:
     bool empty();                      /* are pipes empty? */
     void clear();                      /* clears events pipes */
     
+public slots:
+    void slotRunEngine();
 };
 
-extern class CEngine Engine;
+extern class CEngine *engine;
 
 #endif
 

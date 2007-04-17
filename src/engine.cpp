@@ -16,9 +16,10 @@
 #include "engine.h"
 #include "Map.h"
 #include "tree.h"
+#include "userfunc.h"
 
 
-class CEngine Engine;
+class CEngine *engine;
 
 
 /*---------------- * MAPPING OFF ---------------------------- */
@@ -217,6 +218,14 @@ void CEngine::tryAllDirs()
     
 }
 
+void CEngine::slotRunEngine()
+ {
+          if (userland_parser.is_empty())
+            exec();
+          else 
+            userland_parser.parse_command();
+}
+
 
 void CEngine::parse_event()
 {
@@ -231,8 +240,8 @@ void CEngine::parse_event()
     
     setMgoto( false );    /* if we get a new room data incoming, mgoto has to go away */
 
-//    printf("ANALYZER Event. NAME %s\r\nDESC %s\r\nEXITS %s\r\n", 
-//        (const char *) event.name, (const char *) event.desc, (const char *) event.exits);
+    printf("ANALYZER Event. NAME %s\r\nDESC %s\r\nEXITS %s\r\n", 
+        (const char *) event.name, (const char *) event.desc, (const char *) event.exits);
 
     if (event.name == "") {
         if (addedroom)
@@ -252,13 +261,15 @@ void CEngine::parse_event()
     if (stacker.amount() == 0)
         resync();
         
+    printf("Done. Sending a renderer event.\r\n");
     toggle_renderer_reaction();
 }
 
 
 
-CEngine::CEngine()
+CEngine::CEngine() : QObject()
 {
+  engine_init();
 }
 
 CEngine::~CEngine()
@@ -299,6 +310,7 @@ void CEngine::engine_init()
   last_exits.clear();
   last_terrain = 0;
   last_prompt.clear();
+  addedroom = 0;
 }
 
 int CEngine::check_roomdesc()

@@ -46,10 +46,9 @@ public:
 
   RendererWidget( QWidget *parent = 0);
 
-  void display(void);
 
-  void draw(void);
   void CalculateFrustum();
+  void display(void);
   
 
 
@@ -77,7 +76,9 @@ private:
   void glDrawCSquare(CSquare *p);
   bool PointInFrustum(float x, float y, float z);
   bool SquareInFrustum(CSquare *p);
-  
+
+public slots:
+  void draw();
 };
 
 
