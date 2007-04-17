@@ -17,7 +17,7 @@
 #include "mainwindow.h"
 #include "exits.h"
 
-class Userland userland_parser;
+class Userland *userland_parser;
 
 /* ================= ENCHANCED USER FUNCTIONS VERSIONS =============== */
 #define USERCMD_FLAG_SYNC       (1 << 0)       /* sync is required */
@@ -339,15 +339,15 @@ int Userland::parse_user_input_line(char *line)
         result = ((*user_commands[i].command_pointer) (i, user_commands[i].subcmd, p, line));
       }
       else {
-        userland_parser.add_command(i, p);
+        userland_parser->add_command(i, p);
       }
 
       
       if (IS_SET(user_commands[i].flags, USERCMD_FLAG_REDRAW)) 
         toggle_renderer_reaction();
       
-      if (renderer_window)
-        renderer_window->update_status_bar();
+//      if (renderer_window)
+//        renderer_window->update_status_bar();
       
       return result;
     }
@@ -1160,7 +1160,7 @@ USERCMD(usercmd_config)
                   }
                     
                   engine->setMapping(true);
-                  conf.set_exits_check(false);
+                  conf->set_exits_check(false);
                   send_to_mud("brief OFF\n");
                   send_to_mud("spam ON\n");
                   send_to_mud("prompt all\n");
@@ -1176,49 +1176,49 @@ USERCMD(usercmd_config)
 		break;
 	case  USER_CONF_BRIEF:
                 if (desired == -1)
-                  conf.set_brief_mode( !conf.get_brief_mode());
+                  conf->set_brief_mode( !conf->get_brief_mode());
                 else 
-                  conf.set_brief_mode(desired);
+                  conf->set_brief_mode(desired);
                 
                 send_to_user("----[ Mapper Brief Mode is now %s.\r\n", 
-                              ON_OFF(conf.get_brief_mode()) );
+                              ON_OFF(conf->get_brief_mode()) );
 		break;
 	case  USER_CONF_AUTOMERGE:
                 if (desired == -1)
-                  conf.set_automerge( !conf.get_automerge() );
+                  conf->set_automerge( !conf->get_automerge() );
                 else 
-                  conf.set_automerge(desired);
+                  conf->set_automerge(desired);
                 
                 send_to_user("----[ Description analyzer and automatic merging is now %s.\r\n", 
-                              ON_OFF(conf.get_automerge()) );
+                              ON_OFF(conf->get_automerge()) );
 		break;
 	case  USER_CONF_ANGRYLINKER:
                 if (desired == -1)
-                  conf.set_angrylinker( !conf.get_angrylinker() );
+                  conf->set_angrylinker( !conf->get_angrylinker() );
                 else 
-                  conf.set_angrylinker(desired);
+                  conf->set_angrylinker(desired);
                 
                 send_to_user("----[ AngryLinker is now %s.\r\n", 
-                              ON_OFF(conf.get_angrylinker()) );
+                              ON_OFF(conf->get_angrylinker()) );
 		break;
 
         case  USER_CONF_EXITS:
                 if (desired == -1)
-                  conf.set_exits_check( !conf.get_exits_check() );
+                  conf->set_exits_check( !conf->get_exits_check() );
                 else 
-                  conf.set_exits_check(desired);
+                  conf->set_exits_check(desired);
                 
                 send_to_user("----[ Exits analyzer is now %s.\r\n", 
-                              ON_OFF( conf.get_exits_check() ) );
+                              ON_OFF( conf->get_exits_check() ) );
 		break;
 	case  USER_CONF_TERRAIN:
                 if (desired == -1)
-                  conf.set_terrain_check( !conf.get_terrain_check());
+                  conf->set_terrain_check( !conf->get_terrain_check());
                 else 
-                  conf.set_terrain_check(desired);
+                  conf->set_terrain_check(desired);
                 
                 send_to_user("----[ Terrain analyzer is now %s.\r\n", 
-                              ON_OFF(conf.get_terrain_check()) );
+                              ON_OFF(conf->get_terrain_check()) );
 		break;
   }
 
@@ -1240,9 +1240,9 @@ USERCMD(usercmd_msave)
   p = skip_spaces(line);
   if (!*p) {
     /* no arguments */
-    xml_writebase( conf.get_base_file() );
+    xml_writebase( conf->get_base_file() );
     send_to_user("--[Pandora: Saved...\r\n");
-    conf.set_data_mod(false);
+    conf->set_data_mod(false);
 
     
     send_to_user( (const char *) engine->get_prompt());
@@ -1253,7 +1253,7 @@ USERCMD(usercmd_msave)
     xml_writebase(arg);
     send_to_user("--[Pandora: Saved to %s...\r\n", arg);
     
-    conf.set_data_mod(false);
+    conf->set_data_mod(false);
 
     send_to_user( (const char *) engine->get_prompt());
     return USER_PARSE_SKIP;
@@ -1288,9 +1288,9 @@ USERCMD(usercmd_mload)
   if (!*p) {
     /* no arguments */
     send_to_user(" * Loading the file %s from the disk...\r\n", 
-                  (const char *) conf.get_base_file()  );
+                  (const char *) conf->get_base_file()  );
       
-    xml_readbase( conf.get_base_file() );
+    xml_readbase( conf->get_base_file() );
   } else {
     p = one_argument(p, arg, 1);        /* do not lower or upper case - filename */
 
@@ -1305,7 +1305,7 @@ USERCMD(usercmd_mload)
   
   send_to_user("--[Pandora: Done.\r\n");
 
-  conf.set_data_mod(true);
+  conf->set_data_mod(true);
 
   
   send_to_user( (const char *) engine->get_prompt());
@@ -1563,7 +1563,7 @@ USERCMD(usercmd_move)
             case USER_MOVE_LOOK:
             case USER_MOVE_EXAMINE:
                     printf("Setting awaitingRoom to true!\r\n");
-                    dispatcher.setAwaitingRoom(true);
+                    proxy->setAwaitingRoom(true);
                     break;
         }      
   */

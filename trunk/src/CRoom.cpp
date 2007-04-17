@@ -73,7 +73,7 @@ CRoom::~CRoom()
 
 void CRoom::modified()
 {
-  conf.set_data_mod(true);
+  conf->set_data_mod(true);
 }
 
 void CRoom::refresh_note(QByteArray n)
@@ -116,7 +116,7 @@ void CRoom::refresh_roomname(QByteArray newname)
 
 void CRoom::refresh_terrain(char terrain)
 {
-  sector = conf.get_sector_by_pattern(terrain);
+  sector = conf->get_sector_by_pattern(terrain);
   modified();      
 }
 
@@ -232,12 +232,12 @@ void CRoom::send_room()
     char line[MAX_STR_LEN];
     
     send_to_user(" Id: %i, Flags: %s, Coord: %i,%i,%i\r\n", id,
-	    (const char *) conf.sectors[sector].desc, x, y, z);
+	    (const char *) conf->sectors[sector].desc, x, y, z);
     send_to_user(" [32m%s[0m\n",name);
 
     line[0] = 0;
     pos = 0;
-    if (!(proxy->isMudEmulation() && conf.get_brief_mode() ) ) {
+    if (!(proxy->isMudEmulation() && conf->get_brief_mode() ) ) {
       for (i = 0; i <= strlen(desc); i++)
 	if (desc[i] == '|') {
 	    line[pos] = 0;
@@ -261,7 +261,7 @@ void CRoom::send_room()
     send_to_user("%s\r\n", line);
 
     
-    if (conf.get_brief_mode() && proxy->isMudEmulation()) {
+    if (conf->get_brief_mode() && proxy->isMudEmulation()) {
       sprintf(line, "Exits: ");
       for (i = 0; i <= 5; i++)
           if (exits[i] > 0) {
@@ -378,11 +378,11 @@ int Strings_Comparator::compare_with_quote(QByteArray str, QByteArray text, int 
 
 int Strings_Comparator::strcmp_roomname(QByteArray name, QByteArray text)
 {
-    return compare_with_quote(name, text, conf.get_name_quote());
+    return compare_with_quote(name, text, conf->get_name_quote());
 }
 
 
 int Strings_Comparator::strcmp_desc(QByteArray name, QByteArray text)
 {
-    return compare_with_quote(name, text, conf.get_desc_quote());
+    return compare_with_quote(name, text, conf->get_desc_quote());
 }

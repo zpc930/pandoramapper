@@ -239,8 +239,8 @@ void RoomEditDialog::load_room_data(unsigned int id)
         
     
         
-    for (i=0; i< conf.sectors.size(); i++)
-        comboBox_terrain->insertItem(i, conf.sectors[i].desc);    
+    for (i=0; i< conf->sectors.size(); i++)
+        comboBox_terrain->insertItem(i, conf->sectors[i].desc);    
         
     comboBox_terrain->setCurrentIndex(r->sector);
 }
@@ -283,8 +283,8 @@ void RoomEditDialog::accept()
     desc = textEdit_desc->toPlainText();
     desc.replace("\n", "|");
     terrain = comboBox_terrain->currentIndex();
-    for (i=0; i< conf.sectors.size(); i++)
-        if (comboBox_terrain->currentText() == conf.sectors[i].desc) {
+    for (i=0; i< conf->sectors.size(); i++)
+        if (comboBox_terrain->currentText() == conf->sectors[i].desc) {
             r->sector = i;
         }
     

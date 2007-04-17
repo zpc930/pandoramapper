@@ -174,10 +174,10 @@ void CEngine::tryDir()
         if (nameMatch > 0) {
             send_to_user("--[ not exact room match: %i errors.\r\n", nameMatch);
         }
-        if (conf.get_autorefresh() && descMatch > 0) {
+        if (conf->get_autorefresh() && descMatch > 0) {
             send_to_user("--[ (AutoRefreshed) not exact room desc match: %i errors.\r\n", descMatch);
             stacker.next_first()->refresh_desc(event.desc);  
-        } else if (!conf.get_autorefresh() && descMatch > 0) {
+        } else if (!conf->get_autorefresh() && descMatch > 0) {
             send_to_user("--[ not exact room desc match: %i errors.\r\n", descMatch);
         }
     }
@@ -220,10 +220,10 @@ void CEngine::tryAllDirs()
 
 void CEngine::slotRunEngine()
  {
-          if (userland_parser.is_empty())
+          if (userland_parser->is_empty())
             exec();
           else 
-            userland_parser.parse_command();
+            userland_parser->parse_command();
 }
 
 
@@ -328,7 +328,7 @@ int CEngine::check_roomdesc()
         return 0;
     }
 
-    if (conf.get_automerge() == false) {
+    if (conf->get_automerge() == false) {
         printf("Analyzer: autodesc check if OFF - quiting this routine.\n");
         stacker.put(addedroom);
       
@@ -395,7 +395,7 @@ void CEngine::angrylinker(CRoom *r)
   int distances[6];
   int z;
     
-  if (!conf.get_angrylinker()) 
+  if (!conf->get_angrylinker()) 
     return; 
 
   print_debug(DEBUG_ROOMS, "AngryLinker is called");
@@ -558,10 +558,10 @@ void CEngine::printstacks()
 	    "Conf: Mapping %s, AutoChecks [Desc %s, Exits %s, Terrain %s],\r\n"
             "      AutoRefresh settings %s (RName/Desc quotes %i/%i), \r\n"
             "      AngryLinker %s\r\n", 
-            ON_OFF(mapping), ON_OFF(conf.get_automerge()), 
-            ON_OFF(conf.get_exits_check() ), ON_OFF(conf.get_terrain_check() ),
-            ON_OFF(conf.get_autorefresh() ), conf.get_name_quote(), conf.get_desc_quote(),
-            ON_OFF(conf.get_angrylinker() )             );
+            ON_OFF(mapping), ON_OFF(conf->get_automerge()), 
+            ON_OFF(conf->get_exits_check() ), ON_OFF(conf->get_terrain_check() ),
+            ON_OFF(conf->get_autorefresh() ), conf->get_name_quote(), conf->get_desc_quote(),
+            ON_OFF(conf->get_angrylinker() )             );
     
     send_to_user(line);
     stacker.printstacks();

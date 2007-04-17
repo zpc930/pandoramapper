@@ -163,7 +163,7 @@ public:
     int get_name_quote() { return name_quote; }
 };
 
-extern class Cconfigurator conf;
+extern class Cconfigurator *conf;
 
 
 class ConfigParser : public QXmlDefaultHandler {
