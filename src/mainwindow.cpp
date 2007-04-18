@@ -556,7 +556,11 @@ MainWindow::MainWindow(QWidget *parent)
   statusBar()->addWidget(formulaLabel, 1); 
   statusBar()->addWidget(modLabel); 
 
-  
+  connect(this, SIGNAL(newLocationLabel(const QString &)),
+          locationLabel, SLOT(setText(const QString &)));
+  connect(this, SIGNAL(newModLabel(const QString &)),
+          modLabel, SLOT(setText(const QString &)));
+ 
 
 
   LeftButtonPressed = false;
@@ -573,13 +577,13 @@ void MainWindow::update_status_bar()
   printf("Updating status bar\r\n");
 
   if (conf->get_data_mod() )
-    modLabel->setText(tr("Data: MOD "));     
+    emit newModLabel("Data: MOD ");     
   else 
-    modLabel->setText(tr("Data: --- "));
+    emit newModLabel("Data: --- ");
   
 
   stacker.get_current(str);
-  locationLabel->setText(tr(str));
+  emit newLocationLabel(str);
   printf("Done!\r\n");
 }
 
@@ -742,7 +746,7 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
 //            renderer_window->hide();
             break;	
     }
-//    update_status_bar();
+    update_status_bar();
     renderer_window->renderer->display();
     printf("Done processing events at keyEventPress\r\n");
 }
