@@ -80,7 +80,10 @@ public:
     void update_status_bar();
     QAction       *hide_status_action;
     QAction       *hide_menu_action;
-    
+
+signals:
+  void newLocationLabel(const QString &label);
+  void newModLabel(const QString &label);
 
 public slots:
   void disable_online_actions();
