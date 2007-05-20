@@ -346,3 +346,94 @@ void basic_mud_vlog(const char *format, va_list args)
   fflush(logfile);
 }
 
+// latin1 to 7-bit Ascii
+void latinToAscii(QByteArray &text) 
+{
+    const unsigned char table[]= {
+/*192*/   'A',    
+          'A',    
+          'A',    
+          'A',    
+          'A',    
+          'A',    
+          'A',    
+          'C',    
+          'E',    
+          'E',    
+          'E',    
+          'E',    
+          'I',    
+          'I',    
+          'I',    
+          'I',    
+          'D',    
+          'N',    
+          'O',    
+          'O',    
+          'O',    
+          'O',    
+          'O',    
+          'x',    
+          'O',    
+          'U',    
+          'U',    
+          'U',    
+          'U',    
+          'Y',    
+          'b',    
+          'B',    
+          'a',    
+          'a',    
+          'a',    
+          'a',    
+          'a',    
+          'a',    
+          'a',    
+          'c',    
+          'e',    
+          'e',    
+          'e',    
+          'e',    
+          'i',    
+          'i',    
+          'i',    
+          'i',    
+          'o',    
+          'n',    
+          'o',    
+          'o',    
+          'o',    
+          'o',    
+          'o',    
+          ':',    
+          'o',    
+          'u',    
+          'u',    
+          'u',    
+          'u',    
+          'y',    
+          'b',    
+          'y'
+    };
+    unsigned char ch;
+    int pos;
+
+    printf("Before : %s\r\n", (const char *) text);
+    printf("in LatinToAscii() : ");
+    for (pos = 0; pos <= text.length(); pos++) {
+        ch = text[pos];
+        if (ch > 128) {
+            if (ch < 192) 
+                ch = 'z';
+            else 
+                ch = table[ ch - 192 ];
+
+            printf("%c", ch);
+
+            text[pos] = ch;
+        }
+    }
+    printf("\r\n");
+
+    printf("Before : %s\r\n", (const char *) text);
+}
