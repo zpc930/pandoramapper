@@ -278,21 +278,11 @@ void CEngine::parseEvent()
 CEngine::CEngine() : QObject()
 {
   /* setting defaults */
-  
-  printf("Engine INIT.\r\n");
-  mapping =                0;
-  mgoto             =      0;
 
-  last_name.clear();
-  last_desc.clear();
-  last_exits.clear();
-  last_terrain = 0;
-  last_prompt.clear();
-
-  set_users_region(Map.getRegionByName("default"));
-  set_last_region(Map.getRegionByName("default"));
-    
+  clear();  
 }
+
+
 
 CEngine::~CEngine()
 {
@@ -610,6 +600,21 @@ bool CEngine::empty()                      /* are pipes empty? */
 void CEngine::clear()
 {
     Pipe.clear();
+    printf("Engine INIT.\r\n");
+    mapping =                0;
+    mgoto             =      0;
+
+  
+    last_name.clear();
+    last_desc.clear();
+    last_exits.clear();
+    last_terrain = 0;
+    last_prompt.clear();
+    
+    set_users_region(Map.getRegionByName("default"));
+    set_last_region(Map.getRegionByName("default"));
+    
+    addedroom = NULL;  
 }
 
 void CEngine::set_users_region(CRegion *reg)
