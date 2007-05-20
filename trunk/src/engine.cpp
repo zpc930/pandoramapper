@@ -237,17 +237,15 @@ void CEngine::slotRunEngine()
 
 void CEngine::parseEvent()
 {
-    // to avoid latin-1 chars, just use the dump copy to QString and back method ...
-    QString transString;
     if (event.name != "") {
-        transString = event.name;
-        event.name = transString.toAscii();
+        printf("Outside before: %s\r\n", (const char *) event.name);
+        latinToAscii( event.name);
+        printf("Outside before: %s\r\n", (const char *) event.name);
         last_name = event.name;
     }
 
     if (event.desc != "") {
-        transString = event.desc;
-        event.desc = transString.toAscii();
+        latinToAscii( event.desc );
         last_desc = event.desc;
     }
     if (event.exits != "") {
@@ -621,6 +619,7 @@ void CEngine::clear()
     last_exits.clear();
     last_terrain = 0;
     last_prompt.clear();
+    last_prompt = "- mapper nosync prompt ->";
     
     set_users_region(Map.getRegionByName("default"));
     set_last_region(Map.getRegionByName("default"));
@@ -647,3 +646,4 @@ CRegion *CEngine::get_last_region()
 {
     return last_region;
 }
+

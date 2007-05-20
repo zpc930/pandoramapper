@@ -77,6 +77,7 @@ int parse_dir(char *dir);
 void basic_mud_log(const char *format, ...);
 int MIN(int a, int b);
 
+void latinToAscii(QByteArray &text); 
 
 #endif
 
