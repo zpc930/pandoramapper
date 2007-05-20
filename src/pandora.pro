@@ -19,6 +19,7 @@ FORMS +=	spellsdialog.ui
 
 HEADERS		+=configurator.h
 HEADERS		+=CRoom.h
+HEADERS		+=Regions.h
 HEADERS		+=defines.h
 HEADERS		+=dispatch.h
 HEADERS		+=engine.h
@@ -35,10 +36,13 @@ HEADERS		+=RoomEditDialog.h
 HEADERS		+=ConfigWidget.h
 HEADERS		+=SpellsDialog.h
 HEADERS		+=mainwindow.h
+HEADERS		+=Frustum.h
+HEADERS		+=CSquare.h
 
 
 SOURCES		+=auda.cpp
 SOURCES		+=CRoom.cpp
+SOURCES		+=Regions.cpp
 SOURCES		+=configurator.cpp
 SOURCES		+=dispatch.cpp
 SOURCES		+=engine.cpp
@@ -55,7 +59,8 @@ SOURCES		+=mainwindow.cpp
 SOURCES		+=RoomEditDialog.cpp
 SOURCES		+=ConfigWidget.cpp
 SOURCES		+=SpellsDialog.cpp
-
+SOURCES		+=Frustum.cpp
+SOURCES         +=CSquare.cpp
 
 TARGET		= ../pandora
 

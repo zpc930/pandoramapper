@@ -10,7 +10,21 @@
 class stackmanager stacker;
 
 
-void stackmanager::get_current(char *str)
+CRoom * stackmanager::first()  
+{ 
+    if (sa->size() == 0)
+        return NULL;
+    return (*sa)[0]; 
+}
+
+CRoom * stackmanager::nextFirst()  
+{ 
+    if (sb->size() == 0)
+        return NULL;
+    return (*sb)[0]; 
+}
+
+void stackmanager::getCurrent(char *str)
 {
   if (sa->size() == 0) {
     sprintf(str, "NO_SYNC");
@@ -22,11 +36,11 @@ void stackmanager::get_current(char *str)
     return;
   }
   
-  sprintf(str, "%i", ((*sa)[0])->id);
+  sprintf(str, "%i", ((*sa)[0])->id );
 }
 
 
-void stackmanager::printstacks()
+void stackmanager::printStacks()
 {
     unsigned int i;
 
@@ -38,7 +52,7 @@ void stackmanager::printstacks()
     }
 }
 
-void stackmanager::remove_room(unsigned int id)
+void stackmanager::removeRoom(unsigned int id)
 {
   unsigned int i;
 
@@ -59,7 +73,7 @@ void stackmanager::put(CRoom *r)
 
 void stackmanager::put(unsigned int id)
 {
-    put(Map.getroom(id));
+    put(Map.getRoom(id));
 }
 
 
@@ -68,7 +82,7 @@ CRoom *stackmanager::get(unsigned int i)
     return (*sa)[i];
 }
 
-CRoom *stackmanager::get_next(unsigned int i)
+CRoom *stackmanager::getNext(unsigned int i)
 {
     return (*sb)[i];
 }

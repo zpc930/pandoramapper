@@ -1,7 +1,5 @@
 #include <cstdio>
-#include <cmath>
 #include <cstdlib>
-#include <vector>
 
 #include <QGLWidget>
 #include <QImage>
@@ -11,15 +9,17 @@
 
 #include "renderer.h"
 #include "configurator.h"
+#include "engine.h"
 
 
 #include "stacks.h"
 #include "utils.h"
 #include "Map.h"
+#include "CSquare.h"
 
+#include "Frustum.h"
 #include "userfunc.h"
 
-using namespace std;
 
 #if defined(Q_CC_MSVC)
 #pragma warning(disable:4305) // init: truncation from const double to float
@@ -31,29 +31,6 @@ GLfloat marker_colour[4] =  {1.0, 0.1, 0.1, 0.9};
 #define MARKER_SIZE           (ROOM_SIZE/2.0)
 
 class MainWindow *renderer_window;
-
-
-// We create an enum of the sides so we don't have to call each side 0 or 1.
-// This way it makes it more understandable and readable when dealing with frustum sides.
-enum FrustumSide
-{
-    RIGHT   = 0,        // The RIGHT side of the frustum
-    LEFT    = 1,        // The LEFT  side of the frustum
-    BOTTOM  = 2,        // The BOTTOM side of the frustum
-    TOP     = 3,        // The TOP side of the frustum
-    BACK    = 4,        // The BACK side of the frustum
-    FRONT   = 5         // The FRONT side of the frustum
-}; 
-
-// Like above, instead of saying a number for the ABC and D of the plane, we
-// want to be more descriptive.
-enum PlaneData
-{
-    A = 0,              // The X value of the plane's normal
-    B = 1,              // The Y value of the plane's normal
-    C = 2,              // The Z value of the plane's normal
-    D = 3               // The distance the plane is from the origin
-};
 
 RendererWidget::RendererWidget( QWidget *parent )
      : QGLWidget( parent )
@@ -107,14 +84,7 @@ void RendererWidget::initializeGL()
     basic_gllist = glGenLists(1);
     if (basic_gllist != 0) {
       glNewList(basic_gllist, GL_COMPILE);
-
-      glBegin(GL_QUADS);
-      glVertex3f( ROOM_SIZE,  ROOM_SIZE, 0.0f);
-      glVertex3f( ROOM_SIZE, -ROOM_SIZE, 0.0f);
-      glVertex3f(-ROOM_SIZE, -ROOM_SIZE, 0.0f);
-      glVertex3f(-ROOM_SIZE,  ROOM_SIZE, 0.0f);
-      glEnd();
-      
+      glRectf( -ROOM_SIZE, -ROOM_SIZE, ROOM_SIZE, ROOM_SIZE);          
       glEndList();
     }
 
@@ -242,9 +212,9 @@ void RendererWidget::glDrawMarkers()
             continue;
         }
     
-        dx = p->x - curx;
-        dy = p->y - cury;
-        dz = (p->z - curz) /* * DIST_Z */;
+        dx = p->getX() - curx;
+        dy = p->getY() - cury;
+        dz = (p->getZ() - curz) /* * DIST_Z */;
     
 
         drawMarker(dx, dy, dz, 1);
@@ -258,11 +228,11 @@ void RendererWidget::glDrawMarkers()
 
     if (last_drawn_trail) {
         glColor4f(marker_colour[0] / 1.1, marker_colour[1] / 1.5, marker_colour[2] / 1.5, marker_colour[3] / 1.5);
-        p = Map.getroom(last_drawn_trail);
+        p = Map.getRoom(last_drawn_trail);
         if (p != NULL) {
-            dx = p->x - curx;
-            dy = p->y - cury;
-            dz = (p->z - curz) ;
+            dx = p->getX() - curx;
+            dy = p->getY() - cury;
+            dz = (p->getZ() - curz) ;
             drawMarker(dx, dy, dz, 2);
         }
     }
@@ -278,66 +248,78 @@ void RendererWidget::glDrawRoom(CRoom *p)
     CRoom *r;
     int k;
     float distance;
-    bool lines, texture;    
+    bool details, texture;    
 
     rooms_drawn_csquare++;
     
-    dx = p->x - curx;
-    dy = p->y - cury;
-    dz = (p->z - curz) /* * DIST_Z */;
+    dx = p->getX() - curx;
+    dy = p->getY() - cury;
+    dz = (p->getZ() - curz) /* * DIST_Z */;
     dx2 = 0;
     dy2 = 0;
     dz2 = 0;
-    lines = 1;
+    details = 1;
     texture = 1;
     
-    if (PointInFrustum(dx, dy, dz) != true)
+    if (frustum.isPointInFrustum(dx, dy, dz) != true)
       return;
     
     rooms_drawn_total++;
 
 
-    distance = m_Frustum[FRONT][A] * dx + m_Frustum[FRONT][B] * dy + 
-               m_Frustum[FRONT][C] * dz + m_Frustum[FRONT][D];
+    distance = frustum.distance(dx, dy, dz);
+//  m_Frustum[FRONT][A] * dx + m_Frustum[FRONT][B] * dy + 
+//               m_Frustum[FRONT][C] * dz + m_Frustum[FRONT][D];
     
     if (distance >= conf->get_details_vis()) 
-      lines = 0;
+      details = 0;
 
     if (distance >= conf->get_texture_vis()) 
       texture = 0;
 
     
     glTranslatef(dx, dy, dz);
-    if (p->sector && texture) {
-      glEnable(GL_TEXTURE_2D);
-      glBindTexture(GL_TEXTURE_2D, conf->sectors[ p->sector].texture);
-      glCallList(conf->sectors[ p->sector].gllist);  
-      glDisable(GL_TEXTURE_2D);
+    if (p->getTerrain() && texture) {
+                
+    
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, conf->sectors[ p->getTerrain() ].texture);
+        glCallList(conf->sectors[ p->getTerrain() ].gllist);  
+        glDisable(GL_TEXTURE_2D);
+        
+       if (conf->get_display_regions_renderer() &&  engine->get_last_region() == p->getRegion()  ) {
+            glColor4f(0.20, 0.20, 0.20, colour[3]-0.1);
+            glRectf(-ROOM_SIZE*2, -ROOM_SIZE*2, 2*ROOM_SIZE, 2*ROOM_SIZE);   
+            glColor4f(colour[0], colour[1], colour[2], colour[3]);
+        }    
     } else {
-      glCallList(basic_gllist);
+        glCallList(basic_gllist);
     }              
     
     glTranslatef(-dx, -dy, -dz);
 
-    if (lines == 0)
+
+
+    if (details == 0)
       return;
     
+    if (conf->get_show_notes_renderer() == true) {
+        glColor4f(0.60, 0.4, 0.3, colour[3]);
+        renderText(dx, dy, dz + ROOM_SIZE / 2, p->getNote());    
+        glColor4f(colour[0], colour[1], colour[2], colour[3]);
+    }
+
     for (k = 0; k <= 5; k++) 
-      if (p->exits[k] != 0) {
-        if (p->exits[k] < EXIT_UNDEFINED) {
+      if (p->isExitPresent(k) == true) {
+        if (p->isExitNormal(k)) {
             GLfloat kx, ky, kz;
             GLfloat sx, sy;
 
-            r = Map.ids[p->exits[k]];
+            r = p->exits[k];
 
-            if (r == NULL) {
-                printf("RENDERER ERROR: Room #%d not found.\r\n", p->exits[k]);
-                continue;
-            }
-
-            dx2 = r->x - curx;
-            dy2 = r->y - cury;
-            dz2 = (r->z - curz) /* * DIST_Z */;
+            dx2 = r->getX() - curx;
+            dy2 = r->getY() - cury;
+            dz2 = (r->getZ() - curz) /* * DIST_Z */;
 
             dx2 = (dx + dx2) / 2;
             dy2 = (dy + dy2) / 2;
@@ -380,10 +362,24 @@ void RendererWidget::glDrawRoom(CRoom *p)
                 sx = 0;
                 sy = 0;
             } 
-            if (p->doors[k] != NULL) {
-                if (strcmp(p->doors[k], "exit") == 0) {
+            if (p->getDoor(k) != "") {
+                if (p->isDoorSecret(k) == false) {
                     glColor4f(0, 1.0, 0.0, colour[3] + 0.2);
                 } else {
+                    // Draw the secret door ...
+                    QByteArray info;
+                    QByteArray alias;                    
+                    info = p->getDoor(k);
+                    if (conf->get_show_regions_info() == true) {
+                        alias = engine->get_users_region()->getAliasByDoor( info, k);
+                        if (alias != "") {
+                            info += " [";
+                            info += alias;
+                            info += "]";  
+                        }
+                    }
+                    renderText((dx + dx2) / 2, (dy + dy2) / 2 , (dz +dz)/2 + ROOM_SIZE / 2 , info);    
+                
                     glColor4f(1.0, 0.0, 0.0, colour[3] + 0.2);
                 }
             }
@@ -448,14 +444,13 @@ void RendererWidget::glDrawRoom(CRoom *p)
             }
 
 
-            if (p->exits[k] == EXIT_UNDEFINED) {
+            if (p->isExitUndefined(k)) {
               glColor4f(1.0, 1.0, 0.0, colour[3] + 0.2);
             } 
             
-            if (p->exits[k] == EXIT_DEATH) {
+            if (p->isExitDeath(k)) {
                 glColor4f(1.0, 0.0, 0.0, colour[3] + 0.2);
             } 
-
 
             glBegin(GL_LINES);
             glVertex3f(dx + kx, dy + ky, dz);
@@ -463,7 +458,7 @@ void RendererWidget::glDrawRoom(CRoom *p)
             glEnd();
             
             GLuint death_terrain = conf->get_texture_by_desc("DEATH");
-            if (death_terrain && p->exits[k] == EXIT_DEATH) {
+	    if (death_terrain && p->isExitDeath(k)) {
               glTranslatef(dx2 + kx, dy2 + ky, dz2);
               
               glEnable(GL_TEXTURE_2D);
@@ -502,20 +497,20 @@ void RendererWidget::glDrawCSquare(CSquare *p)
 {
     unsigned int k;
     
-    if (!SquareInFrustum(p)) {
+    if (!frustum.isSquareInFrustum(p)) {
         return; // this square is not in view 
     }
         
-    if (p->to_be_passed()) {
+    if (p->toBePassed()) {
 //         go deeper 
-        if (p->subsquares[ Left_Upper ])
-            glDrawCSquare( p->subsquares[ Left_Upper ]);
-        if (p->subsquares[ Right_Upper ])
-            glDrawCSquare( p->subsquares[ Right_Upper ]);
-        if (p->subsquares[ Left_Lower ])
-            glDrawCSquare( p->subsquares[ Left_Lower ]);
-        if (p->subsquares[ Right_Lower ])
-            glDrawCSquare( p->subsquares[ Right_Lower ]);
+        if (p->subsquares[ CSquare::Left_Upper ])
+            glDrawCSquare( p->subsquares[ CSquare::Left_Upper ]);
+        if (p->subsquares[ CSquare::Right_Upper ])
+            glDrawCSquare( p->subsquares[ CSquare::Right_Upper ]);
+        if (p->subsquares[ CSquare::Left_Lower ])
+            glDrawCSquare( p->subsquares[ CSquare::Left_Lower ]);
+        if (p->subsquares[ CSquare::Right_Lower ])
+            glDrawCSquare( p->subsquares[ CSquare::Right_Lower ]);
     } else {
         for (k = 0; k < p->rooms.size(); k++) {
             glDrawRoom(p->rooms[k]);
@@ -527,17 +522,17 @@ void RendererWidget::glDrawCSquare(CSquare *p)
 
 void RendererWidget::draw(void)
 {
-    CRoom *p;
+    CRoom *p = NULL;
     CPlane *plane;  
 
     
     rooms_drawn_csquare=0;
     rooms_drawn_total=0;
-    square_frustum_checks = 0;
+//    square_frustum_checks = 0;
     
     int z = 0;
     
-//    print_debug(DEBUG_RENDERER, "in draw()");
+    print_debug(DEBUG_RENDERER, "in draw()");
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glLoadIdentity();
@@ -559,16 +554,19 @@ void RendererWidget::draw(void)
     if (stacker.amount() >= 1) {
 	p = stacker.first();
         if (p != NULL) {
-            curx = p->x;
-            cury = p->y;
-            curz = p->z;
+            curx = p->getX();
+            cury = p->getY();
+            curz = p->getZ();
         } else {
+            curx = 0;
+            cury = 0;
+            curz = 0;
             printf("RENDERER ERROR: cant get base coordinates.\r\n");
         }
     }
 
-
-    CalculateFrustum();
+    
+    frustum.calculateFrustum(p);
     
     
 //    print_debug(DEBUG_RENDERER, "drawing %i rooms", Map.size());
@@ -626,8 +624,8 @@ void RendererWidget::draw(void)
     }
     
     
-    print_debug(DEBUG_RENDERER, "Drawn %i rooms, after dot elimination %i, %i square frustum checks done", 
-            rooms_drawn_csquare, rooms_drawn_total, square_frustum_checks);
+//    print_debug(DEBUG_RENDERER, "Drawn %i rooms, after dot elimination %i, %i square frustum checks done", 
+//            rooms_drawn_csquare, rooms_drawn_total, square_frustum_checks);
 //    print_debug(DEBUG_RENDERER, "Drawing markers");
 
     glDrawMarkers();
@@ -652,146 +650,3 @@ void RendererWidget::display(void)
   
 }
 
-void NormalizePlane(float frustum[6][4], int side)
-{
-    // Here we calculate the magnitude of the normal to the plane (point A B C)
-    // Remember that (A, B, C) is that same thing as the normal's (X, Y, Z).
-    // To calculate magnitude you use the equation:  magnitude = sqrt( x^2 + y^2 + z^2)
-    float magnitude = (float)sqrt( frustum[side][A] * frustum[side][A] + 
-                                   frustum[side][B] * frustum[side][B] + 
-                                   frustum[side][C] * frustum[side][C] );
-
-    // Then we divide the plane's values by it's magnitude.
-    // This makes it easier to work with.
-    frustum[side][A] /= magnitude;
-    frustum[side][B] /= magnitude;
-    frustum[side][C] /= magnitude;
-    frustum[side][D] /= magnitude; 
-}
-
-void RendererWidget::CalculateFrustum()
-{    
-    float   proj[16];                               // This will hold our projection matrix
-    float   modl[16];                               // This will hold our modelview matrix
-    float   clip[16];                               // This will hold the clipping planes
-
-    glPushMatrix ();
-    
-    glGetFloatv(GL_PROJECTION_MATRIX, proj);
-
-    glGetFloatv(GL_MODELVIEW_MATRIX, modl);
-    
-    glLoadMatrixf (proj);
-    glMultMatrixf (modl);
-    
-    glGetFloatv(GL_MODELVIEW_MATRIX, clip);
-    glPopMatrix (); 
-
-    // This will extract the RIGHT side of the frustum
-    m_Frustum[RIGHT][A] = clip[ 3] - clip[ 0];
-    m_Frustum[RIGHT][B] = clip[ 7] - clip[ 4];
-    m_Frustum[RIGHT][C] = clip[11] - clip[ 8];
-    m_Frustum[RIGHT][D] = clip[15] - clip[12];
-
-    // Now that we have a normal (A,B,C) and a distance (D) to the plane,
-    // we want to normalize that normal and distance.
-
-    // Normalize the RIGHT side
-    NormalizePlane(m_Frustum, RIGHT);
-
-    // This will extract the LEFT side of the frustum
-    m_Frustum[LEFT][A] = clip[ 3] + clip[ 0];
-    m_Frustum[LEFT][B] = clip[ 7] + clip[ 4];
-    m_Frustum[LEFT][C] = clip[11] + clip[ 8];
-    m_Frustum[LEFT][D] = clip[15] + clip[12];
-
-    // Normalize the LEFT side
-    NormalizePlane(m_Frustum, LEFT);
-
-    // This will extract the BOTTOM side of the frustum
-    m_Frustum[BOTTOM][A] = clip[ 3] + clip[ 1];
-    m_Frustum[BOTTOM][B] = clip[ 7] + clip[ 5];
-    m_Frustum[BOTTOM][C] = clip[11] + clip[ 9];
-    m_Frustum[BOTTOM][D] = clip[15] + clip[13];
-
-    // Normalize the BOTTOM side
-    NormalizePlane(m_Frustum, BOTTOM);
-
-    // This will extract the TOP side of the frustum
-    m_Frustum[TOP][A] = clip[ 3] - clip[ 1];
-    m_Frustum[TOP][B] = clip[ 7] - clip[ 5];
-    m_Frustum[TOP][C] = clip[11] - clip[ 9];
-    m_Frustum[TOP][D] = clip[15] - clip[13];
-
-    // Normalize the TOP side
-    NormalizePlane(m_Frustum, TOP);
-
-    // This will extract the BACK side of the frustum
-    m_Frustum[BACK][A] = clip[ 3] - clip[ 2];
-    m_Frustum[BACK][B] = clip[ 7] - clip[ 6];
-    m_Frustum[BACK][C] = clip[11] - clip[10];
-    m_Frustum[BACK][D] = clip[15] - clip[14];
-
-    // Normalize the BACK side
-    NormalizePlane(m_Frustum, BACK);
-
-    // This will extract the FRONT side of the frustum
-    m_Frustum[FRONT][A] = clip[ 3] + clip[ 2];
-    m_Frustum[FRONT][B] = clip[ 7] + clip[ 6];
-    m_Frustum[FRONT][C] = clip[11] + clip[10];
-    m_Frustum[FRONT][D] = clip[15] + clip[14];
-
-    // Normalize the FRONT side
-    NormalizePlane(m_Frustum, FRONT);
-    
-}
-
-bool RendererWidget::PointInFrustum( float x, float y, float z )
-{
-    // Go through all the sides of the frustum
-    for(int i = 0; i < 6; i++ )
-    {
-        // Calculate the plane equation and check if the point is behind a side of the frustum
-        if(m_Frustum[i][A] * x + m_Frustum[i][B] * y + m_Frustum[i][C] * z + m_Frustum[i][D] <= 0)
-        {
-            // The point was behind a side, so it ISN'T in the frustum
-            return false;
-        }
-    }
-
-    // The point was inside of the frustum (In front of ALL the sides of the frustum)
-    return true;
-}
-
-
-bool RendererWidget::SquareInFrustum(CSquare *p)
-{
-    float x, y, z, size;
-
-
-    square_frustum_checks++;
-    
-    /* normalize the coordinates to the real view coordinates */
-    /* see glDrawRoom for similar functions */
-    x = p->centerx -curx;
-    y = p->centery - cury;
-    z = (current_plane_z - curz) /* * DIST_Z */;
-    size = ( (p->rightx - p->leftx) / 2 /*- curz */) /* * DIST_Z */;
-
-    for(int i = 0; i < 6; i++ )
-    {
-        if(m_Frustum[i][A] * (x - size) + m_Frustum[i][B] * (y - size) + m_Frustum[i][C] * (float) z + m_Frustum[i][D] >= 0)
-           continue;
-        if(m_Frustum[i][A] * (x + size) + m_Frustum[i][B] * (y - size) + m_Frustum[i][C] * (float) z + m_Frustum[i][D] >= 0)
-           continue;
-        if(m_Frustum[i][A] * (x - size) + m_Frustum[i][B] * (y + size) + m_Frustum[i][C] * (float) z + m_Frustum[i][D] >= 0)
-           continue;
-        if(m_Frustum[i][A] * (x + size) + m_Frustum[i][B] * (y + size) + m_Frustum[i][C] * (float) z + m_Frustum[i][D] >= 0)
-           continue;
-
-        // If we get here, it isn't in the frustum
-        return false;
-    }
-
-    return true;
-}

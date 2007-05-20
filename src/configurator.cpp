@@ -42,6 +42,13 @@ Cconfigurator::Cconfigurator()
     
     set_name_quote(10);
     set_desc_quote(10);
+    
+    set_regions_auto_replace( false );
+    set_regions_auto_set( false );
+    
+    set_show_regions_info( true );
+    set_display_regions_renderer( true );
+    set_show_notes_renderer( true );
 
     
     
@@ -134,7 +141,7 @@ QString Cconfigurator::spell_up_for(unsigned int p)
 /* ------------------- DATA ------------------- */
 char Cconfigurator::get_pattern_by_room(CRoom *r)
 {
-    return sectors.at(r->sector).pattern;
+    return sectors.at(r->getTerrain()).pattern;
 }
 
 int Cconfigurator::get_sector_by_desc(QByteArray desc)
@@ -185,6 +192,57 @@ void Cconfigurator::set_base_file(QByteArray str)
     base_file = str;
     set_conf_mod(true);
 }
+
+void Cconfigurator::set_display_regions_renderer(bool b)
+{
+    display_regions_renderer = b;
+    set_conf_mod(true);
+}
+
+void Cconfigurator::set_show_regions_info(bool b)
+{
+    show_regions_info = b;
+    set_conf_mod(true);
+}
+
+bool Cconfigurator::get_display_regions_renderer()
+{
+    return display_regions_renderer;
+}
+
+bool Cconfigurator::get_show_regions_info()
+{
+    return show_regions_info;
+}
+
+bool Cconfigurator::get_regions_auto_set()
+{
+    return regions_auto_set;
+}
+
+bool Cconfigurator::get_regions_auto_replace()
+{
+    return regions_auto_replace;
+}
+
+void Cconfigurator::set_regions_auto_set(bool b)
+{
+    regions_auto_set = b;
+}
+
+void Cconfigurator::set_regions_auto_replace(bool b)
+{
+    regions_auto_replace = b;
+    set_conf_mod(true);
+}
+
+void Cconfigurator::set_show_notes_renderer(bool b)
+{
+    show_notes_renderer = b;
+    set_conf_mod(true);
+}
+
+
 
 void Cconfigurator::set_remote_host(QByteArray str)
 {
@@ -377,8 +435,8 @@ int Cconfigurator::save_config_as(QByteArray path, QByteArray filename)
   fprintf(f, "  <basefile filename=\"%s\">\r\n", 
                   (const char *) get_base_file() );
   
-  fprintf(f, "  <GLvisibility textures=\"%i\" details=\"%i\">\r\n", 
-                  get_texture_vis(),  get_details_vis() );
+  fprintf(f, "  <GLvisibility textures=\"%i\" details=\"%i\" shownotes=\"%s\">\r\n", 
+                  get_texture_vis(),  get_details_vis(), ON_OFF(get_show_notes_renderer()) );
   
   fprintf(f, "  <analyzers desc=\"%s\" exits=\"%s\"  terrain=\"%s\">\r\n", 
                   "ON", ON_OFF(get_exits_check() ), ON_OFF(get_terrain_check() ) );
@@ -386,6 +444,12 @@ int Cconfigurator::save_config_as(QByteArray path, QByteArray filename)
   fprintf(f, "  <engineflags briefmode=\"%s\" automerge=\"%s\"  angrylinker=\"%s\">\r\n", 
                   ON_OFF(get_brief_mode()), 
                   ON_OFF(get_automerge() ), ON_OFF( get_angrylinker()) );
+                  
+              
+  fprintf(f, "  <regionsflags displayinrenderer=\"%s\" showinfo=\"%s\">\r\n", 
+                  ON_OFF(get_display_regions_renderer()), 
+                  ON_OFF(get_show_regions_info()) );
+                  
 
   fprintf(f, "  <guisettings always_on_top=\"%s\">\r\n", 
                   ON_OFF(get_always_on_top()) );
@@ -511,6 +575,14 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         s = attributes.value("details");
         conf->set_details_vis(s.toInt() );
         
+        s = attributes.value("shownotes");
+        s = s.toLower();
+        if (s == "on") 
+            conf->set_show_notes_renderer( true);
+        else 
+            conf->set_show_notes_renderer( false);
+        
+        
         printf("OpenGL visibility ranges set to %i (texture) and %i (details).\r\n",
                     conf->get_texture_vis(), conf->get_details_vis() );
         
@@ -552,6 +624,31 @@ bool ConfigParser::startElement( const QString& , const QString& ,
             conf->set_always_on_top(true);
         else 
             conf->set_always_on_top(false);
+
+        printf("GUI settings: always_on_top %s.\r\n", ON_OFF(conf->get_always_on_top()) );
+
+        return TRUE;
+    } else if (qName == "regionsflags") {
+        if (attributes.length() < 1) {
+            printf("(guisettings token) Not enough attributes in XML file!");
+            exit(1);
+        }        
+        
+        s = attributes.value("displayinrenderer");
+        s = s.toLower();
+        if (s == "on") 
+            conf->set_display_regions_renderer(true);
+        else 
+            conf->set_display_regions_renderer(false);
+            
+        s = attributes.value("showinfo");
+        s = s.toLower();
+        if (s == "on") 
+            conf->set_show_regions_info(true);
+        else 
+            conf->set_show_regions_info(false);
+            
+            
 
         printf("GUI settings: always_on_top %s.\r\n", ON_OFF(conf->get_always_on_top()) );
 

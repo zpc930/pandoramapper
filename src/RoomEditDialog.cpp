@@ -4,6 +4,10 @@
 #include "configurator.h"
 #include "RoomEditDialog.h"
 
+#define ROOMFLAG_UNDEFINED 0
+#define ROOMFLAG_DEATH          1
+#define ROOMFLAG_NONE           2
+
 /* ROOM EDIT DIALOG */
 RoomEditDialog::RoomEditDialog(QWidget *parent) : 
                                     QDialog(parent)
@@ -62,18 +66,18 @@ int RoomEditDialog::updateExitsInfo(int dir, CRoom *r)
     if (box->isChecked()) {
         flag = flags->currentIndex();
         if (flag == ROOMFLAG_UNDEFINED) {
-            lead = EXIT_UNDEFINED;
+            r->setExitUndefined(dir);
         } else if (flag == ROOMFLAG_DEATH) {
-            lead = EXIT_DEATH;
+            r->setExitDeath(dir);
         } else  {        
             lead = leads->text().toInt();
-            if (Map.getroom(lead) == NULL) {
+            if (Map.getRoom(lead) == NULL) {
                 QMessageBox::critical(this, "Room Info Edit",
                               QString("Bad door to the north!"));
                 return -1;
             }
+            r->setExit(dir, lead);
         }
-        r->exits[dir] = lead;
     
         dname = door->text();
         if (dname.length() > 40) {
@@ -81,11 +85,9 @@ int RoomEditDialog::updateExitsInfo(int dir, CRoom *r)
                               QString("Bad door to the north!"));
             return -1;    
         }
-        r->refresh_door(dir, dname.toAscii());    
+        r->setDoor(dir, dname.toAscii());    
     } else {
-        if (r->doors[dir])
-            free(r->doors[dir]);
-        r->exits[dir] = 0;
+        r->removeDoor(dir);    
         return 0;        
     }
     
@@ -170,23 +172,23 @@ void RoomEditDialog::setup_exit_widgets(int dir, CRoom *r)
     
     
     /* Exit North */
-    door->setText(r->doors[dir]);        
+    door->setText(r->getDoor(dir) );        
     flags->setCurrentIndex(ROOMFLAG_NONE);
     
-    if (r->exits[dir] == 0) {
+    if (r->isExitPresent(dir) == false) {
         box->setChecked(false);
         changedExitsState(dir, false);
     } else {
         box->setChecked(true);
         changedExitsState(dir, true);
                 
-        if (r->exits[dir] == EXIT_UNDEFINED) {
+        if (r->isExitUndefined(dir)) {
             changedExitsFlag(dir, ROOMFLAG_UNDEFINED);
-        } else if (r->exits[dir] == EXIT_DEATH) {
-            changedExitsFlag(dir, ROOMFLAG_UNDEFINED);
+        } else if (r->isExitDeath(dir) ) {
+            changedExitsFlag(dir, ROOMFLAG_DEATH);
         } else {
             changedExitsFlag(dir, ROOMFLAG_NONE);
-            leads->setText(QString("%1").arg(r->exits[dir]) );
+            leads->setText(QString("%1").arg(r->exits[dir]->id) );
             leads->setEnabled(true);
         }
         
@@ -218,7 +220,7 @@ void RoomEditDialog::load_room_data(unsigned int id)
     unsigned int i;
     
     /* stuff dialog with room data */    
-    r = Map.getroom(id);
+    r = Map.getRoom(id);
     setup_exit_widgets(NORTH, r);
     setup_exit_widgets(EAST, r);
     setup_exit_widgets(SOUTH, r);
@@ -226,23 +228,23 @@ void RoomEditDialog::load_room_data(unsigned int id)
     setup_exit_widgets(UP, r);
     setup_exit_widgets(DOWN, r);
     
-    lineEdit_name->setText(r->name);
-    lineEdit_coordx->setText(QString("%1").arg(r->x));
-    lineEdit_coordy->setText(QString("%1").arg(r->y));
-    lineEdit_coordz->setText(QString("%1").arg(r->z));
+    lineEdit_name->setText(r->getName());
+    lineEdit_coordx->setText(QString("%1").arg(r->getX()));
+    lineEdit_coordy->setText(QString("%1").arg(r->getY()));
+    lineEdit_coordz->setText(QString("%1").arg(r->getZ()));
     
-    QString desc = r->desc;
+    QString desc = r->getDesc();
     desc.replace("|", "\n");
     textEdit_desc->append( desc );
     label_roomid->setText(QString("%1").arg(r->id) );
-    textEdit_note->append(r->note);
+    textEdit_note->append(r->getNote());
         
     
         
     for (i=0; i< conf->sectors.size(); i++)
         comboBox_terrain->insertItem(i, conf->sectors[i].desc);    
         
-    comboBox_terrain->setCurrentIndex(r->sector);
+    comboBox_terrain->setCurrentIndex(r->getTerrain() );
 }
 
 
@@ -261,7 +263,7 @@ void RoomEditDialog::accept()
     id = label_roomid->text().toInt();
     printf("Room id : %i\r\n", id);
     
-    r = Map.getroom(id);
+    r = Map.getRoom(id);
     if (r == NULL) {
         QMessageBox::critical(this, "Room Info Edit",
                               QString("The room with this ID does not exist anymore."));
@@ -280,23 +282,29 @@ void RoomEditDialog::accept()
     y = lineEdit_coordy->text().toInt();
     z = lineEdit_coordz->text().toInt();
     
+    if (x != r->getX())
+        r->setX(x);
+    if (y != r->getY())
+        r->setY(y);
+    if (z != r->getZ())
+        r->setZ(z);
+        
     desc = textEdit_desc->toPlainText();
     desc.replace("\n", "|");
     terrain = comboBox_terrain->currentIndex();
     for (i=0; i< conf->sectors.size(); i++)
         if (comboBox_terrain->currentText() == conf->sectors[i].desc) {
-            r->sector = i;
+            r->setSector(i);
         }
     
     note = textEdit_note->toPlainText();
             
-            
-    if (r->name != name) 
-        r->refresh_roomname(name.toAscii());            
-    if (r->desc != desc) 
-        r->refresh_desc(desc.toAscii());            
-    if (r->note != note) 
-        r->refresh_note(note.toAscii());            
+    if (r->getName() != name) 
+        r->setName(name.toAscii());            
+    if (r->getDesc() != desc) 
+        r->setDesc(desc.toAscii());            
+    if (r->getNote() != note) 
+        r->setNote(note.toAscii());            
 
     if (updateExitsInfo(NORTH, r) == -1) return;
     if (updateExitsInfo(EAST, r) == -1) return;

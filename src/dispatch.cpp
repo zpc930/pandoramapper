@@ -38,7 +38,7 @@ Cdispatcher::Cdispatcher()
 /**
  * 
  */
-void Cdispatcher::parse_xml(QByteArray tag) 
+void Cdispatcher::parseXml(QByteArray tag) 
 {
         /* types without parameters here */
         struct {
@@ -160,7 +160,7 @@ void Cdispatcher::parse_xml(QByteArray tag)
                 c.subState = NORMAL; \
             }   
     
-void Cdispatcher::dispatch_buffer(ProxySocket &c) 
+void Cdispatcher::dispatchBuffer(ProxySocket &c) 
 {
     QByteArray line;
     unsigned char *s;
@@ -227,7 +227,7 @@ void Cdispatcher::dispatch_buffer(ProxySocket &c)
                                     switch (*s) {
                                         case '>' : 
                                                         c.subchars.append('>');
-                                                        parse_xml(c.subchars);
+                                                        parseXml(c.subchars);
                                                         c.mainState = NORMAL;
                                                         c.subState = NORMAL;
                                                         c.subchars.clear();
@@ -434,16 +434,15 @@ QByteArray Cdispatcher::cutColours(QByteArray line)
 
 #define SEND_EVENT_TO_ENGINE \
                     {   \
-                    printf("Sendin geven to engine!\r\n");\
                     awaitingData = false;               \
-                    engine->add_event(event);                            \
+                    engine->addEvent(event);                            \
                     event.clear();                  \
                     notify_analyzer();      \
                     xmlState = STATE_NORMAL;                       \
                     }
         
 
-int Cdispatcher::analyze_mud_stream(ProxySocket &c) 
+int Cdispatcher::analyzeMudStream(ProxySocket &c) 
 {
     int i;
     int new_len;
@@ -453,13 +452,11 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
     printf("---------- mud input -----------\r\n");
     printf("Buffer size %i\r\n", c.length);
 
-    printf("Calling dispatch buffer\r\n");
-    dispatch_buffer(c);
+    dispatchBuffer(c);
     
     buf = c.buffer;
     new_len = 0;
-
-    printf("Parsing buffer\r\n");    
+    
     // else we simply recreate our buffer and parse lines 
     for (i = 0; i< amount; i++) {
     
@@ -519,8 +516,8 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
                 continue;
             } else if (buffer[i].xmlType == XML_END_PROMPT) {
                 event.prompt = cutColours(event.prompt);
-                engine->set_prompt(event.prompt);
-                event.terrain = parse_terrain(event.prompt);
+                engine->setPrompt(event.prompt);
+                event.terrain = parseTerrain(event.prompt);
                 SEND_EVENT_TO_ENGINE;
                 xmlState = STATE_NORMAL;
                 continue;
@@ -567,7 +564,6 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
             }
           
             // now do all necessary spells checks 
-            printf("Preparing spell checks\r\n");
             {
                 unsigned int p;
             
@@ -652,8 +648,7 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
         
         if (buffer[i].type == IS_PROMPT) {
             spells_print_mode = false;      // 
-            printf("Setting prompt in engine.\r\n");
-            engine->set_prompt(buffer[i].line);
+            engine->setPrompt(buffer[i].line);
         }
         
         // recreating this line in buffer 
@@ -670,7 +665,7 @@ int Cdispatcher::analyze_mud_stream(ProxySocket &c)
 
 
 /* new user input analyzer */
-int Cdispatcher::analyze_user_stream(ProxySocket &c) 
+int Cdispatcher::analyzeUserStream(ProxySocket &c) 
 {
     int i, result;
     int new_len, len;
@@ -683,7 +678,7 @@ int Cdispatcher::analyze_user_stream(ProxySocket &c)
     printf("---------- user input -----------\r\n");
     printf("Buffer size %i\r\n", c.length);
 
-    dispatch_buffer(c);
+    dispatchBuffer(c);
 
     printf("Proceeding user input\r\n");    
     for (i = 0; i< amount; i++) {
@@ -724,7 +719,7 @@ int Cdispatcher::analyze_user_stream(ProxySocket &c)
     return new_len;
 }
 
-char Cdispatcher::parse_terrain(QByteArray prompt)
+char Cdispatcher::parseTerrain(QByteArray prompt)
 {
     char terrain;
         
@@ -734,25 +729,3 @@ char Cdispatcher::parse_terrain(QByteArray prompt)
     
     return terrain;
 }
-
-
-QByteArray Cdispatcher::get_colour_name(QByteArray str)
-{
-    QByteArray s;
-    
-    s = str.simplified();
-    s.truncate(s.indexOf(" ", 0));
-    return s;
-}
-
-QByteArray Cdispatcher::get_colour(QByteArray str)
-{
-    QByteArray s;
-    int start, end;
-    
-    start = str.indexOf("[", 0);
-    end = str.indexOf("m", start);
-    s = str.mid(start, end-start+1);
-    return s;
-}
-

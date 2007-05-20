@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
     if (mud_emulation) {
       printf("Starting in MUD emulation mode...\r\n");
       
-      engine->set_prompt("-->");
+      engine->setPrompt("-->");
       stacker.put(1);
       stacker.swap();
     }

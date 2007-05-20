@@ -23,7 +23,7 @@ class CEngine *engine;
 
 
 /*---------------- * MAPPING OFF ---------------------------- */
-void CEngine::mappingoff()
+void CEngine::mappingOff()
 {
     if (mapping) {
         send_to_user("--[ Mapping is now OFF!\r\n");
@@ -39,7 +39,7 @@ void CEngine::swap()
     stacker.swap();
     
     if (mapping && stacker.amount() != 1)
-        mappingoff();
+        mappingOff();
 }
 /*---------------- * SWAP  ------------------------- */
 
@@ -50,13 +50,13 @@ void CEngine::resync()
   unsigned int j;
   TTree *n;
   
-  mappingoff();
+  mappingOff();
   
   print_debug(DEBUG_ANALYZER, "FULL RESYNC");
-  n = NameMap.find_by_name(last_name);
+  n = NameMap.findByName(last_name);
   if (n != NULL)
     for (j = 0; j < n->ids.size(); j++) {
-      if (last_name == Map.getname( n->ids[j] )) {
+      if (last_name == Map.getName( n->ids[j] )) {
 //        print_debug(DEBUG_ANALYZER, "Adding matches");
         stacker.put( n->ids[j] );
       } 
@@ -69,10 +69,10 @@ bool CEngine::testRoom(CRoom *room)
 {
     if (event.blind)
         return true;
-    if  ((nameMatch = room->roomname_cmp(event.name)) >= 0) 
+    if  ((nameMatch = room->roomnameCmp(event.name)) >= 0) 
         if (event.desc == "")
             return true;
-        else if ( (descMatch = room->desc_cmp(event.desc)) >= 0 ) 
+        else if ( (descMatch = room->descCmp(event.desc)) >= 0 ) 
             return true;    
     return false;
 }
@@ -102,8 +102,8 @@ void CEngine::tryDir()
   
     for (i = 0; i < stacker.amount(); i++) {
         room = stacker.get(i);
-        if (room->is_connected(dir)) {
-            candidate = Map.getroom(room->exits[dir]);
+        if (room->isConnected(dir)) {
+            candidate = room->exits[dir];
             if  (testRoom(candidate) )
                 stacker.put(candidate);
                 
@@ -113,52 +113,60 @@ void CEngine::tryDir()
                 /* casual checks for data */
                 if (event.blind) {
                     send_to_user( "--[Pandora: Failed to add new room. Blind !\r\n");                
-                    mappingoff();
+                    mappingOff();
                     return;
                 } else if (event.name == "") {
                     send_to_user( "--[Pandora: Failed to add new room. Missing roomname!\r\n");                
-                    mappingoff();
+                    mappingOff();
                     return;
                 } else if (event.desc == "") {
                     send_to_user( "--[Pandora: Failed to add new room. Missing description!\r\n");                
-                    mappingoff();
+                    mappingOff();
                     return;
                 } else if (event.exits == "") {
                     send_to_user( "--[Pandora: Failed to add new room. Missing exits data!\r\n");                
-                    mappingoff();
+                    mappingOff();
                     return;
                 } 
                 send_to_user("--[ Adding new room!\n");
                 
-                Map.fixfree();	// making this call just for more safety - might remove 
+                Map.fixFreeRooms();	// making this call just for more safety - might remove 
         
                 addedroom = new CRoom;
         
                 addedroom->id = Map.next_free;
-                addedroom->name = strdup((const char *) event.name);
-                addedroom->desc = strdup((const char *) event.desc);
+                addedroom->setName(event.name);
+                addedroom->setDesc(event.desc);
+                addedroom->setRegion( users_region );
                 
-                room->exits[dir] = addedroom->id;
-                addedroom->exits[reversenum(dir)] = room->id;
+                room->setExit(dir, addedroom);
+                addedroom->setExit(reversenum(dir), room);
                 
-                set_exits(event.exits);
+                setExits(event.exits);
                 do_exits((const char *) event.exits);
                 
         
-                addedroom->x = room->x;
-                addedroom->y = room->y;
-                addedroom->z = room->z;
-                if (dir == NORTH)	    addedroom->y += 2;
-                if (dir == SOUTH)     addedroom->y -= 2;
-                if (dir == EAST)      addedroom->x += 2;
-                if (dir == WEST)      addedroom->x -= 2;
-                if (dir == UP)	    addedroom->z += 2;
-                if (dir == DOWN)      addedroom->z -= 2;
-                Map.addroom(addedroom);
+                int x = room->getX();
+                int y = room->getY();
+                int z = room->getZ();
+                
+                if (dir == NORTH)	    y += 2;
+                if (dir == SOUTH)       y -= 2;
+                if (dir == EAST)          x+= 2;
+                if (dir == WEST)         x -= 2;
+                if (dir == UP)	            z += 2;
+                if (dir == DOWN)        z -= 2;
+                
+                addedroom->setX(x);
+                addedroom->setY(y);
+                addedroom->setZ(z);
+
+                
+                Map.addRoom(addedroom);
                 stacker.put(addedroom);
                 
-                if (check_roomdesc() != 1)
-                    angrylinker(addedroom);
+                if (checkRoomDesc() != 1)
+                    angryLinker(addedroom);
                 
                 return;
             }	
@@ -176,7 +184,7 @@ void CEngine::tryDir()
         }
         if (conf->get_autorefresh() && descMatch > 0) {
             send_to_user("--[ (AutoRefreshed) not exact room desc match: %i errors.\r\n", descMatch);
-            stacker.next_first()->refresh_desc(event.desc);  
+            stacker.nextFirst()->setDesc(event.desc);  
         } else if (!conf->get_autorefresh() && descMatch > 0) {
             send_to_user("--[ not exact room desc match: %i errors.\r\n", descMatch);
         }
@@ -194,7 +202,7 @@ void CEngine::tryAllDirs()
     unsigned int i;
     
     print_debug(DEBUG_ANALYZER, "in try_all_dirs");
-//    mappingoff();
+//    mappingOff();
     if (stacker.amount() == 0) {
         return;
     }
@@ -227,7 +235,7 @@ void CEngine::slotRunEngine()
 }
 
 
-void CEngine::parse_event()
+void CEngine::parseEvent()
 {
     if (event.name != "")
         last_name = event.name;
@@ -245,7 +253,7 @@ void CEngine::parse_event()
 
     if (event.name == "") {
         if (addedroom)
-            addedroom->refresh_terrain(last_terrain);
+            addedroom->setTerrain(last_terrain);
         return;            
     }
 
@@ -269,7 +277,21 @@ void CEngine::parse_event()
 
 CEngine::CEngine() : QObject()
 {
-  engine_init();
+  /* setting defaults */
+  
+  printf("Engine INIT.\r\n");
+  mapping =                0;
+  mgoto             =      0;
+
+  last_name.clear();
+  last_desc.clear();
+  last_exits.clear();
+  last_terrain = 0;
+  last_prompt.clear();
+
+  set_users_region(Map.getRegionByName("default"));
+  set_last_region(Map.getRegionByName("default"));
+    
 }
 
 CEngine::~CEngine()
@@ -291,29 +313,46 @@ void CEngine::exec()
 
     
     event = Pipe.dequeue();
-    parse_event();
+    parseEvent();
+    
+    updateRegions();
+    
     
     print_debug(DEBUG_ANALYZER, "done. Time elapsed %d ms", t.elapsed());
     return;        
 }
 
-/* load config and init engine */
-void CEngine::engine_init()
+void CEngine::updateRegions()
 {
-     
-  /* setting defaults */
-  mapping =                0;
-  mgoto             =      0;
-
-  last_name.clear();
-  last_desc.clear();
-  last_exits.clear();
-  last_terrain = 0;
-  last_prompt.clear();
-  addedroom = 0;
+    CRoom *r;
+    
+    // update Regions info only if we are in full sync 
+    if (stacker.amount() == 1) {
+        r = stacker.first();
+        
+        last_region = r->getRegion();
+        
+        if (last_region != users_region && conf->get_regions_auto_replace() == false) {
+            send_to_user("--[ Moved to another region: new region %s\r\n", (const char *)  last_region->getName() );
+            if (conf->get_regions_auto_set()) 
+                users_region = last_region;            
+        }
+        
+        if (conf->get_regions_auto_replace() && last_region != users_region) {
+                // update is required ...
+                send_to_user( "--[ Regions update: Room region changed from %s to %s\r\n", 
+                                        (const char *) last_region->getName(),  
+                                        (const char *) users_region->getName()); 
+                r->setRegion(users_region);
+                last_region = users_region;
+                toggle_renderer_reaction();
+        }
+    
+    }
 }
 
-int CEngine::check_roomdesc()
+
+int CEngine::checkRoomDesc()
 {
     CRoom *r;
     unsigned int i;
@@ -339,22 +378,22 @@ int CEngine::check_roomdesc()
     /* exit as the defined exit in current room, we can merge them. */
 
 
-    if (addedroom->name == NULL) {
+    if (addedroom->getName().isEmpty()) {
         /* now thats sounds bad ... */
-        Map.delete_room(addedroom, 0);
+        Map.deleteRoom(addedroom, 0);
         printf("ERROR: in check_description() - empty roomname in new room.\r\n");
         return 0;
     }
 
         
-    if (addedroom->desc == NULL) {
+    if (addedroom->getDesc().isEmpty()) {
         send_to_user("--[Pandora: Error, empty roomdesc in new added room.\r\n");
-        addedroom->desc=strdup("");
+        addedroom->setDesc("");
     }
 
     /* find the only defined exit in new room - the one we came from */
     for (i = 0; i <= 5; i++)
-      if ( addedroom->is_connected(i) ) {
+      if ( addedroom->isConnected(i) ) {
           j = i;
           break;
       }
@@ -362,14 +401,14 @@ int CEngine::check_roomdesc()
     
     for (i = 0; i < Map.size(); i++) {
         r = Map.rooms[i];
-        if (addedroom->id == r->id || r->desc == NULL || r->name == NULL) {
+        if (addedroom->id == r->id || r->getDesc() == "" || r->getName() == "") {
           continue;
         }
         
         /* in this case we do an exact match for both roomname and description */
-        if (strcmp(addedroom->desc, r->desc) == 0) {
-            if (strcmp(addedroom->name, r->name) == 0) {
-              if (Map.try_merge_rooms(r, addedroom, j)) {
+        if (addedroom->getDesc() == r->getDesc()) {
+            if (addedroom->getName() == r->getName()) {
+              if (Map.tryMergeRooms(r, addedroom, j)) {
                 send_to_user("--[Pandora: Twin rooms merged!\n");
                 send_to_user(last_prompt);
                 print_debug(DEBUG_ANALYZER, "Twins merged");
@@ -387,7 +426,7 @@ int CEngine::check_roomdesc()
 }
 
 
-void CEngine::angrylinker(CRoom *r)
+void CEngine::angryLinker(CRoom *r)
 {
   CRoom *p;
   unsigned int i;
@@ -406,16 +445,7 @@ void CEngine::angrylinker(CRoom *r)
     return;
   }
   
-  
-  
-  /* check if we have any undefined exits in thos room at all */
-  for (i = 0; i <= 5; i++) 
-    if (r->exits[i] == EXIT_UNDEFINED) {
-      i = 1000;
-      break;
-    }
-    
-  if (i == 5) 
+  if (r->anyUndefinedExits() != true)
     return;     /* no need to try and link this room - there are no undefined exits */
 
 
@@ -432,14 +462,14 @@ void CEngine::angrylinker(CRoom *r)
       p = Map.rooms[i];  
   
     /* z-axis: up and down exits */
-    if (p->z != r->z) {
+    if (p->getZ() != r->getZ()) {
       
-      if ((p->x != r->x) || (p->y != r->y))
+      if ((p->getX() != r->getX()) || (p->getY() != r->getY()))
         continue;
       
       /* up exit */
-      if (p->z > r->z) {
-        z = p->z - r->z;
+      if (p->getZ() > r->getZ()) {
+        z = p->getZ() - r->getZ();
         if (z < distances[UP]) {
           /* update */
           distances[UP] = z;
@@ -448,8 +478,8 @@ void CEngine::angrylinker(CRoom *r)
       }
 
       /* DOWN exit */
-      if (r->z > p->z) {
-        z = r->z - p->z;
+      if (r->getZ() > p->getZ()) {
+        z = r->getZ() - p->getZ();
         if (z < distances[DOWN]) {
           /* update */
           distances[DOWN] = z;
@@ -461,14 +491,14 @@ void CEngine::angrylinker(CRoom *r)
     /* done with z-axis */
       
     /* x-axis. */
-    if ((p->y == r->y) && (p->z == r->z)) {
+    if ((p->getY() == r->getY()) && (p->getZ() == r->getZ())) {
       
-      if (p->x == r->x) 
+      if (p->getX() == r->getX()) 
         continue;                       /* all coordinates are the same - skip */
       
       /* EAST exit */
-      if (p->x > r->x) {
-        z = p->x - r->x;
+      if (p->getX() > r->getX()) {
+        z = p->getX() - r->getX();
         if (z < distances[EAST]) {
           /* update */
           distances[EAST] = z;
@@ -477,8 +507,8 @@ void CEngine::angrylinker(CRoom *r)
       }
 
       /* WEST exit */
-      if (r->x > p->x) {
-        z = r->x - p->x;
+      if (r->getX() > p->getX()) {
+        z = r->getX() - p->getX();
         if (z < distances[WEST]) {
           /* update */
           distances[WEST] = z;
@@ -489,14 +519,14 @@ void CEngine::angrylinker(CRoom *r)
     }
 
     /* y-axis.  */
-    if ((p->x == r->x) && (p->z == r->z)) {
+    if ((p->getX() == r->getX()) && (p->getZ() == r->getZ())) {
       
-      if (p->y == r->y) 
+      if (p->getY() == r->getY()) 
         continue;                       /* all coordinates are the same - skip */
       
       /* NORTH exit */
-      if (p->y > r->y) {
-        z = p->y - r->y;
+      if (p->getY() > r->getY()) {
+        z = p->getY() - r->getY();
         if (z < distances[NORTH]) {
           /* update */
           distances[NORTH] = z;
@@ -505,8 +535,8 @@ void CEngine::angrylinker(CRoom *r)
       }
 
       /* SOUTH exit */
-      if (r->y > p->y) {
-        z = r->y - p->y;
+      if (r->getY() > p->getY()) {
+        z = r->getY() - p->getY();
         if (z < distances[SOUTH]) {
           /* update */
           distances[SOUTH] = z;
@@ -522,20 +552,20 @@ void CEngine::angrylinker(CRoom *r)
     
   /* ok, now we have candidates for linking - lets check directions and connections*/
   for (i=0; i <= 5; i++) {
-    if (r->exits[i] == EXIT_UNDEFINED && candidates[i] != NULL)
-      if (candidates[i]->exits[ reversenum(i) ] == EXIT_UNDEFINED) {
+    if (r->isExitUndefined(i) && candidates[i] != NULL)
+      if (candidates[i]->isExitUndefined( reversenum(i) )  == true) {
         
         if (distances[ i ] <= 2) {
           print_debug(DEBUG_ROOMS, "we have a match for AngryLinker!");
           print_debug(DEBUG_ROOMS, "ID: %i to %i exit %s.", r->id, candidates[i]->id, exits[i] );
           
           /* ok, do the linking */
-          candidates[ i ]->exits[ reversenum(i) ] = r->id;
-          r->exits[ i ] = candidates[ i ]->id;
+          candidates[ i ]->setExit( reversenum(i), r);
+          r->setExit(i, candidates[ i ]);
           print_debug(DEBUG_ROOMS, "Linked.", r->id, candidates[i]->id, exits[i] );
           
           send_to_user("--[ (AngryLinker) Linked exit %s with %s [%i].\r\n", 
-                      exits[ i ], candidates[i]->name, candidates[i]->id);
+                      exits[ i ], (const char*) candidates[i]->getName(), candidates[i]->id);
 
         }
         
@@ -547,7 +577,7 @@ void CEngine::angrylinker(CRoom *r)
 }
 
 
-void CEngine::printstacks()
+void CEngine::printStacks()
 {
     char line[MAX_DATA_LEN];
     QByteArray s;
@@ -564,10 +594,10 @@ void CEngine::printstacks()
             ON_OFF(conf->get_angrylinker() )             );
     
     send_to_user(line);
-    stacker.printstacks();
+    stacker.printStacks();
 }
 
-void CEngine::add_event(Event e)
+void CEngine::addEvent(Event e)
 {
     Pipe.enqueue(e); 
 }
@@ -582,3 +612,22 @@ void CEngine::clear()
     Pipe.clear();
 }
 
+void CEngine::set_users_region(CRegion *reg)
+{
+    users_region = reg;
+}
+
+void CEngine::set_last_region(CRegion *reg)
+{
+    last_region = reg;
+}
+
+CRegion *CEngine::get_users_region()
+{
+    return users_region;
+}
+
+CRegion *CEngine::get_last_region()
+{
+    return last_region;
+}

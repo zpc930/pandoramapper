@@ -1,6 +1,6 @@
 
 /*
-  $Id: xml2.cpp,v 1.11 2006/02/11 20:38:53 porien Exp $
+  $Id: xml2.cpp,v 1.15 2006/08/06 13:50:53 porien Exp $
 */
 #include <cstdlib>
 #include <cstring>
@@ -34,6 +34,7 @@ public:
 private:
   /* some flags */
   int flag;
+  bool readingRegion;
 
   char data[MAX_DATA_LEN];
   QString s;
@@ -41,6 +42,7 @@ private:
 
   int i;
   CRoom *r;
+  CRegion *region;
     
 };
 
@@ -68,7 +70,19 @@ void xml_readbase( QString filename)
   printf("reading xml ...");
   fflush(stdout);
   reader.parse( source );
+  
+  // Now fix the preloaded ID' in exits 
+  
+  for (unsigned int i = 0; i < Map.size(); i++) {
+        CRoom *r = Map.rooms[i];
+        for (int exit = 0; exit <= 5; exit++)
+            if (r->exits[ exit ] > 0)
+                r->exits[exit] = Map.getRoom( (unsigned long) r->exits[exit] );
+  }
+
+  
   printf("done.\r\n");
+
 
   return;
 }
@@ -77,14 +91,19 @@ void xml_readbase( QString filename)
 StructureParser::StructureParser()
   : QXmlDefaultHandler()
 {
+    readingRegion = false;
 }
 
 
 bool StructureParser::endElement( const QString& , const QString& , const QString& qName)
 {
-
   if (qName == "room") {
-    Map.addroom_nonsorted(r);	/* tada! */
+      Map.addRoomNonsorted(r);	/* tada! */
+  }  
+  if (qName == "region" && readingRegion)  {
+      Map.addRegion( region );
+      region = NULL;      
+      readingRegion = false;
   }        
   flag = 0;    
     
@@ -97,29 +116,12 @@ bool StructureParser::characters( const QString& ch)
     return TRUE;
     
   if (flag == XML_ROOMNAME) {
-    strncpy( data, qPrintable( ch) , ch.length() );
-    data[ ch.length() ] = 0;
-    r->name = strdup(data);
+    r->setName(ch.toAscii());
   } else if (flag == XML_DESC) {
-    strncpy( data, qPrintable( ch) , ch.length() );
-    data[ ch.length() ] = 0;
-    if (ch == "" || ch == NULL) {
-      r->desc = NULL;
-    } else {       
-      r->desc = strdup(data);
-    }
-            
+      r->setDesc(ch.toAscii());
   } else if (flag == XML_NOTE) {
-    strncpy( data, qPrintable( ch) , ch.length() );
-    data[ ch.length() ] = 0;
-    if (ch == "" || ch == NULL) {
-      r->desc = NULL;
-    } else {       
-      r->note = strdup(data);
-    }
+      r->setNote(ch.toAscii());
   }
-
-    
   return TRUE;
 } 
 
@@ -128,11 +130,22 @@ bool StructureParser::startElement( const QString& , const QString& ,
                                     const QString& qName, 
                                     const QXmlAttributes& attributes)
 {
-
-    
-  /*    if (qName == "map") {
-	}
-  */ 
+    if (readingRegion == true) {
+        if (qName == "alias") {
+            QByteArray alias, door;
+            
+            s = attributes.value("name");
+            alias = s.toAscii();
+            
+            s = attributes.value("door");
+            door = s.toAscii();
+            
+            if (door != "" && alias != "")
+                region->addDoor(alias, door);
+            return TRUE;
+        } 
+   }
+        
   if (qName == "exit") {
     unsigned int dir;
     unsigned int to;
@@ -145,39 +158,23 @@ bool StructureParser::startElement( const QString& , const QString& ,
     }        
       
     s = attributes.value("dir");
-    strncpy( data, qPrintable(s), s.length() );
-    data[ s.length() ] = 0;
-    dir = numbydir(data[0]);
+    dir = numbydir(s.toAscii().at(0));
       
     s = attributes.value("to");
-    strncpy( data, qPrintable(s), s.length() );
-    data[ s.length() ] = 0;
-      
-      
-    i = 0;
-    to = atoi( (const char *) data);
-    if (to == 0) 
-        while (room_flags[i].name) { 
-          if (strcmp(data, room_flags[i].xml_name) == 0) { 
-            to = room_flags[i].flag;
-          }
-          i++;
-        }
-    r->exits[dir] = to;
-      
-    s = attributes.value("door");
-    strncpy( data, qPrintable( s), s.length() );
-    data[ s.length() ] = 0;
-      
-    if (s.length() != 0) {
-      r->doors[dir] = strdup(data);
-      if (!r->doors[dir]) {
-	printf("XML: Error while allocating memory in readbase function!");
-	exit(1);
-      }
+    if (s == "DEATH") {
+	r->setExitDeath( dir );
+    } else if (s == "UNDEFINED") {
+	r->setExitUndefined( dir);
+    } else {
+    	i = 0;
+    	bool NoError = false;
+    	to = s.toInt(&NoError);
+    	r->exits[dir] = (CRoom *) to;        
     }
-      
-        
+
+    s = attributes.value("door");
+    r->setDoor(dir, s.toAscii());
+    
   } else if (qName == "roomname") {
     flag = XML_ROOMNAME;
     return TRUE;
@@ -194,18 +191,27 @@ bool StructureParser::startElement( const QString& , const QString& ,
       r->id = s.toInt();
       
       s = attributes.value("x");
-      r->x = s.toInt();
+      r->setX( s.toInt() );
 
       s = attributes.value("y");
-      r->y = s.toInt();
+      r->setY( s.toInt() );
 
       s = attributes.value("z");
-      r->z = s.toInt();
+      r->simpleSetZ( s.toInt() );
 
       s = attributes.value("terrain");
-      r->sector = conf->get_sector_by_desc(s.toAscii());
-  }  
-    
+      r->setSector( conf->get_sector_by_desc(s.toAscii()) );
+      
+      s = attributes.value("region");
+      r->setRegion(s.toAscii());
+  } else if (qName == "region") {
+     region = new CRegion;
+            
+     readingRegion = true;
+     s = attributes.value("name");
+     region->setName(s.toAscii());
+  }   
+  
   return TRUE;
 }
 
@@ -226,37 +232,75 @@ void xml_writebase(QString filename)
     return;
   }
 
+  
+
   fprintf(f, "<map>\n");
+  
+  
+  
+  {
+        // SAVE REGIONS DATA
+        CRegion    *region;
+        QList<CRegion *> regions;
+        QMap<QByteArray, QByteArray> doors;        
+        
+        regions = Map.getAllRegions();
+        fprintf(f, "  <regions>\n");
+        for (int i=0; i < regions.size(); i++) {
+            region = regions[i];
+            if (region->getName() == "default")
+                continue;   // skip the default region -> its always in memory as the first one anyway!
+            fprintf(f, "    <region name=\"%s\">\n", (const char *) region->getName() );
+            
+            doors = region->getAllDoors();
+            QMapIterator<QByteArray, QByteArray> i(doors);
+            while (i.hasNext()) {
+                i.next();
+                fprintf(f, "      <alias name=\"%s\" door=\"%s\"/>\n",  (const char *)  i.key(), (const char *) i.value() );
+            }
+            fprintf(f, "    </region>\n");
+        }
+        fprintf(f, "  </regions>\n");
+  
+  
+  
+  
+  }
+  
   
     for (z = 0; z < Map.size(); z++) {
         p = Map.rooms[z];
     
         fprintf(f,  "  <room id=\"%i\" x=\"%i\" y=\"%i\" z=\"%i\" "
-                "terrain=\"%s\">\n",
-                p->id, p->x, p->y, p->z, 
-                (const char *) conf->sectors[p->sector].desc);
+                "terrain=\"%s\" region=\"%s\">\n",
+                p->id, p->getX(), p->getY(), p->getZ(), 
+                (const char *) conf->sectors[ p->getTerrain() ].desc, 
+                (const char *) p->getRegionName());
             
             
-        fprintf(f, "    <roomname>%s</roomname>\n", p->name ? p->name : "");
-        fprintf(f, "    <desc>%s</desc>\n", p->desc ? p->desc : "");
-        fprintf(f, "    <note>%s</note>\n", p->note ? p->note : "");
+        fprintf(f, "    <roomname>%s</roomname>\n", (const char *) p->getName());
+        fprintf(f, "    <desc>%s</desc>\n",  (const char *) p->getDesc() );
+        fprintf(f, "    <note>%s</note>\n",  (const char *) p->getNote() );
             
         fprintf(f, "    <exits>\n");
     
     
             
         for (i = 0; i <= 5; i++) {
-        if (p->exits[i] != 0) {
+            if (p->isExitPresent(i) == true) {
     
-            sprintf(tmp, "%d", p->exits[i]);
-            if (p->exits[i] == EXIT_UNDEFINED)
-            sprintf(tmp, "%s", "UNDEFINED");
-            if (p->exits[i] == EXIT_DEATH)
-            sprintf(tmp, "%s", "DEATH");
-                    
-            fprintf(f, "      <exit dir=\"%c\" to=\"%s\" door=\"%s\"/>\n",
-                    exitnames[i][0], tmp, p->doors[i] ? p->doors[i] : ""); 
-        }
+                if (p->isExitNormal(i) == true) {
+                    sprintf(tmp, "%d", p->exits[i]->id);
+                } else {
+                    if (p->isExitUndefined(i) == true)
+                        sprintf(tmp, "%s", "UNDEFINED");
+                    else if (p->isExitDeath(i) == true)
+                        sprintf(tmp, "%s", "DEATH");
+                }
+                                    
+                fprintf(f, "      <exit dir=\"%c\" to=\"%s\" door=\"%s\"/>\n",
+                        exitnames[i][0], tmp, (const char *) p->getDoor(i) ); 
+            }   
     
         }
             
