@@ -268,8 +268,6 @@ void RendererWidget::glDrawRoom(CRoom *p)
 
 
     distance = frustum.distance(dx, dy, dz);
-//  m_Frustum[FRONT][A] * dx + m_Frustum[FRONT][B] * dy + 
-//               m_Frustum[FRONT][C] * dz + m_Frustum[FRONT][D];
     
     if (distance >= conf->get_details_vis()) 
       details = 0;
@@ -288,10 +286,21 @@ void RendererWidget::glDrawRoom(CRoom *p)
         glDisable(GL_TEXTURE_2D);
         
        if (conf->get_display_regions_renderer() &&  engine->get_last_region() == p->getRegion()  ) {
+
             glColor4f(0.20, 0.20, 0.20, colour[3]-0.1);
-            glRectf(-ROOM_SIZE*2, -ROOM_SIZE*2, 2*ROOM_SIZE, 2*ROOM_SIZE);   
+
+            glRectf(-ROOM_SIZE*2, -ROOM_SIZE, -ROOM_SIZE, ROOM_SIZE); // left  
+            glRectf(ROOM_SIZE, -ROOM_SIZE, ROOM_SIZE*2, ROOM_SIZE);   // right
+            glRectf(-ROOM_SIZE, ROOM_SIZE, +ROOM_SIZE, ROOM_SIZE*2);  // upper 
+            glRectf(-ROOM_SIZE, -ROOM_SIZE*2, +ROOM_SIZE, -ROOM_SIZE);   // lower
+
+//            glRectf(ROOM_SIZE, -ROOM_SIZE, -ROOM_SIZE*2, ROOM_SIZE);   
+//            glRectf(-ROOM_SIZE*2, -ROOM_SIZE*2, -ROOM_SIZE, -ROOM_SIZE);   
+//            glRectf(-ROOM_SIZE*2, -ROOM_SIZE*2, -ROOM_SIZE, -ROOM_SIZE);   
+
+
             glColor4f(colour[0], colour[1], colour[2], colour[3]);
-        }    
+        } 
     } else {
         glCallList(basic_gllist);
     }              
@@ -377,8 +386,8 @@ void RendererWidget::glDrawRoom(CRoom *p)
                             info += alias;
                             info += "]";  
                         }
+                        renderText((dx + dx2) / 2, (dy + dy2) / 2 , (dz +dz)/2 + ROOM_SIZE / 2 , info);    
                     }
-                    renderText((dx + dx2) / 2, (dy + dy2) / 2 , (dz +dz)/2 + ROOM_SIZE / 2 , info);    
                 
                     glColor4f(1.0, 0.0, 0.0, colour[3] + 0.2);
                 }
