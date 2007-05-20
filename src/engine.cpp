@@ -237,15 +237,26 @@ void CEngine::slotRunEngine()
 
 void CEngine::parseEvent()
 {
-    if (event.name != "")
+    // to avoid latin-1 chars, just use the dump copy to QString and back method ...
+    QString transString;
+    if (event.name != "") {
+        transString = event.name;
+        event.name = transString.toAscii();
         last_name = event.name;
-    if (event.desc != "")
+    }
+
+    if (event.desc != "") {
+        transString = event.desc;
+        event.desc = transString.toAscii();
         last_desc = event.desc;
-    if (event.exits != "")
+    }
+    if (event.exits != "") {
         last_exits = event.exits;
-    if (event.terrain != -1)
+    }
+    if (event.terrain != -1) {
         last_terrain = event.terrain;
-    
+    }    
+
     setMgoto( false );    /* if we get a new room data incoming, mgoto has to go away */
 
     printf("ANALYZER Event. NAME %s\r\nDESC %s\r\nEXITS %s\r\n", 
