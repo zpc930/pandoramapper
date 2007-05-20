@@ -110,8 +110,8 @@ public:
 
         void run();
         int init();
-        void send_line_to_user(char *line);
-        void send_line_to_mud(char *line);
+        void send_line_to_user(const char *line);
+        void send_line_to_mud(const char *line);
         bool isMudEmulation() { return mudEmulation; }
         void setMudEmulation(bool b) { mudEmulation = b; }
         void shutdown();

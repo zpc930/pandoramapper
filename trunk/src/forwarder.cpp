@@ -148,7 +148,7 @@ int Proxy::loop(void)
             
             size = user.read();
             if (size > 0) {
-                size = dispatcher->analyze_user_stream(user);
+                size = dispatcher->analyzeUserStream(user);
                 if (!mudEmulation) {
                     mud.write(user.buffer, size);
                 }
@@ -167,7 +167,7 @@ int Proxy::loop(void)
             
             size = mud.read();
             if (size>0) {
-                size = dispatcher->analyze_mud_stream(mud);
+                size = dispatcher->analyzeMudStream(mud);
                 user.write( mud.buffer, size );      
             } else { 
                 if (WSAGetLastError() == WSAEWOULDBLOCK) 
@@ -192,19 +192,25 @@ void Proxy::run()
 }
 
 
-void Proxy::send_line_to_mud(char *line) 
+void Proxy::send_line_to_mud(const char *line) 
 {
-    mud.send_line(line);    
+    mud.send_line((char *) line);    
 }
 
-void Proxy::send_line_to_user(char *line) 
+void Proxy::send_line_to_user(const char *line) 
 {
-    user.send_line(line);    
+    user.send_line((char *)line);    
 }
 
 void Proxy::sendMudEmulationGreeting()
 {
-    user.send_line( "Pandora MUD Emulation.\r\n" );
+    CRoom *r;
+    
+    user.send_line( "Welcome to Pandora MUD Emulation!\r\n\r\n" );
+    
+    r = Map.getRoom( 1 );
+    r->sendRoom();
+    
     user.send_line( "-->" );
 }
 

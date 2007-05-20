@@ -258,7 +258,7 @@ void MainWindow::emulation_mode()
             return;        
         }
         proxy->setMudEmulation( true );
-        engine->set_prompt("-->");
+        engine->setPrompt("-->");
         stacker.put(1);
         stacker.swap();
     } else {
@@ -304,9 +304,9 @@ void MainWindow::publish_map()
             r = stacker.get(i);
             mark[r->id] = true;
             for (z = 0; z <= 5; z++) {
-                if (r->is_connected(z) && mark[r->exits[z]] != true ) {
-                    if ( (r->doors[z] == NULL) || (r->doors[z] && (strcmp(r->doors[z], "exit") == 0)) ) {
-                        stacker.put(r->exits[z]);
+                if (r->isConnected(z) && mark[ r->exits[z]->id  ] != true ) {
+                    if ( r->isDoorSecret(z) == true  ) {
+                        stacker.put(r->exits[z]->id);
                     }
                 }
             }
@@ -319,7 +319,7 @@ void MainWindow::publish_map()
         r = Map.rooms[i];
         if (r) {
             if (!mark[r->id]) {
-                Map.delete_room(r, 0);
+                Map.deleteRoom(r, 0);
                 continue;        
             }
         }
@@ -330,9 +330,9 @@ void MainWindow::publish_map()
         r = Map.rooms[i];
         if (r) {
             for (z = 0; z <= 5; z++) {
-                if (r->doors[z] && (strcmp(r->doors[z], "exit") != 0)) {
+                if ( r->isDoorSecret(z) == true ) {
                     printf("Secret door was still in database...\r\n");
-                    r->remove_door(z);
+                    r->removeDoor(z);
                 }
             }
         }
@@ -574,7 +574,7 @@ void MainWindow::update_status_bar()
 {
   char str[20];
   
-  printf("Updating status bar\r\n");
+  print_debug(DEBUG_INTERFACE, "Updating status bar\r\n");
 
   if (conf->get_data_mod() )
     emit newModLabel("Data: MOD ");     
@@ -582,9 +582,9 @@ void MainWindow::update_status_bar()
     emit newModLabel("Data: --- ");
   
 
-  stacker.get_current(str);
+  stacker.getCurrent(str);
   emit newLocationLabel(str);
-  printf("Done!\r\n");
+  print_debug(DEBUG_INTERFACE, "Done!\r\n");
 }
 
 
@@ -645,7 +645,7 @@ void MainWindow::hide_status()
 void MainWindow::keyPressEvent( QKeyEvent *k )
 {
 
-    printf("Processing events in keyPressEvent\r\n");
+    print_debug(DEBUG_INTERFACE, "Processing events in keyPressEvent\r\n");
     switch ( k->key() ) {
 //         case Qt::Key_C :
 //           if (userland_parser->is_empty())
@@ -748,7 +748,7 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
     }
     update_status_bar();
     renderer_window->renderer->display();
-    printf("Done processing events at keyEventPress\r\n");
+    print_debug(DEBUG_INTERFACE, "Done processing events at keyEventPress\r\n");
 }
 
 void MainWindow::mousePressEvent( QMouseEvent *e)
