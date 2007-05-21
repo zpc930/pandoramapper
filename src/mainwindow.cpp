@@ -45,7 +45,6 @@ void MainWindow::disable_online_actions()
   mappingAct->setEnabled(false);
   automergeAct->setEnabled(false);
   angryLinkerAct->setEnabled(false);
-  calibrateColoursAct->setEnabled(false);
 }
 
 
@@ -54,7 +53,6 @@ void MainWindow::enable_online_actions()
     mappingAct->setEnabled(true);
     automergeAct->setEnabled(true);
     angryLinkerAct->setEnabled(true);
-    calibrateColoursAct->setEnabled(true);
 }
 
 
@@ -193,12 +191,6 @@ void MainWindow::angrylinker()
     userland_parser->parse_user_input_line("mangrylinker off");
   }
 }
-
-void MainWindow::calibrateColours()
-{
-    userland_parser->parse_user_input_line("mcalibrate");
-}
-
 
 void MainWindow::saveConfig()
 {
@@ -363,7 +355,6 @@ MainWindow::MainWindow(QWidget *parent)
   connect(proxy, SIGNAL(connectionLost()), this, SLOT(disable_online_actions()), Qt::AutoConnection );
 
 
-
   /* creating actions and connecting them here */
   newAct = new QAction(tr("&New"), this);
   newAct->setShortcut(tr("Ctrl+N"));
@@ -464,6 +455,7 @@ MainWindow::MainWindow(QWidget *parent)
   mappingMenu->addAction(angryLinkerAct);
 
 
+
 /* Configuration menu bar */
   
   
@@ -480,17 +472,15 @@ MainWindow::MainWindow(QWidget *parent)
   hide_menu_action->setCheckable(true);
   hide_menu_action->setChecked(false);
   connect(hide_menu_action, SIGNAL(triggered()), this, SLOT(hide_menu()));    
-  
-  
-  calibrateColoursAct= new QAction(tr("Calibrate Colours"), this);
-  calibrateColoursAct->setStatusTip(tr("Sends change colour command and parses the output"));
-  connect(calibrateColoursAct, SIGNAL(triggered()), this, SLOT(calibrateColours()));    
 
+  
   always_on_top_action= new QAction(tr("Always on Top"), this);
   always_on_top_action->setStatusTip(tr("Always on Top"));
   always_on_top_action->setCheckable(true);
-  connect(always_on_top_action, SIGNAL(toggled(bool)), this, SLOT(always_on_top(bool)));
+  connect(always_on_top_action, SIGNAL(toggled(bool)), this, SLOT(always_on_top(bool)), Qt::QueuedConnection);
   always_on_top_action->setChecked(conf->get_always_on_top());
+
+   
 
   emulationAct= new QAction(tr("Emulation Mode"), this);
   emulationAct->setStatusTip(tr("Offline MUME Emulation"));
@@ -523,13 +513,10 @@ MainWindow::MainWindow(QWidget *parent)
   connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(loadConfig()));    
 
 
-
   optionsMenu = menuBar()->addMenu(tr("&Configuration"));
   optionsMenu->addAction(hide_status_action);
   optionsMenu->addAction(always_on_top_action);  
   optionsMenu->addAction(emulationAct);  
-  optionsMenu->addSeparator();
-  optionsMenu->addAction(calibrateColoursAct);  
   optionsMenu->addSeparator();
   optionsMenu->addAction(setupGeneralAct);  
   optionsMenu->addAction(spellsAct);  
@@ -538,6 +525,8 @@ MainWindow::MainWindow(QWidget *parent)
 //  optionsMenu->addAction(saveConfigAsAct);
   optionsMenu->addAction(loadConfigAct);
     
+
+  printf("Was THERE before status bar magic!\r\n");
   
 
   /* status bar magicz */
@@ -561,6 +550,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(this, SIGNAL(newModLabel(const QString &)),
           modLabel, SLOT(setText(const QString &)));
  
+  printf("Was THERE three!\r\n");
 
 
   LeftButtonPressed = false;
@@ -568,6 +558,9 @@ MainWindow::MainWindow(QWidget *parent)
   
   
   disable_online_actions();
+
+  printf("Done with constructor!\r\n");
+
 }
 
 void MainWindow::update_status_bar()
