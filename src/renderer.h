@@ -8,6 +8,8 @@
 #include "configurator.h"
 #include "Frustum.h"
 
+class QFont;
+
 
 
 class RendererWidget : public QGLWidget
@@ -49,6 +51,7 @@ private:
   int           cury;
   int           curz;			/* current rooms position */ 
   Frustum       frustum;
+  QFont		textFont;
 
   unsigned int last_drawn_marker;
   unsigned int last_drawn_trail;

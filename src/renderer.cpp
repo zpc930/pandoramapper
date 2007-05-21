@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <QFont>
 #include <QGLWidget>
 #include <QImage>
 #include <QApplication>
@@ -55,6 +56,8 @@ RendererWidget::RendererWidget( QWidget *parent )
 void RendererWidget::initializeGL()
 {
   unsigned int i;
+
+  //textFont = new QFont("Times", 10, QFont::Bold);
   
   glShadeModel(GL_SMOOTH);
   glClearColor (0.0, 0.0, 0.0, 0.0);	/* This Will Clear The Background Color To Black */
@@ -249,6 +252,9 @@ void RendererWidget::glDrawRoom(CRoom *p)
     int k;
     float distance;
     bool details, texture;    
+    QFont textFont("Times", 10, QFont::Bold);
+
+
 
     rooms_drawn_csquare++;
     
@@ -314,7 +320,7 @@ void RendererWidget::glDrawRoom(CRoom *p)
     
     if (conf->get_show_notes_renderer() == true) {
         glColor4f(0.60, 0.4, 0.3, colour[3]);
-        renderText(dx, dy, dz + ROOM_SIZE / 2, p->getNote());    
+        renderText(dx, dy, dz + ROOM_SIZE / 2, p->getNote(), textFont);    
         glColor4f(colour[0], colour[1], colour[2], colour[3]);
     }
 
@@ -386,7 +392,7 @@ void RendererWidget::glDrawRoom(CRoom *p)
                             info += alias;
                             info += "]";  
                         }
-                        renderText((dx + dx2) / 2, (dy + dy2) / 2 , (dz +dz)/2 + ROOM_SIZE / 2 , info);    
+                        renderText((dx + dx2) / 2, (dy + dy2) / 2 , (dz +dz)/2 + ROOM_SIZE / 2 , info, textFont);    
                     }
                 
                     glColor4f(1.0, 0.0, 0.0, colour[3] + 0.2);
