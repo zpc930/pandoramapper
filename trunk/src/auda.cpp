@@ -235,6 +235,8 @@ int main(int argc, char *argv[])
 
     renderer_window = new MainWindow( 0 );
 
+
+
     QGLFormat f;
     f.setDoubleBuffer( TRUE );
     f.setDirectRendering( TRUE );
@@ -246,11 +248,16 @@ int main(int argc, char *argv[])
 
     renderer_window->show();
 
+	
+    printf("Proxy: init starting\r\n");
     proxy->init();
+    printf("Proxy: starting\r\n");
     proxy->start();
     QObject::connect(proxy, SIGNAL(startEngine()), engine, SLOT(slotRunEngine()), Qt::QueuedConnection );
     QObject::connect(proxy, SIGNAL(startRenderer()), renderer_window->renderer, SLOT(draw()), Qt::QueuedConnection);
-
+    
+    printf("Starting the Application cycle\r\n");
+	
 
     
     return app.exec();

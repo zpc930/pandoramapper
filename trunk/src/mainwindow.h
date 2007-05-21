@@ -50,7 +50,6 @@ class MainWindow : public QMainWindow
     
     QMenu       *optionsMenu;
   QAction       *always_on_top_action;
-  QAction       *calibrateColoursAct;  
   QAction       *saveConfigAct;
   QAction       *saveConfigAsAct;
   QAction       *loadConfigAct;
@@ -103,7 +102,6 @@ private slots:
   void mapping_mode();
   void automerge();
   void angrylinker();
-  void calibrateColours();
   void saveConfig();
   void saveAsConfig();
   void loadConfig();
