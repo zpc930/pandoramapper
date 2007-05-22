@@ -11,11 +11,17 @@
 class QFont;
 
 
+#define MAXHITS 200
 
 class RendererWidget : public QGLWidget
 {
   Q_OBJECT
 
+    GLuint selectBuf[MAXHITS];
+
+  void setupViewingModel(  int width, int height  );
+  void renderPickupObjects();  
+  void renderPickupRoom(CRoom *p);
 
 public:
   GLfloat       angley;
@@ -37,12 +43,12 @@ public:
 
   void display(void);
   
-
-
-protected:
+ 
   void initializeGL();
   void resizeGL( int width, int height );
   void paintGL();
+
+  bool doSelect(QPoint pos, unsigned int &id);
 
 private:
   GLfloat       colour[4];
@@ -61,7 +67,11 @@ private:
   void drawMarker(int, int, int, int);
   void glDrawRoom(CRoom *p);
   
-  void glDrawCSquare(CSquare *p);
+  
+  void glDrawCSquare(CSquare *p, int renderingMode);
+
+  // bool : selection result
+  // id : return value of selected id
 
 public slots:
   void draw();

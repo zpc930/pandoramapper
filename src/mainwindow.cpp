@@ -526,9 +526,6 @@ MainWindow::MainWindow(QWidget *parent)
   optionsMenu->addAction(loadConfigAct);
     
 
-  printf("Was THERE before status bar magic!\r\n");
-  
-
   /* status bar magicz */
   locationLabel = new QLabel("NO_SYNC"); 
   locationLabel->setAlignment(Qt::AlignHCenter); 
@@ -550,17 +547,11 @@ MainWindow::MainWindow(QWidget *parent)
   connect(this, SIGNAL(newModLabel(const QString &)),
           modLabel, SLOT(setText(const QString &)));
  
-  printf("Was THERE three!\r\n");
-
-
   LeftButtonPressed = false;
   RightButtonPressed = false;
   
   
   disable_online_actions();
-
-  printf("Done with constructor!\r\n");
-
 }
 
 void MainWindow::update_status_bar()
@@ -747,12 +738,34 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
 void MainWindow::mousePressEvent( QMouseEvent *e)
 {
   
-  if (e->button() == Qt::LeftButton) {
-    LeftButtonPressed = true;
-  } else {
-    RightButtonPressed = true;
-  }
-  old_pos = e->pos();
+    if (e->button() == Qt::LeftButton) {
+        LeftButtonPressed = true;
+        unsigned int returnedId;
+        bool result;    
+    
+        // calculate the position of the mouse click in frame 
+        QPoint inFramePos = e->pos();
+        if (menuBar()->isHidden() == false) {
+            int height = menuBar()->height();
+            printf("Not hidden! It's height is : %i\r\n", height);
+            inFramePos.setY( inFramePos.y() -  height);
+        }
+
+        result = renderer->doSelect( inFramePos, returnedId );
+
+        if (result == true) {
+            printf("Picked %i \r\n", returnedId);
+            if (Map.selections.isSelected( returnedId ) == true) 
+                Map.selections.unselect(returnedId);
+            else
+                Map.selections.select(returnedId);
+        } 
+        renderer->draw();
+
+    } else {
+        RightButtonPressed = true;
+    }
+    old_pos = e->pos();
   
   
 }

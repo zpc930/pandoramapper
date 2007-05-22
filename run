@@ -3,7 +3,7 @@
 ulimit -c unlimited
 
 # malloc() built-in heap corruption detection
-#export MALLOC_CHECK_=1
+export MALLOC_CHECK_=1
 
 ./pandora -c ./configs/mume.xml
 

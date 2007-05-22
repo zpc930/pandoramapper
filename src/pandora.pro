@@ -39,6 +39,8 @@ HEADERS		+=SpellsDialog.h
 HEADERS		+=mainwindow.h
 HEADERS		+=Frustum.h
 HEADERS		+=CSquare.h
+HEADERS		+=CSelectionManager.h
+
 
 
 SOURCES		+=auda.cpp
@@ -62,6 +64,7 @@ SOURCES		+=ConfigWidget.cpp
 SOURCES		+=SpellsDialog.cpp
 SOURCES		+=Frustum.cpp
 SOURCES         +=CSquare.cpp
+SOURCES         +=CSelectionManager.cpp
 
 TARGET		= ../pandora
 

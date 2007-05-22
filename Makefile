@@ -2,5 +2,5 @@
 SUBDIRS = src 
 
 all:
-	cd src && make all
+	cd src && make -j3 all
 

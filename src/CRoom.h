@@ -64,7 +64,6 @@ class CRoom {
   
     int x, y, z;		/* coordinates on our map */
 
-
 public:
     enum ExitFlags { EXIT_NONE = 0, EXIT_UNDEFINED, EXIT_DEATH};
   
@@ -111,11 +110,12 @@ public:
     bool isExitLeadingTo(int dir, CRoom *room);
     
     bool isExitDeath(int dir);
+    void setExitDeath(int dir);
+
     bool isExitNormal(int dir);
     bool isExitPresent(int dir);       /* if there is anything at all in this direction, deathtrap, undefined exit or normal one */
     bool isExitUndefined(int dir);
     void setExitUndefined(int dir);
-    void setExitDeath(int dir);
     
     
     bool anyUndefinedExits();
@@ -126,11 +126,11 @@ public:
     void setX(int x);
     void setY(int x);
     void setZ(int x);
-    void simpleSetZ(int val);       // this one does not perform any Plane operations (see rendering) on  CPlane in Map.h
+    void simpleSetZ(int val); // does not perform any Plane operations (see rendering) on  CPlane in Map.h
     
-    int getX();
-    int getY();
-    int getZ();
+    inline int getX() { return x; }
+    inline int getY() { return y; }
+    inline int getZ() { return z; }
     
     int descCmp(QByteArray desc);
     int roomnameCmp(QByteArray name);
