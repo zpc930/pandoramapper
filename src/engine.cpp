@@ -87,8 +87,6 @@ void CEngine::tryDir()
     
     nameMatch = 0;
     descMatch = 0;
-
-    
     
     print_debug(DEBUG_ANALYZER, "in try_dir");
     dir = numbydir(event.dir[0]);
@@ -110,67 +108,9 @@ void CEngine::tryDir()
         
         } else {
             if (stacker.amount() == 1 && mapping)  {
-                /* casual checks for data */
-                if (event.blind) {
-                    send_to_user( "--[Pandora: Failed to add new room. Blind !\r\n");                
-                    mappingOff();
-                    return;
-                } else if (event.name == "") {
-                    send_to_user( "--[Pandora: Failed to add new room. Missing roomname!\r\n");                
-                    mappingOff();
-                    return;
-                } else if (event.desc == "") {
-                    send_to_user( "--[Pandora: Failed to add new room. Missing description!\r\n");                
-                    mappingOff();
-                    return;
-                } else if (event.exits == "") {
-                    send_to_user( "--[Pandora: Failed to add new room. Missing exits data!\r\n");                
-                    mappingOff();
-                    return;
-                } 
-                send_to_user("--[ Adding new room!\n");
-                
-                Map.fixFreeRooms();	// making this call just for more safety - might remove 
-        
-                addedroom = new CRoom;
-        
-                addedroom->id = Map.next_free;
-                addedroom->setName(event.name);
-                addedroom->setDesc(event.desc);
-                addedroom->setRegion( users_region );
-                
-                room->setExit(dir, addedroom);
-                addedroom->setExit(reversenum(dir), room);
-                
-                setExits(event.exits);
-                do_exits((const char *) event.exits);
-                
-        
-                int x = room->getX();
-                int y = room->getY();
-                int z = room->getZ();
-                
-                if (dir == NORTH)	    y += 2;
-                if (dir == SOUTH)       y -= 2;
-                if (dir == EAST)          x+= 2;
-                if (dir == WEST)         x -= 2;
-                if (dir == UP)	            z += 2;
-                if (dir == DOWN)        z -= 2;
-                
-                addedroom->setX(x);
-                addedroom->setY(y);
-                addedroom->setZ(z);
-
-                
-                Map.addRoom(addedroom);
-                stacker.put(addedroom);
-                
-                if (checkRoomDesc() != 1)
-                    angryLinker(addedroom);
-                
+                mapCurrentRoom(room, dir);
                 return;
             }	
-        
         }
            
     }
@@ -180,7 +120,7 @@ void CEngine::tryDir()
         /* this means we have exactly one match */
 //        printf("nameMatch %i, descMatch %i\r\n", nameMatch, descMatch);
         if (nameMatch > 0) {
-            send_to_user("--[ not exact room match: %i errors.\r\n", nameMatch);
+            send_to_user("--[ not exact room match: %i errors. Use 'mrefresh' to fix it!\r\n", nameMatch);
         }
         if (conf->get_autorefresh() && descMatch > 0) {
             send_to_user("--[ (AutoRefreshed) not exact room desc match: %i errors.\r\n", descMatch);
@@ -191,25 +131,49 @@ void CEngine::tryDir()
     }
 }
 
-
-/* new try all dirs, only removes other rooms, if there is a full 100% fit for new data */
+/* now try all dirs, only removes other rooms, if there is a full 100% fit for new data */
 /* resyncs only if the stacks are empty */
 void CEngine::tryAllDirs()
 {
+    
+    print_debug(DEBUG_ANALYZER, "in try_all_dirs");
+
+    mappingOff();
+    if (stacker.amount() == 0) {
+        return;
+    }
+
+
+    int dir;
+    unsigned int i;
     CRoom *room;
+    CRoom *candidate;
+    
+    print_debug(DEBUG_ANALYZER, "in try_dir_all_dirs");
+    if (stacker.amount() == 0) 
+        return;
+  
+    for (i = 0; i < stacker.amount(); i++) {
+        room = stacker.get(i);
+        for (dir = 0; dir <= 5; dir++) {
+            if (room->isConnected(dir)) {
+                candidate = room->exits[dir];
+                if  (testRoom(candidate) )
+                    stacker.put(candidate);
+            } 
+        }
+           
+    }
+
+
+
+/*    CRoom *room;
     CRoom *fittingRoom;
     int fits;
     unsigned int i;
     
-    print_debug(DEBUG_ANALYZER, "in try_all_dirs");
-//    mappingOff();
-    if (stacker.amount() == 0) {
-        return;
-    }
-    
     fits = 0;
     fittingRoom = NULL;
-//    exits check if simply ignored for now 
     for (i = 0; i < stacker.amount(); i++) {
         room = stacker.get(i);
         if (testRoom(room)) {
@@ -222,8 +186,10 @@ void CEngine::tryAllDirs()
             stacker.put(fittingRoom);
     else 
         for (i = 0; i < stacker.amount(); i++)  // due to instant swap after this function ends, we have to rotate the 
-            stacker.put(stacker.get(i));               // stacks 
+            stacker.put(stacker.get(i));               // stacks */
     
+
+
 }
 
 void CEngine::slotRunEngine()
@@ -422,6 +388,70 @@ int CEngine::checkRoomDesc()
     /* so put addedroom->id in stack */
     stacker.put(addedroom);
     return 0;
+}
+
+// where from where to ... map it!
+void CEngine::mapCurrentRoom(CRoom *room, int dir)
+{
+    /* casual checks for data */
+    if (event.blind) {
+        send_to_user( "--[Pandora: Failed to add new room. Blind !\r\n");                
+        mappingOff();
+        return;
+    } else if (event.name == "") {
+        send_to_user( "--[Pandora: Failed to add new room. Missing roomname!\r\n");                
+        mappingOff();
+        return;
+    } else if (event.desc == "") {
+        send_to_user( "--[Pandora: Failed to add new room. Missing description!\r\n");                
+        mappingOff();
+        return;
+    } else if (event.exits == "") {
+        send_to_user( "--[Pandora: Failed to add new room. Missing exits data!\r\n");                
+        mappingOff();
+        return;
+    } 
+    send_to_user("--[ Adding new room!\n");
+    
+    Map.fixFreeRooms();	// making this call just for more safety - might remove 
+
+    addedroom = new CRoom;
+
+    addedroom->id = Map.next_free;
+    addedroom->setName(event.name);
+    addedroom->setDesc(event.desc);
+    addedroom->setRegion( users_region );
+    
+    room->setExit(dir, addedroom);
+    addedroom->setExit(reversenum(dir), room);
+    
+    setExits(event.exits);
+    do_exits((const char *) event.exits);
+    
+
+    int x = room->getX();
+    int y = room->getY();
+    int z = room->getZ();
+    
+    if (dir == NORTH)	    y += 2;
+    if (dir == SOUTH)       y -= 2;
+    if (dir == EAST)          x+= 2;
+    if (dir == WEST)         x -= 2;
+    if (dir == UP)	            z += 2;
+    if (dir == DOWN)        z -= 2;
+    
+    addedroom->setX(x);
+    addedroom->setY(y);
+    addedroom->setZ(z);
+
+    
+    Map.addRoom(addedroom);
+    stacker.put(addedroom);
+    
+    if (checkRoomDesc() != 1)
+        angryLinker(addedroom);
+    
+    return;
 }
 
 
