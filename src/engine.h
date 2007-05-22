@@ -50,8 +50,9 @@ class Event   {
         QByteArray name;
         QByteArray desc;
         QByteArray exits;
-        bool             blind;         /* fog, no light, blind flag */
-        char             terrain;
+        bool       blind;         /* fog, no light, blind flag */
+        bool       
+        char       terrain;
         QByteArray prompt;
 };
 
