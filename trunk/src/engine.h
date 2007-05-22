@@ -85,6 +85,8 @@ Q_OBJECT
     void mappingOff();
     
     bool testRoom(CRoom *room);
+
+    void mapCurrentRoom(CRoom *room, int dir);
     
 public:
     CEngine();

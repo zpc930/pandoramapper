@@ -190,16 +190,16 @@ void Cdispatcher::dispatchBuffer(ProxySocket &c)
                                                             }
                                                             c.mainState = TELNET;
                                                             c.subState = T_GOTIAC;
-                                                            break;                                                                
+                                                            break;     
 	                                       
-                                        case 0x0a :  // LF 
+                                       case 0x0a :  // LF 
 //                                                            printf("Appending %i : %c [newline] \r\n", s, *s);
                                                             line.append(*s);
                                                             buffer[amount].type = IS_NORMAL;
                                                             buffer[amount++].line = line;
                                                             line.clear();
                                                             continue;
-                                      case '<'      :  // turns XML tag mode on 
+                                       case '<'      :  // turns XML tag mode on 
                                                             if (c.isXmlMode()) {
                                                                 if (line != "") {
                                                                     buffer[amount].type = IS_NORMAL;
@@ -213,7 +213,7 @@ void Cdispatcher::dispatchBuffer(ProxySocket &c)
                                                                 break;
                                                             }
                                                                                                       
-                                        case '&'      :
+                                       case '&'      :
                                                             if (c.isXmlMode()) {
                                                                 c.subchars.append('&');
                                                                 c.subState = AMP;
@@ -246,21 +246,20 @@ void Cdispatcher::dispatchBuffer(ProxySocket &c)
                                                                         switch (*s) {
                                                                             case 'l' :
                                                                                 c.subchars.append('l');
-                                                                                c.subState = L;                                                                         
+                                                                                c.subState = L;   
                                                                                 continue;
                                                                             case 'g' :
                                                                                 c.subchars.append('g');
-                                                                                c.subState = G;                                                                         
+                                                                                c.subState = G;
                                                                                 continue;
                                                                             case 'a' :
                                                                                 c.subchars.append('a');
-                                                                                c.subState = A;                                                                         
+                                                                                c.subState = A;
                                                                                 continue;
                                                                             case 'q' :
                                                                                 c.subchars.append('q');
-                                                                                c.subState = Q;                                                                         
+                                                                                c.subState = Q;
                                                                                 continue;
-                                                                            
                                                                             default:
                                                                                 STUFFING_CLEANUP;
                                                                                 continue;
