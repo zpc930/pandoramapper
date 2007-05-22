@@ -30,6 +30,7 @@ GLfloat marker_colour[4] =  {1.0, 0.1, 0.1, 0.9};
 
 
 #define MARKER_SIZE           (ROOM_SIZE/2.0)
+#define PICK_TOL              20  
 
 class MainWindow *renderer_window;
 
@@ -56,6 +57,8 @@ RendererWidget::RendererWidget( QWidget *parent )
 void RendererWidget::initializeGL()
 {
   unsigned int i;
+
+  setMouseTracking(true);
 
   //textFont = new QFont("Times", 10, QFont::Bold);
   
@@ -97,6 +100,13 @@ void RendererWidget::initializeGL()
 }
 
 
+void RendererWidget::setupViewingModel(  int width, int height ) 
+{
+    gluPerspective(50.0f, (GLfloat) width / (GLfloat) height, 5.0f, conf->get_details_vis()*1.0f);
+    glMatrixMode (GL_MODELVIEW);	
+}
+
+
 void RendererWidget::resizeGL( int width, int height )
 {
     print_debug(DEBUG_RENDERER, "in resizeGL()");
@@ -104,9 +114,9 @@ void RendererWidget::resizeGL( int width, int height )
     glViewport (0, 0, (GLint) width, (GLint) height);	
     glMatrixMode (GL_PROJECTION);	
     glLoadIdentity ();		
-    gluPerspective(50.0f, (GLfloat) width / (GLfloat) height, 0.5f, 1000.0f);
-    glMatrixMode (GL_MODELVIEW);	
   
+    setupViewingModel( width, height );
+    
     glredraw = 1;
 //    display();
 }
@@ -284,8 +294,7 @@ void RendererWidget::glDrawRoom(CRoom *p)
     
     glTranslatef(dx, dy, dz);
     if (p->getTerrain() && texture) {
-                
-    
+
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, conf->sectors[ p->getTerrain() ].texture);
         glCallList(conf->sectors[ p->getTerrain() ].gllist);  
@@ -307,6 +316,14 @@ void RendererWidget::glDrawRoom(CRoom *p)
 
             glColor4f(colour[0], colour[1], colour[2], colour[3]);
         } 
+
+        // slow version of selection drawing 
+        // should be enough for start
+        if (Map.selections.isSelected( p->id ) == true ) {
+            glColor4f(0.20, 0.20, 0.80, colour[3]-0.1);
+            glRectf(-ROOM_SIZE*2, -ROOM_SIZE*2, ROOM_SIZE*2, ROOM_SIZE*2); // left  
+            glColor4f(colour[0], colour[1], colour[2], colour[3]);
+        }
     } else {
         glCallList(basic_gllist);
     }              
@@ -507,29 +524,36 @@ void RendererWidget::glDrawRoom(CRoom *p)
 }
 
 
-
-void RendererWidget::glDrawCSquare(CSquare *p)
+// renderingMode serves for separating Pickup GLSELECT and normal GL_SELECT mode
+void RendererWidget::glDrawCSquare(CSquare *p, int renderingMode)
 {
     unsigned int k;
     
     if (!frustum.isSquareInFrustum(p)) {
         return; // this square is not in view 
     }
-        
+    
     if (p->toBePassed()) {
 //         go deeper 
         if (p->subsquares[ CSquare::Left_Upper ])
-            glDrawCSquare( p->subsquares[ CSquare::Left_Upper ]);
+            glDrawCSquare( p->subsquares[ CSquare::Left_Upper ], renderingMode);
         if (p->subsquares[ CSquare::Right_Upper ])
-            glDrawCSquare( p->subsquares[ CSquare::Right_Upper ]);
+            glDrawCSquare( p->subsquares[ CSquare::Right_Upper ], renderingMode);
         if (p->subsquares[ CSquare::Left_Lower ])
-            glDrawCSquare( p->subsquares[ CSquare::Left_Lower ]);
+            glDrawCSquare( p->subsquares[ CSquare::Left_Lower ], renderingMode);
         if (p->subsquares[ CSquare::Right_Lower ])
-            glDrawCSquare( p->subsquares[ CSquare::Right_Lower ]);
+            glDrawCSquare( p->subsquares[ CSquare::Right_Lower ], renderingMode);
     } else {
-        for (k = 0; k < p->rooms.size(); k++) {
-            glDrawRoom(p->rooms[k]);
-        } 
+        if (renderingMode == GL_SELECT) {
+            for (k = 0; k < p->rooms.size(); k++) {
+                renderPickupRoom(p->rooms[k]);
+            } 
+        } else {
+            for (k = 0; k < p->rooms.size(); k++) {
+                glDrawRoom(p->rooms[k]);
+            } 
+        }
+
     }
 }
 
@@ -594,25 +618,6 @@ void RendererWidget::draw(void)
         
         z = plane->z - curz;
         
-/*        
-        if (z == 0) {
-          colour[0] = 0.1; colour[1] = 0.8; colour[2] = 0.8; colour[3] = 0.6; 
-        } else if (z > 1) {
-          colour[0] = 0.0; colour[1] = 0.5; colour[2] = 0.9; colour[3] = 0.1; 
-        } else if (z < -1) {
-          colour[0] = 0.4; colour[1] = 0.4; colour[2] = 0.4; colour[3] = 0.3; 
-        } else if (z == -1) {
-          colour[0] = 0.5; colour[1] = 0.5; colour[2] = 0.5; colour[3] = 0.4; 
-        } else if (z == 1) {
-          colour[0] = 0.0; colour[1] = 0.5; colour[2] = 0.9; colour[3] = 0.2; 
-        } else if (z <= -5) {
-          colour[0] = 0.3; colour[1] = 0.3; colour[2] = 0.3; colour[3] = 0.2; 
-        } else if (z <= -10) {
-          colour[0] = 0.1; colour[1] = 0.1; colour[2] = 0.1; colour[3] = 0.1; 
-        } else if (z <= -14) {
-          colour[0] = 0; colour[1] = 0; colour[2] = 0; colour[3] = 0; 
-        }
-*/        
         if (z == 0) {
           colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.8; 
         } else if (z > 1) {
@@ -634,7 +639,7 @@ void RendererWidget::draw(void)
         
         current_plane_z = plane->z;
         
-        glDrawCSquare(plane->squares);
+        glDrawCSquare(plane->squares, GL_RENDER);
         plane = plane->next;
     }
     
@@ -664,4 +669,139 @@ void RendererWidget::display(void)
   }  
   
 }
+
+
+void RendererWidget::renderPickupObjects()
+{
+    CRoom *p = NULL;
+    CPlane *plane;  
+
+    
+    rooms_drawn_csquare=0;
+    rooms_drawn_total=0;
+//    square_frustum_checks = 0;
+    
+    int z = 0;
+    
+    print_debug(DEBUG_RENDERER, "in Object pickup fake draw()");
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glLoadIdentity();
+
+    glEnable(GL_TEXTURE_2D);
+//    glEnable(GL_DEPTH_TEST);    
+    
+//    glColor3ub(255, 0, 0);
+
+    glTranslatef(0, 0, userz);
+
+    glRotatef(anglex, 1.0f, 0.0f, 0.0f);
+    glRotatef(angley, 0.0f, 1.0f, 0.0f);
+    glRotatef(anglez, 0.0f, 0.0f, 1.0f);
+    glTranslatef(userx, usery, 0);
+
+    glColor4f(0.1, 0.8, 0.8, 0.4);
+
+ 
+    if (stacker.amount() >= 1) {
+	p = stacker.first();
+        if (p != NULL) {
+            curx = p->getX();
+            cury = p->getY();
+            curz = p->getZ();
+        } else {
+            curx = 0;
+            cury = 0;
+            curz = 0;
+            printf("RENDERER ERROR: cant get base coordinates.\r\n");
+        }
+    }
+
+    frustum.calculateFrustum(p);
+
+    plane = Map.planes;
+    while (plane) {
+        
+        z = plane->z - curz;
+        
+        current_plane_z = plane->z;
+
+        glDrawCSquare(plane->squares, GL_SELECT);
+        plane = plane->next;
+    }
+    
+}
+
+
+void RendererWidget::renderPickupRoom(CRoom *p)
+{
+    GLfloat dx, dy, dz;
+    
+    dx = p->getX() - curx;
+    dy = p->getY() - cury;
+    dz = (p->getZ() - curz) /* * DIST_Z */;
+
+    if (frustum.isPointInFrustum(dx, dy, dz) != true)
+      return;
+    glTranslatef(dx, dy, dz);
+    glLoadName( p->id + 1 );
+    glCallList(basic_gllist);
+    glTranslatef(-dx, -dy, -dz);
+}
+
+bool RendererWidget::doSelect(QPoint pos, unsigned int &id)
+{
+    int viewport[4];
+    int i;
+    GLint   hits, temphit;
+    GLuint  zval;
+
+    glSelectBuffer( MAXHITS, selectBuf );
+    glRenderMode( GL_SELECT );
+    glInitNames();
+
+    glPushName( 0 );
+
+    // setting up the viewing modell
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity();
+
+    glGetIntegerv( GL_VIEWPORT, viewport );
+    gluPickMatrix( (double) pos.x(), (double) (viewport[3] - pos.y()), PICK_TOL, PICK_TOL, viewport);
+    
+    setupViewingModel( width(), height() );
+
+    renderPickupObjects();
+
+    // find the number of hits
+    hits = glRenderMode( GL_RENDER );
+    printf("Hits : %i\r\n", hits);    
+
+
+    // reset viewing model ?
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity();
+    setupViewingModel( width(), height() );
+
+    if (hits <= 0) {
+        return false;
+    } else {
+        zval = selectBuf[1];
+        temphit = selectBuf[3];
+        for ( i = 1; i < hits; i++) { // for each hit
+            if (selectBuf[4*i + 1] < zval ) {
+                zval = selectBuf[4 * i + 1];
+                temphit = selectBuf[ 4 * i + 3 ];
+            }
+
+        }
+
+    }
+
+    id = temphit - 1;
+
+    return true;
+}
+
+
 

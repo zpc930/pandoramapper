@@ -215,22 +215,6 @@ void CRoom::simpleSetZ(int nz)
     setModified(true);
 }
 
-int CRoom::getX()
-{
-    return x;
-}
-
-int CRoom::getY()
-{
-    return y;
-}
-
-int CRoom::getZ()
-{
-    return z;
-}
-
-
 QByteArray CRoom::getName()
 {
     return name;
