@@ -135,24 +135,16 @@ void CEngine::tryDir()
 /* resyncs only if the stacks are empty */
 void CEngine::tryAllDirs()
 {
-    
-    print_debug(DEBUG_ANALYZER, "in try_all_dirs");
-
-    mappingOff();
-    if (stacker.amount() == 0) {
-        return;
-    }
-
-
     int dir;
     unsigned int i;
     CRoom *room;
     CRoom *candidate;
-    
+
+    mappingOff();
     print_debug(DEBUG_ANALYZER, "in try_dir_all_dirs");
     if (stacker.amount() == 0) 
         return;
-  
+
     for (i = 0; i < stacker.amount(); i++) {
         room = stacker.get(i);
         for (dir = 0; dir <= 5; dir++) {
@@ -164,33 +156,27 @@ void CEngine::tryAllDirs()
         }
            
     }
+}
 
-
-
-/*    CRoom *room;
-    CRoom *fittingRoom;
-    int fits;
+void CEngine::tryLook()
+{
     unsigned int i;
-    
-    fits = 0;
-    fittingRoom = NULL;
+    CRoom *room;
+
+    print_debug(DEBUG_ANALYZER, "in tryLook");
+
+    mappingOff();
+    if (stacker.amount() == 0) 
+        return;
+
     for (i = 0; i < stacker.amount(); i++) {
         room = stacker.get(i);
-        if (testRoom(room)) {
-            fits++;
-            fittingRoom = room;
-        }
+        if  (testRoom(room))
+            stacker.put(room);
+           
     }
-    
-    if (fits == 1)
-            stacker.put(fittingRoom);
-    else 
-        for (i = 0; i < stacker.amount(); i++)  // due to instant swap after this function ends, we have to rotate the 
-            stacker.put(stacker.get(i));               // stacks */
-    
-
-
 }
+
 
 void CEngine::slotRunEngine()
  {
@@ -204,9 +190,7 @@ void CEngine::slotRunEngine()
 void CEngine::parseEvent()
 {
     if (event.name != "") {
-        printf("Outside before: %s\r\n", (const char *) event.name);
         latinToAscii( event.name);
-        printf("Outside before: %s\r\n", (const char *) event.name);
         last_name = event.name;
     }
 
@@ -234,10 +218,21 @@ void CEngine::parseEvent()
 
     if (event.name.indexOf("It is pitch black...") == 0)
         event.blind = true;
-    if (event.dir =="")
-        tryAllDirs();
-    else 
-        tryDir();        
+    if (event.name == "" && event.movement == true) {
+        print_debug(DEBUG_ANALYZER, "NAME is empty and Movement is true. Assuming BLIND");
+        event.blind = true;
+    }
+
+    if (event.movement == true) {
+        if (event.dir =="")
+            tryAllDirs();
+        else 
+            tryDir();        
+    } else {
+        if (event.name != "") 
+            tryLook();
+    }
+
         
     swap();
     

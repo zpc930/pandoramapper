@@ -20,6 +20,7 @@ class Event   {
             blind = other.blind;
             terrain = other.terrain;
             prompt = other.prompt;
+            movement = other.movement;
         }
 
         Event &operator=(const Event &other) 
@@ -32,6 +33,7 @@ class Event   {
                 blind = other.blind;
                 terrain = other.terrain;
                 prompt = other.prompt;
+                movement = other.movement;
             }
             return *this;    // Return ref for multiple assignment            
         }
@@ -43,6 +45,7 @@ class Event   {
             exits = "";
             prompt = "";
             blind = false;
+            movement = false;
             terrain = -1;
         }
 
@@ -51,7 +54,7 @@ class Event   {
         QByteArray desc;
         QByteArray exits;
         bool       blind;         /* fog, no light, blind flag */
-        bool       
+        bool       movement;    
         char       terrain;
         QByteArray prompt;
 };
@@ -81,6 +84,7 @@ Q_OBJECT
     void parseEvent();
     void tryAllDirs();
     void tryDir();
+    void tryLook();
     void swap();
     void resync();
     void mappingOff();

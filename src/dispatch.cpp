@@ -467,6 +467,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 if (awaitingData) 
                     SEND_EVENT_TO_ENGINE;
                 event.dir = buffer[i].line;
+                event.movement = true;
                 continue;
             } else if (buffer[i].xmlType == XML_START_ROOM) {
                 if (awaitingData) 
