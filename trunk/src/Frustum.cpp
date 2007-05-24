@@ -32,23 +32,15 @@ void Frustum::normalizePlane(float frustum[6][4], int side)
     frustum[side][D] /= magnitude; 
 }
 
-void Frustum::calculateFrustum(CRoom *currentRoom)
+void Frustum::calculateFrustum(int cx, int cy, int cz)
 {    
     float   proj[16];                               // This will hold our projection matrix
     float   modl[16];                               // This will hold our modelview matrix
     float   clip[16];                               // This will hold the clipping planes
 
-
-    if (currentRoom == NULL) {
-        curx = 0;
-        cury = 0;
-        curz = 0;
-    } else {
-        curx = currentRoom->getX();
-        cury = currentRoom->getY();
-        curz = currentRoom->getZ();
-    }
-
+    curx = cx;
+    cury = cy;
+    curz = cz;
 
 
     glPushMatrix ();

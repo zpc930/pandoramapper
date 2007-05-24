@@ -171,34 +171,34 @@ void RendererWidget::drawMarker(int dx, int dy, int dz, int mode)
       if (mode == 1) {
         /* left */
         glBegin(GL_QUADS);
-        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f);
-        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy - ROOM_SIZE                      , 0.0f);
-        glVertex3f(dx - ROOM_SIZE                      , dy - ROOM_SIZE                      , 0.0f);
-        glVertex3f(dx - ROOM_SIZE                      , dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f);
+        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f + dz);
+        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy - ROOM_SIZE                      , 0.0f + dz);
+        glVertex3f(dx - ROOM_SIZE                      , dy - ROOM_SIZE                      , 0.0f + dz);
+        glVertex3f(dx - ROOM_SIZE                      , dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f + dz);
         glEnd();
 
         /* right */
         glBegin(GL_QUADS);
-        glVertex3f(dx + ROOM_SIZE                      , dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f);
-        glVertex3f(dx + ROOM_SIZE                      , dy - ROOM_SIZE                      , 0.0f);
-        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy - ROOM_SIZE                      , 0.0f);
-        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f);
+        glVertex3f(dx + ROOM_SIZE                      , dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f + dz);
+        glVertex3f(dx + ROOM_SIZE                      , dy - ROOM_SIZE                      , 0.0f + dz);
+        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy - ROOM_SIZE                      , 0.0f + dz);
+        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f + dz);
         glEnd();
 
         /* upper */
         glBegin(GL_QUADS);
-        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f);
-        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy + ROOM_SIZE                      , 0.0f);
-        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy + ROOM_SIZE                      , 0.0f);
-        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f);
+        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f + dz);
+        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy + ROOM_SIZE                      , 0.0f + dz);
+        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy + ROOM_SIZE                      , 0.0f + dz);
+        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy + ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f + dz);
         glEnd();
 
         /* lower */
         glBegin(GL_QUADS);
-        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy - ROOM_SIZE                      , 0.0f);
-        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy - ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f);
-        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy - ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f);
-        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy - ROOM_SIZE                      , 0.0f);
+        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy - ROOM_SIZE                      , 0.0f + dz);
+        glVertex3f(dx - ROOM_SIZE - (MARKER_SIZE / 3.5), dy - ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f + dz);
+        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy - ROOM_SIZE + (MARKER_SIZE / 3.5), 0.0f + dz);
+        glVertex3f(dx + ROOM_SIZE + (MARKER_SIZE / 3.5), dy - ROOM_SIZE                      , 0.0f + dz);
         glEnd();
     }
 }
@@ -409,7 +409,7 @@ void RendererWidget::glDrawRoom(CRoom *p)
                             info += alias;
                             info += "]";  
                         }
-                        renderText((dx + dx2) / 2, (dy + dy2) / 2 , (dz +dz)/2 + ROOM_SIZE / 2 , info, textFont);    
+                        renderText((dx + dx2) / 2, (dy + dy2) / 2 , (dz +dz)/2 + ROOM_SIZE / 2 , info, textFont); 
                     }
                 
                     glColor4f(1.0, 0.0, 0.0, colour[3] + 0.2);
@@ -558,10 +558,44 @@ void RendererWidget::glDrawCSquare(CSquare *p, int renderingMode)
 }
 
 
+// this sets curx, cury, curz based on hrm internal rules
+void RendererWidget::setupNewBaseCoordinates()
+{
+    CRoom *p = NULL;
+    CRoom *newRoom = NULL;
+    long long bestDistance, dist;
+    int newX, newY, newZ;
+    unsigned int i;
+
+    print_debug(DEBUG_RENDERER, "calculating new Base coordinates");
+
+    // in case we lost sync, stay at the last position 
+    if (stacker.amount() == 0) 
+        return;
+
+    // initial unbeatably worst value for euclidean test
+    bestDistance = 30000*30000*30000;
+    for (i = 0; i < stacker.amount(); i++) {
+        p = stacker.get(i);
+        newX = curx - p->getX();
+        newY = cury - p->getY();
+        newZ = curz - p->getZ();
+        dist = newX * newX + newY * newY + newZ * newZ; 
+        if (dist < bestDistance) {
+            bestDistance = dist;
+            newRoom = p;
+        }
+    }
+
+    curx = newRoom->getX();
+    cury = newRoom->getY();
+    curz = newRoom->getZ();
+}
+
+
 
 void RendererWidget::draw(void)
 {
-    CRoom *p = NULL;
     CPlane *plane;  
 
     
@@ -588,24 +622,9 @@ void RendererWidget::draw(void)
     glRotatef(anglez, 0.0f, 0.0f, 1.0f);
     glTranslatef(userx, usery, 0);
 
- 
-//    print_debug(DEBUG_RENDERER, "taking base coordinates");
-    if (stacker.amount() >= 1) {
-	p = stacker.first();
-        if (p != NULL) {
-            curx = p->getX();
-            cury = p->getY();
-            curz = p->getZ();
-        } else {
-            curx = 0;
-            cury = 0;
-            curz = 0;
-            printf("RENDERER ERROR: cant get base coordinates.\r\n");
-        }
-    }
-
+    setupNewBaseCoordinates(); 
     
-    frustum.calculateFrustum(p);
+    frustum.calculateFrustum(curx, cury, curz);
     
     
 //    print_debug(DEBUG_RENDERER, "drawing %i rooms", Map.size());
@@ -618,16 +637,16 @@ void RendererWidget::draw(void)
         
         z = plane->z - curz;
         
-        if (z == 0) {
+        if (z == -1) {
+          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.4; 
+        } else if (z == 0) {
           colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.8; 
+        } else if (z == 1) {
+          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.2; 
         } else if (z > 1) {
           colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.1; 
         } else if (z < -1) {
           colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.3; 
-        } else if (z == -1) {
-          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.4; 
-        } else if (z == 1) {
-          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.2; 
         } else if (z <= -5) {
           colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.2; 
         } else if (z <= -10) {
@@ -673,14 +692,8 @@ void RendererWidget::display(void)
 
 void RendererWidget::renderPickupObjects()
 {
-    CRoom *p = NULL;
     CPlane *plane;  
 
-    
-    rooms_drawn_csquare=0;
-    rooms_drawn_total=0;
-//    square_frustum_checks = 0;
-    
     int z = 0;
     
     print_debug(DEBUG_RENDERER, "in Object pickup fake draw()");
@@ -689,9 +702,6 @@ void RendererWidget::renderPickupObjects()
     glLoadIdentity();
 
     glEnable(GL_TEXTURE_2D);
-//    glEnable(GL_DEPTH_TEST);    
-    
-//    glColor3ub(255, 0, 0);
 
     glTranslatef(0, 0, userz);
 
@@ -702,22 +712,9 @@ void RendererWidget::renderPickupObjects()
 
     glColor4f(0.1, 0.8, 0.8, 0.4);
 
- 
-    if (stacker.amount() >= 1) {
-	p = stacker.first();
-        if (p != NULL) {
-            curx = p->getX();
-            cury = p->getY();
-            curz = p->getZ();
-        } else {
-            curx = 0;
-            cury = 0;
-            curz = 0;
-            printf("RENDERER ERROR: cant get base coordinates.\r\n");
-        }
-    }
+    setupNewBaseCoordinates(); 
 
-    frustum.calculateFrustum(p);
+    frustum.calculateFrustum(curx, cury, curz);
 
     plane = Map.planes;
     while (plane) {

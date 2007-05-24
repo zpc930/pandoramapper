@@ -40,6 +40,7 @@ HEADERS		+=mainwindow.h
 HEADERS		+=Frustum.h
 HEADERS		+=CSquare.h
 HEADERS		+=CSelectionManager.h
+HEADERS         +=CEvent.h
 
 
 

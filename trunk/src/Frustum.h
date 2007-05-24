@@ -33,7 +33,7 @@ class Frustum {
     int current_plane_z;
 
 public:
-    void calculateFrustum(CRoom *currentRoom);
+    void calculateFrustum(int cx, int cy, int cz);
     bool isPointInFrustum(float x, float y, float z);
     bool isSquareInFrustum(CSquare *p);
     float distance(float x, float y, float z);
