@@ -145,7 +145,6 @@ void CTree::deleteItem(const char *name, unsigned int id)
     genHash(name, hash);
     p = findByName(name);
     if (p == NULL) {
-	printf("Error in TREE module - attempt to delete not existing items (at all)\n");
 	return;
     }
 

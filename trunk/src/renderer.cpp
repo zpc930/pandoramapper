@@ -221,7 +221,7 @@ void RendererWidget::glDrawMarkers()
         p = stacker.get(k);
     
         if (p == NULL) {
-            printf("RENDERER ERROR: Stuck upon corrupted room while drawing red pointers.\r\n");
+            print_debug(DEBUG_RENDERER, "RENDERER ERROR: Stuck upon corrupted room while drawing red pointers.\r\n");
             continue;
         }
     
@@ -772,7 +772,7 @@ bool RendererWidget::doSelect(QPoint pos, unsigned int &id)
 
     // find the number of hits
     hits = glRenderMode( GL_RENDER );
-    printf("Hits : %i\r\n", hits);    
+    print_debug(DEBUG_INTERFACE, "Matches for selection click : %i\r\n", hits);    
 
 
     // reset viewing model ?

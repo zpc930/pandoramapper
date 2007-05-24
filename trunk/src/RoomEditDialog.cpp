@@ -1,5 +1,6 @@
 #include <QMessageBox>
 
+#include "utils.h"
 #include "Map.h"
 #include "configurator.h"
 #include "RoomEditDialog.h"
@@ -257,11 +258,11 @@ void RoomEditDialog::accept()
     char terrain;
     unsigned int i;
 
-    printf("Accepted!\r\n");
+    print_debug(DEBUG_INTERFACE, "Accepted!\r\n");
     /* OK! Now check the data */
     
     id = label_roomid->text().toInt();
-    printf("Room id : %i\r\n", id);
+    print_debug(DEBUG_INTERFACE, "Room id : %i\r\n", id);
     
     r = Map.getRoom(id);
     if (r == NULL) {
@@ -319,7 +320,7 @@ void RoomEditDialog::accept()
 
 void RoomEditDialog::reject()
 {
-    printf("Rejected!\r\n");
+    print_debug(DEBUG_INTERFACE, "Rejected!\r\n");
     done(Rejected);
 }
 

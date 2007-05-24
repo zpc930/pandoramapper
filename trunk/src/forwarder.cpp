@@ -44,7 +44,7 @@
 #include "mainwindow.h"
 #include "engine.h"
 #include "forwarder.h"
-
+#include "utils.h"
 
 class Proxy       *proxy;
 
@@ -64,10 +64,10 @@ int Proxy::init()
         WSADATA wsadata;
         if (WSAStartup(WSVERS, &wsadata) != 0)
         {
-            printf("Failed to initialise Windows Sockets.\n");
+            print_debug(DEBUG_PROXY, "Failed to initialise Windows Sockets.\n");
             exit(1);
         } else {
-	    printf("Started windows sockets.\r\n");
+	    print_debug(DEBUG_PROXY, "Started windows sockets.\r\n");
 	}	
     #endif
 
@@ -75,15 +75,15 @@ int Proxy::init()
         debug_file = fopen(DEBUG_FILE_NAME, "w+");
     #endif
   
-    printf("proxy: initializing...\r\n");
+    print_debug(DEBUG_PROXY, "proxy: initializing...\r\n");
     if ((proxy_hangsock = socket (AF_INET, SOCK_STREAM, 0))<0) {
-        fprintf (stderr, "proxy: Cannot open socket\n");
+        print_debug(DEBUG_PROXY, "proxy: Cannot open socket\n");
         exit(1);
     }
 
     int opt = 1;
     if(setsockopt(proxy_hangsock, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) == -1) {
-        perror("Couldn't set the SO_REUSEADDR.\r\n");
+        print_debug(DEBUG_PROXY, "Couldn't set the SO_REUSEADDR.\r\n");
         exit(1);
     } 
 
@@ -92,12 +92,12 @@ int Proxy::init()
     proxy_name.sin_port=htons(conf->get_local_port());
 
     if (bind(proxy_hangsock, (struct sockaddr *)&proxy_name, sizeof(struct sockaddr_in))) {
-        fprintf (stderr, "proxy: Cannot bind socket\n");
+        print_debug(DEBUG_PROXY, "proxy: Cannot bind socket\n");
         exit(1);
     }
 
   
-    printf("Proxy: ready and listening...\r\n");
+    print_debug(DEBUG_PROXY, "Proxy: ready and listening...\r\n");
     listen(proxy_hangsock, 3);
 
   return 0;
@@ -130,7 +130,7 @@ int Proxy::loop(void)
     n = select (FD_SETSIZE , &input, NULL, &exc, NULL);
     if (n < 0) {
         /* .... */
-        printf("Networking error: Select failed.  Quiting.\r\n"); 
+        print_debug(DEBUG_PROXY, "Networking error: Select failed.  Quiting.\r\n"); 
         exit(1);
     }
         
@@ -146,7 +146,7 @@ int Proxy::loop(void)
             /* user stream */
             int size;
             
-            printf("Proxy: Network activity!\r\n");
+            print_debug(DEBUG_PROXY, "Proxy: Network activity!\r\n");
 
             size = user.read();
             if (size > 0) {
@@ -218,13 +218,13 @@ void Proxy::sendMudEmulationGreeting()
 
 bool Proxy::connectToMud()
 {
-    printf("Trying to connect to MUD...\r\n");
+    print_debug(DEBUG_PROXY, "Trying to connect to MUD...\r\n");
 
     if (mud.openConnection(conf->get_remote_host(), conf->get_remote_port()) != true) {
         user.send_line( "----[ Pandora: Failed to connect to remote host. See terminal log for details.\r\n");
         return false;
     } else {
-        printf("Connected!\r\n");
+        print_debug(DEBUG_PROXY, "Connected!\r\n");
         return true;        
     }    
 }
@@ -236,7 +236,7 @@ void Proxy::incomingConnection()
     int size;
     struct sockaddr_in networkName;
     
-//    printf("Incoming connection!\r\n");
+    print_debug(DEBUG_PROXY, "Incoming connection!\r\n");
     
     size = sizeof(struct sockaddr_in);
     newsock = accept(proxy_hangsock, (struct sockaddr *)&networkName, (socklen_t *) &size);
@@ -264,7 +264,7 @@ void Proxy::incomingConnection()
 
 void Proxy::shutdown()
 {
-    printf("Proxy is shutting down.\r\n");
+    print_debug(DEBUG_PROXY, "Proxy is shutting down.\r\n");
 
     user.close();
     user.clear();
@@ -298,7 +298,7 @@ void ProxySocket::clear() {
 
 void ProxySocket::close() {
     ::shutdown(sock, 2);
-    printf("Closing the socket.\r\n");
+    print_debug(DEBUG_PROXY, "Closing the socket.\r\n");
     ::closesocket(sock);               
 }
 
@@ -353,9 +353,9 @@ bool ProxySocket::openConnection(QByteArray name, int port)
     struct sockaddr_in networkName;
     struct hostent *h;
 
-    printf("Trying to resolve %s\r\n", (const char*) name);
+    print_debug(DEBUG_PROXY, "Trying to resolve %s\r\n", (const char*) name);
     if (!(h = gethostbyname ( (const char*) name) ) ) {
-        fprintf(stderr, "Can't resolve host: %s.\n", (const char*) name);
+        print_debug(DEBUG_PROXY, "Can't resolve host: %s.\n", (const char*) name);
         return false;
     }
 
@@ -365,15 +365,15 @@ bool ProxySocket::openConnection(QByteArray name, int port)
 
     snew=socket(AF_INET, SOCK_STREAM, 0);
     if (snew <= 0) {
-        printf("Cannot create new socket!\r\n");
+        print_debug(DEBUG_PROXY, "Cannot create new socket!\r\n");
         return false;
     }
     
-    printf("Connecting ....\r\n");
+    print_debug(DEBUG_PROXY, "Connecting ....\r\n");
     if (!connect(snew, (struct sockaddr *)&networkName, sizeof(struct sockaddr_in))  )  {
         sock = snew;
     } else {
-        printf("Failed to connect to remote host!\r\n");
+        print_debug(DEBUG_PROXY, "Failed to connect to remote host!\r\n");
         return false;
     }
 

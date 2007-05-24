@@ -57,7 +57,7 @@ void xml_readbase( QString filename)
   QXmlSimpleReader reader;
 
   if (xmlFile.exists() == false) {
-      printf("ERROR: The database file %s does NOT exist!\r\n", qPrintable(filename) );
+      print_debug(DEBUG_XML, "ERROR: The database file %s does NOT exist!\r\n", qPrintable(filename) );
       return;
   }
 
@@ -67,7 +67,7 @@ void xml_readbase( QString filename)
     
 	
     
-  printf("reading xml ...");
+  print_debug(DEBUG_XML, "reading xml ...");
   fflush(stdout);
   reader.parse( source );
   
@@ -81,7 +81,7 @@ void xml_readbase( QString filename)
   }
 
   
-  printf("done.\r\n");
+  print_debug(DEBUG_XML, "done.");
 
 
   return;
@@ -153,7 +153,7 @@ bool StructureParser::startElement( const QString& , const QString& ,
         
     /* special */
     if (attributes.length() < 3) {
-      printf("Not enough exit attributes in XML file!");
+      print_debug(DEBUG_XML, "Not enough exit attributes in XML file!");
       exit(1);
     }        
       

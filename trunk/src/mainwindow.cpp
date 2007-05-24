@@ -16,7 +16,7 @@
 
 void toggle_renderer_reaction()
 {
-    printf("Toggling renderer reaction\r\n");
+    print_debug(DEBUG_INTERFACE,"Toggling renderer reaction\r\n");
     proxy->startRendererCall();
 //    print_debug(DEBUG_RENDERER, "toggle_renderer_reaction called()");
 //    QKeyEvent *k = new QKeyEvent(QEvent::KeyPress, Qt::Key_R,0, "r", false , 1);
@@ -323,7 +323,7 @@ void MainWindow::publish_map()
         if (r) {
             for (z = 0; z <= 5; z++) {
                 if ( r->isDoorSecret(z) == true ) {
-                    printf("Secret door was still in database...\r\n");
+                    print_debug(DEBUG_ROOMS,"Secret door was still in database...\r\n");
                     r->removeDoor(z);
                 }
             }
@@ -336,7 +336,7 @@ void MainWindow::publish_map()
     
     
     
-    printf("Done!\r\n");
+    print_debug(DEBUG_INTERFACE && DEBUG_ROOMS,"Finished removing secrets from the map!\r\n");
     //    QMessageBox::information(this, "Removing secrets...", "Done!\n", QMessageBox::Ok);
 }
 
@@ -747,14 +747,13 @@ void MainWindow::mousePressEvent( QMouseEvent *e)
         QPoint inFramePos = e->pos();
         if (menuBar()->isHidden() == false) {
             int height = menuBar()->height();
-            printf("Not hidden! It's height is : %i\r\n", height);
             inFramePos.setY( inFramePos.y() -  height);
         }
 
         result = renderer->doSelect( inFramePos, returnedId );
 
         if (result == true) {
-            printf("Picked %i \r\n", returnedId);
+            print_debug(DEBUG_INTERFACE, "Clicked on the room with id %i \r\n", returnedId);
             if (Map.selections.isSelected( returnedId ) == true) 
                 Map.selections.unselect(returnedId);
             else

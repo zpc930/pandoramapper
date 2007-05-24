@@ -149,7 +149,7 @@ void parse_exits(const char *p, int exits[])
     exits[4] = E_NOEXIT;
     exits[5] = E_NOEXIT;
 
-    printf("PARSING EXITS: ...%s...\r\n", p);
+    print_debug(DEBUG_ANALYZER, "PARSING EXITS: ...%s...\r\n", p);
     len = strlen(p);
     for (i = 0; i <= len; i++) 
       for (dir = 0; dir <= 5; dir++) 

@@ -176,9 +176,10 @@ int main(int argc, char *argv[])
     /* set analyzer engine defaults */
     //engine_init();
     splash->showMessage(QString("Loading the configuration ") + configfile);
-    printf("Using config file : %s.\r\n", configfile);
+    print_debug(DEBUG_SYSTEM, "Using config file : %s.", configfile);
     conf = new Cconfigurator();
     conf->load_config(resPath, configfile);
+    print_debug(DEBUG_SYSTEM, "starting up...");
     
     
     if (override_base_file[0] != 0) {
@@ -186,45 +187,43 @@ int main(int argc, char *argv[])
     } else if ( conf->get_base_file() == "") {
       conf->set_base_file(default_base_file);
     }
-    printf("Using database file : %s.\r\n", (const char*) conf->get_base_file() );
+    print_debug(DEBUG_SYSTEM, "Using database file : %s.", (const char*) conf->get_base_file() );
     
     if (override_remote_host[0] != 0) {
       conf->set_remote_host(override_remote_host);
     } else if ( conf->get_remote_host().isEmpty() ) {
       conf->set_remote_host(default_remote_host);
     }
-    printf("Using target hostname : %s.\r\n", (const char*) conf->get_remote_host() );
+    print_debug(DEBUG_SYSTEM, "Using target hostname : %s.", (const char*) conf->get_remote_host() );
 
     if (override_local_port != 0) {
       conf->set_local_port(override_local_port);
     } else if ( conf->get_local_port() == 0) {
       conf->set_local_port(default_local_port);
     }
-    printf("Using local port : %i.\r\n", conf->get_local_port());
+    print_debug(DEBUG_SYSTEM, "Using local port : %i.", conf->get_local_port());
 
     if (override_remote_port != 0) {
       conf->set_remote_port(override_remote_port);
     } else if (conf->get_remote_port() == 0) {
       conf->set_remote_port(default_remote_port);
     }
-    printf("Using target port : %i.\r\n", conf->get_remote_port());
+    print_debug(DEBUG_SYSTEM, "Using target port : %i.", conf->get_remote_port());
 
     conf->set_conf_mod( false );
 
-    printf("-- Starting Pandora\n");
-  
     splash->showMessage("Starting Analyzer and Proxy...");
     engine = new CEngine();
     proxy = new Proxy();  
 
     splash->showMessage("Loading the database, please wait...");
-    printf("Loading the database ... \r\n");
+    print_debug(DEBUG_SYSTEM, "Loading the database ... ");
     xml_readbase( conf->get_base_file() );
-    printf("Successfuly loaded %i rooms!\n", Map.size());
+    print_debug(DEBUG_SYSTEM, "Successfuly loaded %i rooms!", Map.size());
 
     /* special init for the mud emulation */
     if (mud_emulation) {
-      printf("Starting in MUD emulation mode...\r\n");
+      print_debug(DEBUG_SYSTEM, "Starting in MUD emulation mode...");
       
       engine->setPrompt("-->");
       stacker.put(1);
@@ -234,7 +233,7 @@ int main(int argc, char *argv[])
     proxy->setMudEmulation( mud_emulation );
 
 
-    printf("Starting renderer ...\n");
+    print_debug(DEBUG_SYSTEM, "Starting renderer ...\n");
 
     if ( !QGLFormat::hasOpenGL() ) {
         qWarning( "This system has no OpenGL support. Exiting." );
