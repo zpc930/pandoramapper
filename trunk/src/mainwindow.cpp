@@ -406,16 +406,16 @@ MainWindow::MainWindow(QWidget *parent)
 
   /* Room menu */
   edit_dialog = NULL;
-  roomeditAct= new QAction(tr("Edit Current Room"), this);
+  roomeditAct= new QAction(tr("Edit"), this);
   roomeditAct->setStatusTip(tr("View/Edit current Room's info"));
   connect(roomeditAct, SIGNAL(triggered()), this, SLOT(edit_current_room()));    
 
-  deleteAct= new QAction(tr("Delete current room"), this);
+  deleteAct= new QAction(tr("Delete"), this);
   deleteAct->setStatusTip(tr("Deletes this room"));
   connect(deleteAct, SIGNAL(triggered()), this, SLOT(delete_room()));    
 
   mergeAct= new QAction(tr("Merge"), this);
-  mergeAct->setStatusTip(tr("Tries to find twin room and merge them"));
+  mergeAct->setStatusTip(tr("Tries to merge two twin rooms"));
   connect(mergeAct, SIGNAL(triggered()), this, SLOT(merge_room()));    
 
 

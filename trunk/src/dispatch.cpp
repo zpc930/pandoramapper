@@ -433,6 +433,7 @@ QByteArray Cdispatcher::cutColours(QByteArray line)
 
 #define SEND_EVENT_TO_ENGINE \
                     {   \
+                    printf("------- Sending the event! ------\r\n"); \
                     awaitingData = false;               \
                     engine->addEvent(event);                            \
                     event.clear();                  \
@@ -448,8 +449,8 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
     char *buf;
     
     
-    printf("---------- mud input -----------\r\n");
-    printf("Buffer size %i\r\n", c.length);
+//    printf("---------- mud input -----------\r\n");
+//    printf("Buffer size %i\r\n", c.length);
 
     dispatchBuffer(c);
     
@@ -470,6 +471,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 event.movement = true;
                 continue;
             } else if (buffer[i].xmlType == XML_START_ROOM) {
+                printf(" -------- XML_START_ROOM ------------\r\n");
                 if (awaitingData) 
                     SEND_EVENT_TO_ENGINE;
                 xmlState = STATE_ROOM;                
@@ -481,6 +483,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 xmlState = STATE_DESC;
                 continue;
             } else if ((buffer[i].xmlType == XML_START_TERRAIN)  && (xmlState == STATE_ROOM)) {
+                printf(" -------- XML_START_TERRAIN and STATE_ROOM setting blind!  ------------\r\n");
                 event.blind = true;                 // BLIND detection 
                 continue;
             } else if (buffer[i].xmlType == XML_START_EXITS) {
@@ -493,6 +496,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 // nada 
                 continue;
             } else if (buffer[i].xmlType == XML_END_ROOM && xmlState == STATE_ROOM) {
+                printf(" -------- XML_END_ROOM ------------\r\n");
                 awaitingData = true;
                 xmlState = STATE_NORMAL;
                 continue;
@@ -656,7 +660,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
         new_len += buffer[i].line.length();
     }
 
-    printf("Done with this buffer. New length: %i\r\n", new_len);
+//    printf("Done with this buffer. New length: %i\r\n", new_len);
     return new_len;
 }
 
@@ -675,8 +679,8 @@ int Cdispatcher::analyzeUserStream(ProxySocket &c)
     new_len = 0;
     
 
-    printf("---------- user input -----------\r\n");
-    printf("Buffer size %i\r\n", c.length);
+//    printf("---------- user input -----------\r\n");
+//    printf("Buffer size %i\r\n", c.length);
 
     dispatchBuffer(c);
 
@@ -714,7 +718,7 @@ int Cdispatcher::analyzeUserStream(ProxySocket &c)
         }
     }
         
-    printf("DOne proceeding user input. Resulting buffer length: %i\r\n", new_len);
+//    printf("DOne proceeding user input. Resulting buffer length: %i\r\n", new_len);
         
     return new_len;
 }
