@@ -67,7 +67,7 @@ void CEngine::resync()
 
 bool CEngine::testRoom(CRoom *room) 
 {
-    if (event.blind)
+    if (event.blind) 
         return true;
     if  ((nameMatch = room->roomnameCmp(event.name)) >= 0) 
         if (event.desc == "")
@@ -207,14 +207,9 @@ void CEngine::parseEvent()
 
     setMgoto( false );    /* if we get a new room data incoming, mgoto has to go away */
 
-    printf("ANALYZER Event. NAME %s\r\nDESC %s\r\nEXITS %s\r\n", 
-        (const char *) event.name, (const char *) event.desc, (const char *) event.exits);
-
-    if (event.name == "") {
-        if (addedroom)
-            addedroom->setTerrain(last_terrain);
-        return;            
-    }
+    printf("ANALYZER Event. NAME %s\r\nDESC %s\r\nEXITS %s\r\nPROMPT %s\r\n, BLIND %i, MOVEMENT %i\r\n", 
+        (const char *) event.name, (const char *) event.desc, (const char *) event.exits,
+        (const char *) event.prompt, event.blind, event.movement);
 
     if (event.name.indexOf("It is pitch black...") == 0)
         event.blind = true;
@@ -222,6 +217,14 @@ void CEngine::parseEvent()
         print_debug(DEBUG_ANALYZER, "NAME is empty and Movement is true. Assuming BLIND");
         event.blind = true;
     }
+
+
+    if (event.name == "" && event.blind == false) {
+        if (addedroom)
+            addedroom->setTerrain(last_terrain);
+        return;            
+    }
+
 
     if (event.movement == true) {
         if (event.dir =="")

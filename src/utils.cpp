@@ -418,8 +418,6 @@ void latinToAscii(QByteArray &text)
     unsigned char ch;
     int pos;
 
-    printf("Before : %s\r\n", (const char *) text);
-    printf("in LatinToAscii() : ");
     for (pos = 0; pos <= text.length(); pos++) {
         ch = text[pos];
         if (ch > 128) {
@@ -428,12 +426,7 @@ void latinToAscii(QByteArray &text)
             else 
                 ch = table[ ch - 192 ];
 
-            printf("%c", ch);
-
             text[pos] = ch;
         }
     }
-    printf("\r\n");
-
-    printf("Before : %s\r\n", (const char *) text);
 }
