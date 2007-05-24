@@ -67,8 +67,7 @@ void roommanager::fixFreeRooms()
 	    return;
 	}
 
-    printf
-	("roomer: error - no more space for rooms in ids[] array! reached limit\n");
+    print_debug(DEBUG_ROOMS, "roomer: error - no more space for rooms in ids[] array! reached limit\n");
     exit(1);
 }
 
@@ -94,8 +93,7 @@ QByteArray roommanager::getName(unsigned int id)
 void roommanager::addRoomNonsorted(CRoom *room)
 {
   if (ids[room->id] != NULL) {
-      printf
-          ("Error while adding new element to database! This id already exists!\n");
+      print_debug(DEBUG_ROOMS, "Error while adding new element to database! This id already exists!\n");
       exit(1);
   }
 
@@ -125,7 +123,7 @@ roommanager::roommanager()
 
 void roommanager::init()
 {
-    printf("Roommanager INIT.\r\n");
+    print_debug(DEBUG_ROOMS,"Roommanager INIT.\r\n");
 
     next_free = 1;
 
@@ -207,7 +205,7 @@ void roommanager::reinit()
     {
         CPlane *p, *next;
         
-        printf("Resetting Cplane structures ... \r\n");
+        print_debug(DEBUG_ROOMS,"Resetting Cplane structures ... \r\n");
         p = planes;
         while (p) {
             next = p->next;
@@ -240,7 +238,7 @@ void roommanager::deleteRoom(CRoom *r, int mode)
     
     
     if (r->id == 1) {
-	printf("Cant delete base room!\n");
+	print_debug(DEBUG_ROOMS,"Cant delete base room!\n");
 	return;
     }
 
@@ -264,7 +262,7 @@ void roommanager::deleteRoom(CRoom *r, int mode)
 void roommanager::smallDeleteRoom(CRoom *r)
 {
     if (r->id == 1) {
-	printf("ERROR (!!): Attempted to delete the base room!\n");
+	print_debug(DEBUG_ROOMS,"ERROR (!!): Attempted to delete the base room!\n");
 	return;
     }
     removeFromPlane(r);
@@ -275,7 +273,7 @@ void roommanager::smallDeleteRoom(CRoom *r)
     
     for (i = rooms.begin(); i != rooms.end(); i++)
         if ((*i)->id == r->id ) {
-            printf("Deleting the room from rooms vector.\r\n");
+            print_debug(DEBUG_ROOMS,"Deleting the room from rooms vector.\r\n");
             i = rooms.erase(i);
             break;
         }
@@ -292,7 +290,7 @@ void roommanager::removeFromPlane(CRoom *room)
     p = planes;
     while (p->z != room->getZ()) {
         if (!p) {
-            printf(" FATAL ERROR. remove_fromplane() the given has impossible Z coordinate!\r\n");
+            print_debug(DEBUG_ROOMS," FATAL ERROR. remove_fromplane() the given has impossible Z coordinate!\r\n");
             return;     /* no idea what happens next ... */
         }
         p = p->next;
@@ -308,9 +306,6 @@ void roommanager::expandPlane(CPlane *plane, CRoom *room)
     
     p = plane->squares;
     
-/*    printf("Preparing to expand the plane lx ly: %i %i, rx ry: %i %i, cx cy: %i %i, for room x y: %i %i\r\n",
-            p->leftx, p->lefty, p->rightx, p->righty, p->centerx, p->centery, room->x, room->y);
-*/    
     while ( p->isInside(room) != true ) {
         /* plane fork/expanding cycle */
         

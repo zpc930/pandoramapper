@@ -91,7 +91,7 @@ void CEngine::tryDir()
     print_debug(DEBUG_ANALYZER, "in try_dir");
     dir = numbydir(event.dir[0]);
     if (dir == -1) {
-        printf("Error in try_dir - faulty DIR given as input!\r\n");
+        print_debug(DEBUG_ANALYZER, "Error in try_dir - faulty DIR given as input!\r\n");
         return;
     }
             
@@ -232,7 +232,7 @@ void CEngine::parseEvent()
 
     print_debug(DEBUG_ANALYZER, "Entering the main part of the function");
 
-    printf("ANALYZER Event. NAME %s\r\nDESC %s\r\nEXITS %s\r\nPROMPT %s\r\n, BLIND %i, MOVEMENT %i\r\n", 
+    print_debug(DEBUG_ANALYZER, "ANALYZER Event. \r\nNAME %s\r\nDESC %s\r\nEXITS %s\r\nPROMPT %s\r\n, BLIND %i, MOVEMENT %i", 
         (const char *) event.name, (const char *) event.desc, (const char *) event.exits,
         (const char *) event.prompt, event.blind, event.movement);
 
@@ -365,12 +365,12 @@ int CEngine::checkRoomDesc()
     j = -1;
 
     if (addedroom == NULL) {
-        printf("analyzer: Failure in check_desc function!\n");
+        print_debug(DEBUG_ANALYZER, "Failure in check_desc function!\n");
         return 0;
     }
 
     if (conf->get_automerge() == false) {
-        printf("Analyzer: autodesc check if OFF - quiting this routine.\n");
+        print_debug(DEBUG_ANALYZER, "autodesc check if OFF - quiting this routine.\n");
         stacker.put(addedroom);
       
         return 0;
@@ -383,7 +383,7 @@ int CEngine::checkRoomDesc()
     if (addedroom->getName().isEmpty()) {
         /* now thats sounds bad ... */
         Map.deleteRoom(addedroom, 0);
-        printf("ERROR: in check_description() - empty roomname in new room.\r\n");
+        print_debug(DEBUG_ANALYZER, "ERROR: in check_description() - empty roomname in new room.\r\n");
         return 0;
     }
 
@@ -423,7 +423,7 @@ int CEngine::checkRoomDesc()
         
     /* if we are still here, then we didnt manage to merge the room */
     /* so put addedroom->id in stack */
-    printf("------- Returning with return 0\r\n");
+    print_debug(DEBUG_ANALYZER, "------- Returning with return 0\r\n");
     stacker.put(addedroom);
     return 0;
 }
@@ -675,7 +675,7 @@ void CEngine::printStacks()
 void CEngine::clear()
 {
     eventPipe.clear();
-    printf("Engine INIT.\r\n");
+    print_debug(DEBUG_ANALYZER, "Engine INIT.\r\n");
     mapping =                0;
     mgoto             =      0;
 

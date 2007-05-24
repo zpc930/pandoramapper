@@ -1617,20 +1617,8 @@ USERCMD(usercmd_move)
     SEND_PROMPT;    
     return USER_PARSE_SKIP;
     
-  } else {
-  /*
-        switch (subcmd)
-        {
-            case USER_MOVE_LOOK:
-            case USER_MOVE_EXAMINE:
-                    printf("Setting awaitingRoom to true!\r\n");
-                    proxy->setAwaitingRoom(true);
-                    break;
-        }      
-  */
-  
-  }
-  
+  } 
+
   return USER_PARSE_DONE;   /* leave the line as it is */
 }
 

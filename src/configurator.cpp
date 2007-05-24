@@ -339,7 +339,7 @@ int Cconfigurator::load_texture(struct room_sectors_data *p)
     if (p->filename == "")
         return -1;
     if (!buf1.load( p->filename )) {
-        printf("Failed to load the %s!\r\n", (const char *) p->filename);
+        print_debug(DEBUG_CONFIG, "Failed to load the %s!", (const char *) p->filename);
         return -1;
     }
     tex1 = QGLWidget::convertToGLFormat( buf1 );
@@ -389,7 +389,7 @@ int Cconfigurator::load_config(QByteArray path, QByteArray filename)
   QXmlInputSource source( &xmlFile );
 
   if (xmlFile.exists() == false) {
-      printf("ERROR: The config file %s does NOT exist!\r\n", (const char*) (path+filename) );
+      print_debug(DEBUG_CONFIG, "ERROR: The config file %s does NOT exist!", (const char*) (path+filename) );
       return 0;
   }
 
@@ -401,10 +401,10 @@ int Cconfigurator::load_config(QByteArray path, QByteArray filename)
   reset_current_config();
 	
     
-  printf("Reading the config file %s\r\n", (const char *) (path+filename));
+  print_debug(DEBUG_CONFIG, "Reading the config file %s", (const char *) (path+filename));
   fflush(stdout);
   reader.parse( source );
-  printf("done.\r\n");
+  print_debug(DEBUG_CONFIG, "done.");
   set_conf_mod(false);
 
 
@@ -423,7 +423,7 @@ int Cconfigurator::save_config_as(QByteArray path, QByteArray filename)
 
   f = fopen((const char *) path + filename, "w");
   if (f == NULL) {
-    printf("XML: Error - can not open the file: %s.\r\n", (const char *) filename);
+    print_debug(DEBUG_XML, "XML: Error - can not open the file: %s.", (const char *) filename);
     return -1;
   }    
   
@@ -529,7 +529,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
 {
     if (qName == "localport") {
         if (attributes.length() < 1) {
-            printf("(localport token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(localport token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -540,7 +540,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         return TRUE;
     } else if (qName == "remotehost") {
         if (attributes.length() < 2) {
-            printf("(remotehost token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(remotehost token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -555,7 +555,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         return TRUE;
     } else if (qName == "basefile") {
         if (attributes.length() < 1) {
-            printf("(basefile token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(basefile token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -566,7 +566,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         return TRUE;
     } else if (qName == "GLvisibility") {
         if (attributes.length() < 2) {
-            printf("(GLvisibility token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(GLvisibility token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -583,13 +583,13 @@ bool ConfigParser::startElement( const QString& , const QString& ,
             conf->set_show_notes_renderer( false);
         
         
-        printf("OpenGL visibility ranges set to %i (texture) and %i (details).\r\n",
+        print_debug(DEBUG_CONFIG, "OpenGL visibility ranges set to %i (texture) and %i (details).",
                     conf->get_texture_vis(), conf->get_details_vis() );
         
         return TRUE;
     } else if (qName == "analyzers") {
         if (attributes.length() < 3) {
-            printf("(analyzers token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(analyzers token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -608,13 +608,13 @@ bool ConfigParser::startElement( const QString& , const QString& ,
             conf->set_terrain_check(false);
         
         
-        printf("Analyzers: desc ON, exits %s, terrain %s.\r\n",
+        print_debug(DEBUG_CONFIG, "Analyzers: desc ON, exits %s, terrain %s.",
                     ON_OFF(conf->get_exits_check() ), ON_OFF(conf->get_terrain_check()) );
         
         return TRUE;
     } else if (qName == "guisettings") {
         if (attributes.length() < 1) {
-            printf("(guisettings token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(guisettings token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -625,12 +625,12 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         else 
             conf->set_always_on_top(false);
 
-        printf("GUI settings: always_on_top %s.\r\n", ON_OFF(conf->get_always_on_top()) );
+        print_debug(DEBUG_CONFIG, "GUI settings: always_on_top %s.", ON_OFF(conf->get_always_on_top()) );
 
         return TRUE;
     } else if (qName == "regionsflags") {
         if (attributes.length() < 1) {
-            printf("(guisettings token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(guisettings token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -650,12 +650,12 @@ bool ConfigParser::startElement( const QString& , const QString& ,
             
             
 
-        printf("GUI settings: always_on_top %s.\r\n", ON_OFF(conf->get_always_on_top()) );
+        print_debug(DEBUG_CONFIG, "GUI settings: always_on_top %s.", ON_OFF(conf->get_always_on_top()) );
 
         return TRUE;
     } else if (qName == "engineflags") {
         if (attributes.length() < 3) {
-            printf("(engineflags token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(engineflags token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -681,14 +681,14 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         else 
             conf->set_angrylinker(false);
 
-        printf("Engine flags: briefmode %s, automerge %s, angrylinker %s.\r\n",
+        print_debug(DEBUG_CONFIG, "Engine flags: briefmode %s, automerge %s, angrylinker %s.",
                ON_OFF(conf->get_brief_mode()), ON_OFF(conf->get_automerge()), 
                 ON_OFF(conf->get_angrylinker()) );
         
         return TRUE;
     } else if (qName == "refresh") {
         if (attributes.length() < 3) {
-            printf("(refresh token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(refresh token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -704,13 +704,13 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         s = attributes.value("descquote");
         conf->set_desc_quote(s.toInt());
 
-        printf("Autorefresh settings: automatic refresh %s, roomname quote %i, desc quote %i.\r\n",
+        print_debug(DEBUG_CONFIG, "Autorefresh settings: automatic refresh %s, roomname quote %i, desc quote %i.",
                 ON_OFF(conf->get_autorefresh()), conf->get_name_quote(), 
                 conf->get_desc_quote() );
         return TRUE;
     } else if (qName == "texture") {
         if (attributes.length() < 2) {
-            printf("(texture token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(texture token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -733,7 +733,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         return TRUE;
     } else if (qName == "spell") {
         if (attributes.length() < 4) {
-            printf("(pattern token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(pattern token) Not enough attributes in XML file!");
             exit(1);
         }        
 
@@ -761,7 +761,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         return TRUE;
     } else if (qName == "debug") {
         if (attributes.length() < 1) {
-            printf("(texture token) Not enough attributes in XML file!");
+            print_debug(DEBUG_CONFIG, "(texture token) Not enough attributes in XML file!");
             exit(1);
         }        
         
@@ -773,7 +773,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
             i++;
         }
         if (debug_data[i].name == NULL) {
-            printf("Warning, %s is a wrong debug descriptor/name!\r\n", qPrintable(s));
+            print_debug(DEBUG_CONFIG, "Warning, %s is a wrong debug descriptor/name!", qPrintable(s));
             return TRUE;
         }
         

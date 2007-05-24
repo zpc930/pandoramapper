@@ -28,7 +28,7 @@ struct boolean_struct {
 #define DEBUG_SYSTEM            (1 << 2)
 #define DEBUG_CONFIG            (1 << 3)
 #define DEBUG_DISPATCHER        (1 << 4)        
-#define DEBUG_FORWARDER         (1 << 5)
+#define DEBUG_PROXY             (1 << 5)
 #define DEBUG_RENDERER          (1 << 6)
 #define DEBUG_ROOMS             (1 << 7)
 #define DEBUG_STACKS            (1 << 8)
@@ -36,6 +36,7 @@ struct boolean_struct {
 #define DEBUG_USERFUNC          (1 << 10)
 #define DEBUG_XML               (1 << 11)
 #define DEBUG_INTERFACE         (1 << 12)
+#define DEBUG_SPELLS            (1 << 13)
 
 /* special flag */
 #define DEBUG_TOUSER            (1 << 13)       /* send the message to user also */

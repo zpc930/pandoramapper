@@ -459,7 +459,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
     
     
     print_debug(DEBUG_DISPATCHER, "analyzerMudStream(): starting");
-    print_debug(DEBUG_DISPATCHER, "Buffer size %i\r\n", c.length);
+    print_debug(DEBUG_DISPATCHER, "Buffer size %i", c.length);
 
     dispatchBuffer(c);
     
@@ -482,7 +482,6 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 event.movement = true;
                 continue;
             } else if (buffer[i].xmlType == XML_START_ROOM) {
-                print_debug(DEBUG_DISPATCHER, "-------- XML_START_ROOM ------------");
                 if (awaitingData) 
                     SEND_EVENT_TO_ENGINE;
                 xmlState = STATE_ROOM;                
@@ -494,7 +493,6 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 xmlState = STATE_DESC;
                 continue;
             } else if ((buffer[i].xmlType == XML_START_TERRAIN)  && (xmlState == STATE_ROOM)) {
-                printf(" -------- XML_START_TERRAIN and STATE_ROOM setting blind!  ------------\r\n");
                 event.blind = true;                 // BLIND detection 
                 continue;
             } else if (buffer[i].xmlType == XML_START_EXITS) {
@@ -507,7 +505,6 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 // nada 
                 continue;
             } else if (buffer[i].xmlType == XML_END_ROOM && xmlState == STATE_ROOM) {
-                print_debug(DEBUG_DISPATCHER, "-------- XML_END_ROOM ------------");
                 awaitingData = true;
                 xmlState = STATE_NORMAL;
                 continue;
@@ -588,7 +585,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 for (p = 0; p < conf->spells.size(); p++) {
                     if ( (conf->spells[p].up_mes != "" && conf->spells[p].up_mes == a_line) || 
                          (conf->spells[p].refresh_mes != "" && conf->spells[p].refresh_mes == a_line )) {
-                        printf("SPELL %s Starting/Restaring timer.\r\n",  (const char *) conf->spells[p].name);
+                        print_debug(DEBUG_SPELLS, "SPELL %s Starting/Restaring timer.",  (const char *) conf->spells[p].name);
                         conf->spells[p].timer.start();   // start counting 
                         conf->spells[p].up = true;        
                         break;
@@ -597,7 +594,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                     // if some spell is up - only then we check if its down 
                     if (conf->spells[p].up && conf->spells[p].down_mes != "" && conf->spells[p].down_mes == a_line) {
                         conf->spells[p].up = false;
-                        printf("SPELL: %s is DOWN. Uptime: %s.\r\n", (const char *) conf->spells[p].name, 
+                        print_debug(DEBUG_SPELLS, "SPELL: %s is DOWN. Uptime: %s.", (const char *) conf->spells[p].name, 
                                                 qPrintable( conf->spell_up_for(p) ) );
                         break;                                    
                     }
@@ -608,7 +605,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 if (spells_print_mode && (strlen(a_line) > 3)) {
                     // we are somewhere between the lines "Affected by:" and prompt 
                     for (p = 0; p < conf->spells.size(); p++) {
-//                        printf("Spell name %s, line %s\r\n", (const char *) conf->spells[p].name, (const char*) a_line );    
+                        //printf("Spell name %s, line %s\r\n", (const char *) conf->spells[p].name, (const char*) a_line );    
                         if (a_line.indexOf(conf->spells[p].name) == 2) {
                             QString s;
                             
@@ -676,8 +673,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
         new_len += buffer[i].line.length();
     }
 
-//    printf("Done with this buffer. New length: %i\r\n", new_len);
-    print_debug(DEBUG_DISPATCHER, "Done with this buffer. New length: %i\r\n", new_len);
+    print_debug(DEBUG_DISPATCHER, "Done with this buffer. New length: %i", new_len);
     return new_len;
 }
 
@@ -696,7 +692,7 @@ int Cdispatcher::analyzeUserStream(ProxySocket &c)
     new_len = 0;
     
     print_debug(DEBUG_DISPATCHER, "abalyzeUserStream() starting");
-    print_debug(DEBUG_DISPATCHER, "Buffer size %i\r\n", c.length);
+    print_debug(DEBUG_DISPATCHER, "Buffer size %i", c.length);
 
 //    printf("---------- user input -----------\r\n");
 
@@ -739,7 +735,7 @@ int Cdispatcher::analyzeUserStream(ProxySocket &c)
         }
     }
         
-    print_debug(DEBUG_DISPATCHER, "Done proceeding user input. Resulting buffer length: %i\r\n", new_len);
+    print_debug(DEBUG_DISPATCHER, "Done proceeding user input. Resulting buffer length: %i", new_len);
     return new_len;
 }
 

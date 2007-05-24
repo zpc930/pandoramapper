@@ -16,7 +16,7 @@
 #include "utils.h"
 #include "forwarder.h"
 
-FILE *logfile;
+FILE *logfile = NULL;
 const char *exitnames[] = { "north", "east", "south", "west", "up", "down" };
 
 struct debug_data_struct debug_data[] = {
@@ -25,7 +25,7 @@ struct debug_data_struct debug_data[] = {
   {"system", "System", "general messages", DEBUG_SYSTEM, 1},
   {"config", "Config", "configuration file reader/parser messages", DEBUG_CONFIG, 0},
   {"dispatcher", "Dispatcher", "network streams Dispatcher messages",  DEBUG_DISPATCHER,  1},
-  {"proxy", "Proxy", "proxy messages", DEBUG_FORWARDER,   0},
+  {"proxy", "Proxy", "proxy messages", DEBUG_PROXY,   0},
   {"renderer", "Renderer", "OpenGL Renderer messages",DEBUG_RENDERER, 0},
   {"roommanager", "Roommanager", "roommanagers messages", DEBUG_ROOMS, 0},
   {"stacks", "Stacker", "stacks messages", DEBUG_STACKS, 0},
@@ -33,6 +33,8 @@ struct debug_data_struct debug_data[] = {
   {"userfunc", "Userfunc", "user interface messages", DEBUG_USERFUNC, 0},
   {"xml", "xml", "XML module messages",  DEBUG_XML, 0},
   {"interface", "Interface", "Qt windowing interface",  DEBUG_INTERFACE, 0},
+  {"spells", "Spells", "Spells timers messages",  DEBUG_SPELLS, 0},
+
   
   {NULL, NULL, NULL, 0, 0}
 };
@@ -68,8 +70,6 @@ double  timer_now;
 
 size_t write_to_channel(int mode, const char *format, va_list args);
 
-
-void basic_mud_vlog(const char *format, va_list args);
 size_t write_debug(unsigned int flag, const char *format, va_list args);
 
 
@@ -81,21 +81,29 @@ int MIN(int a, int b)
 
 size_t write_debug(unsigned int flag, const char *format, va_list args)
 {
-  char txt[MAX_STR_LEN*2];
-  size_t size;
-  int i;
-  
-  
-  size = vsnprintf(txt, sizeof(txt), format, args);
-  
-  for (i = 0; debug_data[i].name; i++)
-    if (IS_SET(flag, debug_data[i].flag) && debug_data[i].state) {
-      printf("%s: %s\r\n", debug_data[i].title, txt);
-      if (IS_SET(flag, DEBUG_TOUSER) )
-        send_to_user("--[ %s: %s\r\n", debug_data[i].title, txt);
-    }
-  
-  return size;
+    char txt[MAX_STR_LEN*2];
+    size_t size;
+    int i;
+    
+
+    if (logfile == NULL) {
+
+        QString filename = "logs/" + QDateTime::currentDateTime().toString("dd.MM.yyyy-hh.mm.ss") + ".txt";
+        printf("Using the LOGFILE : %s\r\n", (const char *) filename.toAscii() );
+        logfile = fopen( (const char *) filename.toAscii(), "w+");
+    }    
+    
+    size = vsnprintf(txt, sizeof(txt), format, args);
+    
+    for (i = 0; debug_data[i].name; i++)
+        if (IS_SET(flag, debug_data[i].flag) && debug_data[i].state) {
+        fprintf(logfile, "%s: %s\r\n", debug_data[i].title, txt);
+        fflush(logfile);
+        if (IS_SET(flag, DEBUG_TOUSER) )
+            send_to_user("--[ %s: %s\r\n", debug_data[i].title, txt);
+        }
+    
+    return size;
 }
 
 void print_debug(unsigned int flag, const char *messg, ...)
@@ -317,34 +325,6 @@ size_t write_to_channel(int mode, const char *format, va_list args)
   return size;
 }
 
-void basic_mud_log(const char *format, ...)
-{
-  va_list args;
-
-  va_start(args, format);
-  basic_mud_vlog(format, args);
-  va_end(args);
-}
-
-void basic_mud_vlog(const char *format, va_list args)
-{
-  time_t ct = time(0);
-  char ts[35];
-
-  if (logfile == NULL) {
-    puts("SYSERR: Using log() before stream was initialized!");
-    return;
-  }
-
-  if (format == NULL)
-    format = "SYSERR: log() received a NULL format.";
-
-  strftime(ts, 35, "%Y%m%d %H%M%S", gmtime(&ct));
-  fprintf(logfile, "%s ", ts);
-  vfprintf(logfile, format, args);
-  fputc('\n', logfile);
-  fflush(logfile);
-}
 
 // latin1 to 7-bit Ascii
 void latinToAscii(QByteArray &text) 

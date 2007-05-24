@@ -1,5 +1,4 @@
 
-
 TEMPLATE	= app
 OBJECTS_DIR	= obj
 MOC_DIR		= moc
@@ -9,10 +8,6 @@ CONFIG		-= release
 CONFIG		+= debug
 
 QT += xml opengl gui network
-
-win32 {
-	CONFIG	+= console
-}
 
 FORMS +=	configedit.ui
 FORMS +=        roomedit.ui
