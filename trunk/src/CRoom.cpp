@@ -369,14 +369,9 @@ bool CRoom::anyUndefinedExits()
     int i;
     
     for (i = 0; i <= 5; i++) 
-        if (exitFlags[i] == EXIT_UNDEFINED) {
-            i = 1000;
-            break;
-        }
-        
-    if (i == 5) 
-        return true;     /* no need to try and link this room - there are no undefined exits */
-   
+        if (exitFlags[i] == EXIT_UNDEFINED) 
+            return true;
+
     return false;
 }
 

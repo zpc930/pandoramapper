@@ -152,7 +152,6 @@ void Cdispatcher::parseXml(QByteArray tag)
     
 #define STUFFING_CLEANUP  \
             {   \
-                printf("Stuffing cleanup!\r\n"); \
                 line.append(c.subchars);  \
                 c.subchars.clear(); \
                 line.append(*s);    \
@@ -165,6 +164,9 @@ void Cdispatcher::dispatchBuffer(ProxySocket &c)
     QByteArray line;
     unsigned char *s;
     unsigned char *stop;
+
+    print_debug(DEBUG_DISPATCHER, "dispatchBuffer called");
+
   
     line.clear();
     amount = 0;
@@ -391,6 +393,9 @@ void Cdispatcher::dispatchBuffer(ProxySocket &c)
         }
         amount++;
     } 
+
+
+    print_debug(DEBUG_DISPATCHER, "Done with dispatching");
     
 /*    printf("Dispatched buffer:\r\n");
     for (int i = 0; i < amount; i++) 
@@ -404,7 +409,9 @@ QByteArray Cdispatcher::cutColours(QByteArray line)
     QByteArray res;
     int i;
     bool skip = false;
-    
+
+    print_debug(DEBUG_DISPATCHER, "Called cutColours");
+
     for (i =0; i < line.length(); i++) {
         if (line.at(i) == '|' || line.at(i) == '-' || line.at(i) == '\\' || line.at(i) == '/') 
             if ((i+1) < line.length() && line.at(i+1) == 0x8) {
@@ -428,17 +435,19 @@ QByteArray Cdispatcher::cutColours(QByteArray line)
         res.append(line.at(i));
     }
     
+    print_debug(DEBUG_DISPATCHER, "returning");
     return res;
 }
 
 #define SEND_EVENT_TO_ENGINE \
                     {   \
-                    printf("------- Sending the event! ------\r\n"); \
+                    print_debug(DEBUG_DISPATCHER, " ---- sending event ---- "); \
                     awaitingData = false;               \
                     engine->addEvent(event);                            \
                     event.clear();                  \
                     notify_analyzer();      \
                     xmlState = STATE_NORMAL;                       \
+                    print_debug(DEBUG_DISPATCHER, " ---- sent event ---- "); \
                     }
         
 
@@ -449,8 +458,8 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
     char *buf;
     
     
-//    printf("---------- mud input -----------\r\n");
-//    printf("Buffer size %i\r\n", c.length);
+    print_debug(DEBUG_DISPATCHER, "analyzerMudStream(): starting");
+    print_debug(DEBUG_DISPATCHER, "Buffer size %i\r\n", c.length);
 
     dispatchBuffer(c);
     
@@ -463,6 +472,8 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
     
         //XML messages parser 
         if (buffer[i].type == IS_XML) {
+
+            print_debug(DEBUG_DISPATCHER, "--- XML data line ---");
             
             if (buffer[i].xmlType == XML_START_MOVEMENT) {
                 if (awaitingData) 
@@ -471,7 +482,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 event.movement = true;
                 continue;
             } else if (buffer[i].xmlType == XML_START_ROOM) {
-                printf(" -------- XML_START_ROOM ------------\r\n");
+                print_debug(DEBUG_DISPATCHER, "-------- XML_START_ROOM ------------");
                 if (awaitingData) 
                     SEND_EVENT_TO_ENGINE;
                 xmlState = STATE_ROOM;                
@@ -496,7 +507,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 // nada 
                 continue;
             } else if (buffer[i].xmlType == XML_END_ROOM && xmlState == STATE_ROOM) {
-                printf(" -------- XML_END_ROOM ------------\r\n");
+                print_debug(DEBUG_DISPATCHER, "-------- XML_END_ROOM ------------");
                 awaitingData = true;
                 xmlState = STATE_NORMAL;
                 continue;
@@ -530,6 +541,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
             continue;
         }
         
+
         switch (xmlState) {
             case STATE_NAME : 
                                                 event.name.append(buffer[i].line);
@@ -567,6 +579,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 }
             }
           
+            print_debug(DEBUG_DISPATCHER, "before spells checker");
             // now do all necessary spells checks 
             {
                 unsigned int p;
@@ -651,16 +664,20 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
         }            
         
         if (buffer[i].type == IS_PROMPT) {
+            print_debug(DEBUG_DISPATCHER, "PROMPT recognized");
             spells_print_mode = false;      // 
             engine->setPrompt(buffer[i].line);
         }
         
+
+        print_debug(DEBUG_DISPATCHER, "Adding the line to the output buffer");
         // recreating this line in buffer 
         memcpy(buf + new_len, buffer[i].line, buffer[i].line.length());
         new_len += buffer[i].line.length();
     }
 
 //    printf("Done with this buffer. New length: %i\r\n", new_len);
+    print_debug(DEBUG_DISPATCHER, "Done with this buffer. New length: %i\r\n", new_len);
     return new_len;
 }
 
@@ -678,15 +695,16 @@ int Cdispatcher::analyzeUserStream(ProxySocket &c)
     buf = c.buffer;
     new_len = 0;
     
+    print_debug(DEBUG_DISPATCHER, "abalyzeUserStream() starting");
+    print_debug(DEBUG_DISPATCHER, "Buffer size %i\r\n", c.length);
 
 //    printf("---------- user input -----------\r\n");
-//    printf("Buffer size %i\r\n", c.length);
 
     dispatchBuffer(c);
 
-    printf("Proceeding user input\r\n");    
     for (i = 0; i< amount; i++) {
         if (buffer[i].type == IS_NORMAL) {
+            print_debug(DEBUG_DISPATCHER, "user input type : NORMAL");
             
             if (buffer[i].line.indexOf('\n') == -1) {
                 if (i != (amount -1)) 
@@ -703,23 +721,25 @@ int Cdispatcher::analyzeUserStream(ProxySocket &c)
             len = buffer[i].line.length();
             commandBuffer[len] = 0;
         
+            print_debug(DEBUG_DISPATCHER, "calling Userland parser");
             result = userland_parser->parse_user_input_line(commandBuffer);
             if (result == USER_PARSE_SKIP) 
                 continue;
                
             strcat(commandBuffer, "\r\n");
                
+            print_debug(DEBUG_DISPATCHER, "recreating the output buffer");
             memcpy(buf + new_len, commandBuffer, strlen(commandBuffer));
             new_len += strlen(commandBuffer);
         } else {
+            print_debug(DEBUG_DISPATCHER, "user input type : no parsing, just recreating the buffer");
             // No parsing, just put the line in buffer. recreating this line in buffer 
             memcpy(buf + new_len, buffer[i].line, buffer[i].line.length());
             new_len += buffer[i].line.length();
         }
     }
         
-//    printf("DOne proceeding user input. Resulting buffer length: %i\r\n", new_len);
-        
+    print_debug(DEBUG_DISPATCHER, "Done proceeding user input. Resulting buffer length: %i\r\n", new_len);
     return new_len;
 }
 

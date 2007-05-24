@@ -146,6 +146,8 @@ int Proxy::loop(void)
             /* user stream */
             int size;
             
+            printf("Proxy: Network activity!\r\n");
+
             size = user.read();
             if (size > 0) {
                 size = dispatcher->analyzeUserStream(user);

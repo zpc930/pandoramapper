@@ -95,8 +95,10 @@ void CEngine::tryDir()
         return;
     }
             
-    if (stacker.amount() == 0) 
+    if (stacker.amount() == 0) {
+        print_debug(DEBUG_ANALYZER, "leaving. No candidates in stack to check. This results in FULL RESYNC.");
         return;
+    }
   
     for (i = 0; i < stacker.amount(); i++) {
         room = stacker.get(i);
@@ -108,6 +110,7 @@ void CEngine::tryDir()
         
         } else {
             if (stacker.amount() == 1 && mapping)  {
+                print_debug(DEBUG_ANALYZER, "Going to add new room...");
                 mapCurrentRoom(room, dir);
                 return;
             }	
@@ -129,6 +132,9 @@ void CEngine::tryDir()
             send_to_user("--[ not exact room desc match: %i errors.\r\n", descMatch);
         }
     }
+
+    print_debug(DEBUG_ANALYZER, "leaving tryDir");
+
 }
 
 /* now try all dirs, only removes other rooms, if there is a full 100% fit for new data */
@@ -142,8 +148,10 @@ void CEngine::tryAllDirs()
 
     mappingOff();
     print_debug(DEBUG_ANALYZER, "in try_dir_all_dirs");
-    if (stacker.amount() == 0) 
+    if (stacker.amount() == 0) {
+        print_debug(DEBUG_ANALYZER, "leaving. No candidates in stack to check. This results in FULL RESYNC.");
         return;
+    }
 
     for (i = 0; i < stacker.amount(); i++) {
         room = stacker.get(i);
@@ -156,6 +164,8 @@ void CEngine::tryAllDirs()
         }
            
     }
+
+    print_debug(DEBUG_ANALYZER, "leaving try_dir_all_dirs");
 }
 
 void CEngine::tryLook()
@@ -165,9 +175,10 @@ void CEngine::tryLook()
 
     print_debug(DEBUG_ANALYZER, "in tryLook");
 
-    mappingOff();
-    if (stacker.amount() == 0) 
+    if (stacker.amount() == 0) {
+        print_debug(DEBUG_ANALYZER, "leaving. No candidates in stack to check. This results in FULL RESYNC.");
         return;
+    }
 
     for (i = 0; i < stacker.amount(); i++) {
         room = stacker.get(i);
@@ -179,22 +190,34 @@ void CEngine::tryLook()
 
 
 void CEngine::slotRunEngine()
- {
-          if (userland_parser->is_empty())
-            exec();
-          else 
-            userland_parser->parse_command();
+{
+    print_debug(DEBUG_ANALYZER, "In slotRunEngine");
+
+    if (userland_parser->is_empty()) {
+        print_debug(DEBUG_ANALYZER, "Calling the analyzer");
+        exec();
+    } else {
+        print_debug(DEBUG_ANALYZER, "Calling userland Parser.");
+        userland_parser->parse_command();
+    }
+
+    print_debug(DEBUG_ANALYZER, "leaving slotRunEngine");
 }
 
 
 void CEngine::parseEvent()
 {
+    print_debug(DEBUG_ANALYZER, "in parseEvent()");
+
+
     if (event.name != "") {
+        print_debug(DEBUG_ANALYZER, "Converting Room Name to ascii format");
         latinToAscii( event.name);
         last_name = event.name;
     }
 
     if (event.desc != "") {
+        print_debug(DEBUG_ANALYZER, "Converting Description to ascii format");
         latinToAscii( event.desc );
         last_desc = event.desc;
     }
@@ -207,12 +230,16 @@ void CEngine::parseEvent()
 
     setMgoto( false );    /* if we get a new room data incoming, mgoto has to go away */
 
+    print_debug(DEBUG_ANALYZER, "Entering the main part of the function");
+
     printf("ANALYZER Event. NAME %s\r\nDESC %s\r\nEXITS %s\r\nPROMPT %s\r\n, BLIND %i, MOVEMENT %i\r\n", 
         (const char *) event.name, (const char *) event.desc, (const char *) event.exits,
         (const char *) event.prompt, event.blind, event.movement);
 
-    if (event.name.indexOf("It is pitch black...") == 0)
+    if (event.name.indexOf("It is pitch black...") == 0) {
+        print_debug(DEBUG_ANALYZER, "NO light BLIND set");
         event.blind = true;
+    }
     if (event.name == "" && event.movement == true) {
         print_debug(DEBUG_ANALYZER, "NAME is empty and Movement is true. Assuming BLIND");
         event.blind = true;
@@ -220,6 +247,7 @@ void CEngine::parseEvent()
 
 
     if (event.name == "" && event.blind == false) {
+        print_debug(DEBUG_ANALYZER, "EMPTY name and no blind set. Assuming addedroom-data update incoming.");
         if (addedroom)
             addedroom->setTerrain(last_terrain);
         return;            
@@ -242,7 +270,7 @@ void CEngine::parseEvent()
     if (stacker.amount() == 0)
         resync();
         
-    printf("Done. Sending a renderer event.\r\n");
+    print_debug(DEBUG_ANALYZER, "Done. Sending an event to the Renderer");
     toggle_renderer_reaction();
 }
 
@@ -288,6 +316,9 @@ void CEngine::exec()
 void CEngine::updateRegions()
 {
     CRoom *r;
+
+    print_debug(DEBUG_ANALYZER, "in updateRegions");
+
     
     // update Regions info only if we are in full sync 
     if (stacker.amount() == 1) {
@@ -312,6 +343,9 @@ void CEngine::updateRegions()
         }
     
     }
+
+
+    print_debug(DEBUG_ANALYZER, "leaving updateRegions");
 }
 
 
@@ -384,6 +418,7 @@ int CEngine::checkRoomDesc()
         
     /* if we are still here, then we didnt manage to merge the room */
     /* so put addedroom->id in stack */
+    printf("------- Returning with return 0\r\n");
     stacker.put(addedroom);
     return 0;
 }
@@ -391,6 +426,9 @@ int CEngine::checkRoomDesc()
 // where from where to ... map it!
 void CEngine::mapCurrentRoom(CRoom *room, int dir)
 {
+    print_debug(DEBUG_ANALYZER, "in mapCurrentRoom");
+
+
     /* casual checks for data */
     if (event.blind) {
         send_to_user( "--[Pandora: Failed to add new room. Blind !\r\n");                
@@ -448,6 +486,8 @@ void CEngine::mapCurrentRoom(CRoom *room, int dir)
     
     if (checkRoomDesc() != 1)
         angryLinker(addedroom);
+
+    print_debug(DEBUG_ANALYZER, "leaving mapCurrentRoom");
     
     return;
 }
@@ -460,21 +500,22 @@ void CEngine::angryLinker(CRoom *r)
   CRoom *candidates[6];
   int distances[6];
   int z;
+
     
   if (!conf->get_angrylinker()) 
     return; 
 
-  print_debug(DEBUG_ROOMS, "AngryLinker is called");
+  print_debug(DEBUG_ROOMS && DEBUG_ANALYZER, "in AngryLinker");
 
-  
   if (r == NULL) {
     print_debug(DEBUG_ROOMS, "given room is NULL");
     return;
   }
   
-  if (r->anyUndefinedExits() != true)
+  if (r->anyUndefinedExits() != true) {
+    print_debug(DEBUG_ROOMS, "returning, no undefined exits in room found");
     return;     /* no need to try and link this room - there are no undefined exits */
-
+  }
 
   /* reset the data */
   for (i=0; i <= 5; i++) {
@@ -576,7 +617,9 @@ void CEngine::angryLinker(CRoom *r)
   
   }
   
+  print_debug(DEBUG_ROOMS, "candidates gathered");
     
+
   /* ok, now we have candidates for linking - lets check directions and connections*/
   for (i=0; i <= 5; i++) {
     if (r->isExitUndefined(i) && candidates[i] != NULL)
