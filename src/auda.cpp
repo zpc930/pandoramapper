@@ -7,7 +7,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QObject>
-
+#include <QSplashScreen>
 
 
 #include "defines.h"
@@ -86,7 +86,15 @@ int main(int argc, char *argv[])
     char    default_base_file[MAX_STR_LEN] = "database/mume.xml";   
     char    default_remote_host[MAX_STR_LEN] = "129.241.210.221";
 #endif
+    QApplication::setColorSpec( QApplication::CustomColor );
+    QApplication app( argc, argv );
 
+
+    QPixmap pixmap("images/logo.png");
+    QSplashScreen *splash = new QSplashScreen(pixmap);
+    splash->show();
+
+    splash->showMessage("Loading configuration and database...");
 
   
     for (i=1; i < argc; i++) {
@@ -167,6 +175,7 @@ int main(int argc, char *argv[])
 
     /* set analyzer engine defaults */
     //engine_init();
+    splash->showMessage(QString("Loading the configuration ") + configfile);
     printf("Using config file : %s.\r\n", configfile);
     conf = new Cconfigurator();
     conf->load_config(resPath, configfile);
@@ -204,9 +213,11 @@ int main(int argc, char *argv[])
 
     printf("-- Starting Pandora\n");
   
+    splash->showMessage("Starting Analyzer and Proxy...");
     engine = new CEngine();
     proxy = new Proxy();  
 
+    splash->showMessage("Loading the database, please wait...");
     printf("Loading the database ... \r\n");
     xml_readbase( conf->get_base_file() );
     printf("Successfuly loaded %i rooms!\n", Map.size());
@@ -224,9 +235,6 @@ int main(int argc, char *argv[])
 
 
     printf("Starting renderer ...\n");
-
-    QApplication::setColorSpec( QApplication::CustomColor );
-    QApplication app( argc, argv );
 
     if ( !QGLFormat::hasOpenGL() ) {
         qWarning( "This system has no OpenGL support. Exiting." );
@@ -247,6 +255,10 @@ int main(int argc, char *argv[])
 
 
     renderer_window->show();
+
+    splash->finish(renderer_window);
+    delete splash;
+
 
     proxy->init();
     proxy->start();
