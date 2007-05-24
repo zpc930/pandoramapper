@@ -1,63 +1,10 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <QQueue>
 #include <QObject>
 
 #include "CRoom.h"
-
-
-
-class Event   {
-    public:
-        Event() {}
-        Event(const Event &other) 
-        {
-            dir = other.dir;
-            name = other.name;
-            desc = other.desc;
-            exits = other.exits;
-            blind = other.blind;
-            terrain = other.terrain;
-            prompt = other.prompt;
-            movement = other.movement;
-        }
-
-        Event &operator=(const Event &other) 
-        {
-            if (this != &other) {  // make sure not same object
-                dir = other.dir;
-                name = other.name;
-                desc = other.desc;
-                exits = other.exits;
-                blind = other.blind;
-                terrain = other.terrain;
-                prompt = other.prompt;
-                movement = other.movement;
-            }
-            return *this;    // Return ref for multiple assignment            
-        }
-
-        void clear()    {
-            dir = "";
-            name = "";
-            desc = "";
-            exits = "";
-            prompt = "";
-            blind = false;
-            movement = false;
-            terrain = -1;
-        }
-
-        QByteArray dir;
-        QByteArray name;
-        QByteArray desc;
-        QByteArray exits;
-        bool       blind;         /* fog, no light, blind flag */
-        bool       movement;    
-        char       terrain;
-        QByteArray prompt;
-};
+#include "CEvent.h"
 
 class CEngine : public QObject {
 Q_OBJECT
@@ -77,8 +24,7 @@ Q_OBJECT
     QByteArray last_prompt;
     char last_terrain;
   
-    QQueue<Event> Pipe;
-
+    PipeManager  eventPipe;
     Event        event;
 
     void parseEvent();
@@ -99,7 +45,7 @@ public:
 
     CRoom *addedroom;	/* new room, contains new data is addinrroom==1 */
     
-    void addEvent(Event e);
+    void addEvent(Event e) { eventPipe.addEvent(e); }
 
     int parseCommandLine(char cause, char result, char *line);
 
@@ -126,7 +72,7 @@ public:
     
     void setMgoto(bool b) { mgoto = b; }
     bool isMgoto() { return mgoto; }
-    bool empty();                      /* are pipes empty? */
+    bool empty() { return eventPipe.isEmpty(); };                      /* are pipes empty? */
     void clear();                      /* clears events pipes */
     
     void set_users_region(CRegion *reg);

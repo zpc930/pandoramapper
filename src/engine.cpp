@@ -17,7 +17,7 @@
 #include "Map.h"
 #include "tree.h"
 #include "userfunc.h"
-
+#include "CEvent.h"
 
 class CEngine *engine;
 
@@ -248,8 +248,10 @@ void CEngine::parseEvent()
 
     if (event.name == "" && event.blind == false) {
         print_debug(DEBUG_ANALYZER, "EMPTY name and no blind set. Assuming addedroom-data update incoming.");
-        if (addedroom)
+        if (addedroom) {
             addedroom->setTerrain(last_terrain);
+            toggle_renderer_reaction();
+        }
         return;            
     }
 
@@ -299,13 +301,16 @@ void CEngine::exec()
     t.start();
     
     
-    if (Pipe.empty()) 
+    if (eventPipe.isEmpty()) 
         return;
 
     
-    event = Pipe.dequeue();
+    print_debug(DEBUG_ANALYZER, "trying to dequeue the pipe ...");
+    event = eventPipe.getEvent();
+    print_debug(DEBUG_ANALYZER, "preparing to call the event parser...");
     parseEvent();
     
+    print_debug(DEBUG_ANALYZER, "updating regions");
     updateRegions();
     
     
@@ -667,19 +672,9 @@ void CEngine::printStacks()
     stacker.printStacks();
 }
 
-void CEngine::addEvent(Event e)
-{
-    Pipe.enqueue(e); 
-}
-
-bool CEngine::empty()                      /* are pipes empty? */
-{
-    return Pipe.empty();
-}
-
 void CEngine::clear()
 {
-    Pipe.clear();
+    eventPipe.clear();
     printf("Engine INIT.\r\n");
     mapping =                0;
     mgoto             =      0;
