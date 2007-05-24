@@ -305,6 +305,8 @@ void Userland::add_command(int id, char *arg)
 {
     struct queued_command_type t;
         
+    print_debug(DEBUG_USERFUNC, "in addCommand");
+
 
     t.id = id;
     strcpy(t.arg, arg);
@@ -313,6 +315,8 @@ void Userland::add_command(int id, char *arg)
     commands_queue.push_back(t);
     queue_mutex.unlock();
     notify_analyzer();
+
+    print_debug(DEBUG_USERFUNC, "leaving addCommand");
 }
 
 
@@ -320,13 +324,17 @@ void Userland::parse_command()
 {
   struct queued_command_type t;
 
+  print_debug(DEBUG_USERFUNC, "in parseCommand");
     
+
   t = commands_queue.front();
   ((*user_commands[t.id].command_pointer) (t.id, user_commands[t.id].subcmd, t.arg, t.arg));  
 
   queue_mutex.lock();
   commands_queue.pop_front();
   queue_mutex.unlock();
+
+  print_debug(DEBUG_USERFUNC, "leaving parseCommand");
 }
 
 int Userland::parse_user_input_line(char *line)
@@ -336,6 +344,9 @@ int Userland::parse_user_input_line(char *line)
   int i;
   int result;
 //  int parse_result;
+
+  print_debug(DEBUG_USERFUNC, "in parse_user_input_line");
+
   
   p = skip_spaces(line);
 
@@ -376,8 +387,13 @@ int Userland::parse_user_input_line(char *line)
   if (proxy->isMudEmulation()) {
     send_to_user("Arglebargle...No such command\r\n");
     SEND_PROMPT;
+  
+    print_debug(DEBUG_USERFUNC, "leaving [emulation] parse_user_input_line");
     return USER_PARSE_SKIP;
   }    
+
+
+  print_debug(DEBUG_USERFUNC, "leaving parse_user_input_line");
   
   return USER_PARSE_NONE;
 }

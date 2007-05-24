@@ -568,7 +568,7 @@ void MainWindow::update_status_bar()
 
   stacker.getCurrent(str);
   emit newLocationLabel(str);
-  print_debug(DEBUG_INTERFACE, "Done!\r\n");
+  print_debug(DEBUG_INTERFACE, "Done updating interface!\r\n");
 }
 
 
