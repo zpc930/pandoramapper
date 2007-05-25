@@ -91,6 +91,10 @@ size_t write_debug(unsigned int flag, const char *format, va_list args)
         QString filename = "logs/" + QDateTime::currentDateTime().toString("dd.MM.yyyy-hh.mm.ss") + ".txt";
         printf("Using the LOGFILE : %s\r\n", (const char *) filename.toAscii() );
         logfile = fopen( (const char *) filename.toAscii(), "w+");
+        if (!logfile) {
+            perror ("Error opening logfile for writing");
+            return -1;
+        }
     }    
     
     size = vsnprintf(txt, sizeof(txt), format, args);
