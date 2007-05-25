@@ -524,7 +524,21 @@ MainWindow::MainWindow(QWidget *parent)
   optionsMenu->addAction(saveConfigAct);
 //  optionsMenu->addAction(saveConfigAsAct);
   optionsMenu->addAction(loadConfigAct);
-    
+
+
+  /* Help menu. */
+  aboutAct = new QAction(tr("&About"), this);
+  aboutAct->setStatusTip(tr("Show the application's About box"));
+  connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
+
+  aboutQtAct = new QAction(tr("About &Qt"), this);
+  aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
+  connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
+  helpMenu = menuBar()->addMenu(tr("&Help"));
+  helpMenu->addAction(aboutAct);
+  helpMenu->addAction(aboutQtAct);
+
 
   /* status bar magicz */
   locationLabel = new QLabel("NO_SYNC"); 
@@ -847,5 +861,17 @@ void MainWindow::edit_room(unsigned int id)
     edit_dialog->show();
     edit_dialog->raise();
     edit_dialog->activateWindow();
+}
+
+void MainWindow::about()
+{
+    QMessageBox::about(this, tr("About Pandora"),
+            tr("<h2>Pandora MUME Mapper</h2>"
+               "<p>Copyright &copy; 2003-2007 Azazello and contributors."
+               "<p>This is an automatic mapper and database software for "
+               "a game named MUME. It uses MUME's XML for parsing the "
+               "output of the game to get user's position on the map and "
+               "represents it in 3d view using OpenGL."
+               "<p>Visit <a href=\"http://code.google.com/p/pandoramapper/\">code.google.com/p/pandoramapper/</a> for more information."));
 }
 

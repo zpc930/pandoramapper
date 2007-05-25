@@ -55,6 +55,10 @@ class MainWindow : public QMainWindow
   QAction       *loadConfigAct;
   QAction       *setupGeneralAct;
   QAction       *spellsAct;
+
+    QMenu       *helpMenu;
+  QAction       *aboutQtAct;
+  QAction       *aboutAct;
   
   QAction       *emulationAct;
   
@@ -112,6 +116,7 @@ private slots:
   void edit_current_room();
   void publish_map();
   void spellsSettings();
+  void about();
 
   void mousePressEvent( QMouseEvent *);
   void mouseReleaseEvent( QMouseEvent *);
