@@ -296,9 +296,8 @@ void CActionManager::open()
     
   if (!s.isEmpty()) { 
     usercmd_mload(0, 0,  data, data);  
+    QMessageBox::information(parent, "Pandora", "Loaded!\n", QMessageBox::Ok);
   }  
-  QMessageBox::information(parent, "Pandora", "Loaded!\n", QMessageBox::Ok);
-
 }
 
 void CActionManager::reload()
@@ -371,9 +370,8 @@ void CActionManager::saveAs()
     
   if (!s.isEmpty()) { 
     usercmd_msave(0, 0,  data, data);  
+    QMessageBox::information(parent, "Saving...", "Saved!\n", QMessageBox::Ok);
   }  
-  
-  QMessageBox::information(parent, "Saving...", "Saved!\n", QMessageBox::Ok);
 }
 
 
