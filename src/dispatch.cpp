@@ -32,6 +32,7 @@ Cdispatcher::Cdispatcher()
     xmlState = STATE_NORMAL;
     mbrief_state = STATE_NORMAL;
     awaitingData = false;
+    scouting = false;
     event.clear();
 }
 
@@ -457,6 +458,8 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
     int new_len;
     char *buf;
     
+
+    printf("SCOUTING FLAG : %i\r\n", scouting);
     
     print_debug(DEBUG_DISPATCHER, "analyzerMudStream(): starting");
     print_debug(DEBUG_DISPATCHER, "Buffer size %i", c.length);
@@ -527,6 +530,11 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
                 SEND_EVENT_TO_ENGINE;
                 continue;
             } else if (buffer[i].xmlType == XML_END_PROMPT) {
+                if (scouting) {
+                    event.scout = true;
+                    scouting = false;
+                    print_debug(DEBUG_DISPATCHER, "prompt, dropping the scouting flag");
+                }
                 event.prompt = cutColours(event.prompt);
                 engine->setPrompt(event.prompt);
                 event.terrain = parseTerrain(event.prompt);
@@ -560,18 +568,24 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
         // mbrief additional check (for look/scout and similar) 
         if (mbrief_state == STATE_DESC && conf->get_brief_mode()) 
             continue;
-        
+
         if (buffer[i].type == IS_NORMAL && buffer[i].line.indexOf("\r\n") != -1) {
-            QByteArray a_line = cutColours( buffer[i].line );          
+            QByteArray a_line = cutColours( buffer[i].line );    
+
+            // check for scouting       
+            if (a_line.startsWith("You quietly scout ") == true) {
+                scouting = true;
+                print_debug(DEBUG_DISPATCHER, "scouting detected, setting scouting flag up");
+            }
           
             if (!c.isXmlMode()) {
                 if (a_line == "Reconnecting." || a_line =="Never forget! Try to role-play..." || a_line == "<xml>") {
-                    printf( "XML MODE IS NOW ON!\r\n");
+                    print_debug(DEBUG_DISPATCHER, "XML MODE IS ON!");
                     c.setXmlMode( true );
                 }
             } else {
                 if (a_line == "</xml>") {
-                    printf( "XML MODE IS NOW OFF!\r\n");
+                    print_debug(DEBUG_DISPATCHER, "XML MODE IS OFF!");
                     c.setXmlMode( false );
                 }
             }
@@ -631,6 +645,7 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
             
             }
           
+
             if (conf->spells_pattern == a_line) {
                 unsigned int spell;
                 QByteArray message = "Timers:";

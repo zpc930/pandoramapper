@@ -24,8 +24,9 @@ class Cdispatcher
     
     int       xmlState;          /* desc shall be incoming - just got roomname */
     int       mbrief_state;
-    bool     awaitingData;
-    Event  event;
+    bool      awaitingData;
+    bool      scouting;
+    Event     event;
 
     enum dispatcherStates { STATE_NORMAL = 0, 
                                                STATE_ROOM, 

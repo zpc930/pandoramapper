@@ -232,9 +232,15 @@ void CEngine::parseEvent()
 
     print_debug(DEBUG_ANALYZER, "Entering the main part of the function");
 
-    print_debug(DEBUG_ANALYZER, "ANALYZER Event. \r\nNAME %s\r\nDESC %s\r\nEXITS %s\r\nPROMPT %s\r\n, BLIND %i, MOVEMENT %i", 
+    print_debug(DEBUG_ANALYZER, "ANALYZER Event. \r\nNAME %s\r\nDESC %s\r\nEXITS %s\r\nPROMPT %s\r\n, BLIND %i, MOVEMENT %i SCOUT %i", 
         (const char *) event.name, (const char *) event.desc, (const char *) event.exits,
-        (const char *) event.prompt, event.blind, event.movement);
+        (const char *) event.prompt, event.blind, event.movement, event.scout);
+
+    if (event.scout) {
+        print_debug(DEBUG_ANALYZER, "SCOUT flag is set. Dropping event");
+        return;
+    }
+
 
     if (event.name.indexOf("It is pitch black...") == 0) {
         print_debug(DEBUG_ANALYZER, "NO light BLIND set");

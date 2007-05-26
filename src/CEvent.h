@@ -14,6 +14,7 @@ class Event   {
             desc = other.desc;
             exits = other.exits;
             blind = other.blind;
+            scout = other.scout;
             terrain = other.terrain;
             prompt = other.prompt;
             movement = other.movement;
@@ -27,6 +28,7 @@ class Event   {
                 desc = other.desc;
                 exits = other.exits;
                 blind = other.blind;
+                scout = other.scout;
                 terrain = other.terrain;
                 prompt = other.prompt;
                 movement = other.movement;
@@ -40,6 +42,7 @@ class Event   {
             desc = "";
             exits = "";
             prompt = "";
+            scout = false;
             blind = false;
             movement = false;
             terrain = -1;
@@ -50,6 +53,7 @@ class Event   {
         QByteArray desc;
         QByteArray exits;
         bool       blind;         /* fog, no light, blind flag */
+        bool       scout;
         bool       movement;    
         char       terrain;
         QByteArray prompt;
