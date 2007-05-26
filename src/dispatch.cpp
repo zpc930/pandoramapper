@@ -459,8 +459,6 @@ int Cdispatcher::analyzeMudStream(ProxySocket &c)
     char *buf;
     
 
-    printf("SCOUTING FLAG : %i\r\n", scouting);
-    
     print_debug(DEBUG_DISPATCHER, "analyzerMudStream(): starting");
     print_debug(DEBUG_DISPATCHER, "Buffer size %i", c.length);
 

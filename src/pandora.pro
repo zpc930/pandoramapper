@@ -36,6 +36,7 @@ HEADERS		+=Frustum.h
 HEADERS		+=CSquare.h
 HEADERS		+=CSelectionManager.h
 HEADERS         +=CEvent.h
+HEADERS         +=CActionManager.h
 
 
 
@@ -61,6 +62,7 @@ SOURCES		+=SpellsDialog.cpp
 SOURCES		+=Frustum.cpp
 SOURCES         +=CSquare.cpp
 SOURCES         +=CSelectionManager.cpp
+SOURCES         +=CActionManager.cpp
 
 TARGET		= ../pandora
 

@@ -30,7 +30,7 @@ GLfloat marker_colour[4] =  {1.0, 0.1, 0.1, 0.9};
 
 
 #define MARKER_SIZE           (ROOM_SIZE/2.0)
-#define PICK_TOL              20  
+#define PICK_TOL              25  
 
 class MainWindow *renderer_window;
 

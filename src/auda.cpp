@@ -26,6 +26,7 @@
 #include "utils.h"
 #include "engine.h"
 
+
 #ifdef Q_OS_MACX
 #include <CoreFoundation/CoreFoundation.h>
 #endif
@@ -89,7 +90,6 @@ int main(int argc, char *argv[])
 #endif
     QApplication::setColorSpec( QApplication::CustomColor );
     QApplication app( argc, argv );
-
 
     QPixmap pixmap("images/logo.png");
     QSplashScreen *splash = new QSplashScreen(pixmap);
@@ -241,9 +241,10 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if (conf->get_window_rect().x() == 0) {
+    QRect rect = app.desktop()->screenGeometry(-1);
+    if (conf->get_window_rect().x() == 0 || conf->get_window_rect().x() >= rect.width() || 
+        conf->get_window_rect().y() >= rect.height() ) {
         print_debug(DEBUG_SYSTEM && DEBUG_INTERFACE, "Autosettings for window size and position");
-        QRect rect = app.desktop()->screenGeometry(-1);
         int x, y, height, width;
 
         x = rect.width() / 3 * 2;
@@ -252,7 +253,6 @@ int main(int argc, char *argv[])
         width = rect.width() - x;
 
         conf->set_window_rect( x, y, width, height);        
-
     }
 
     renderer_window = new MainWindow( 0 );
