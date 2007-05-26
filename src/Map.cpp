@@ -249,6 +249,8 @@ void roommanager::smallDeleteRoom(CRoom *r)
     }
     removeFromPlane(r);
     stacker.removeRoom(r->id);
+    selections.unselect(r->id);
+
     
     vector<CRoom *>::iterator i;
     ids[ r->id ] = NULL;

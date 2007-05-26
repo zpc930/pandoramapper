@@ -39,6 +39,8 @@ class MainWindow : public QMainWindow
 
  
     QPoint mousePosInRenderer( QPoint pos );
+    bool checkMouseSelection( QMouseEvent *e ); 
+
 
 
 public:
@@ -57,17 +59,18 @@ public:
     void editRoomDialog(unsigned int id);
 
 
+private slots:
+  void mousePressEvent( QMouseEvent *);
+  void mouseReleaseEvent( QMouseEvent *e);
+  void mouseMoveEvent( QMouseEvent *);
+  void wheelEvent(QWheelEvent *);
+  void keyPressEvent( QKeyEvent * );
 
 public slots:
   void hide_menu();
   void hide_status();
   void hide();                              /* hide all extra widgets */
 
-  void mousePressEvent( QMouseEvent *);
-  void mouseReleaseEvent( QMouseEvent *e);
-  void mouseMoveEvent( QMouseEvent *);
-  void wheelEvent(QWheelEvent *);
-  void keyPressEvent( QKeyEvent * );
 
 signals:
   void newLocationLabel(const QString &label);

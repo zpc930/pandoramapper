@@ -24,6 +24,7 @@ public:
     int size() {return selection.size(); }
     void exclusiveSelection(unsigned int id); 
 
+    QList<int>  getList() { return selection.toList(); }
     bool isEmpty() { return selection.empty(); }
 };
 
