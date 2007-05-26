@@ -80,9 +80,8 @@ void MainWindow::open()
     
   if (!s.isEmpty()) { 
     usercmd_mload(0, 0,  data, data);  
+    QMessageBox::information(this, "Pandora", "Loaded!\n", QMessageBox::Ok);
   }  
-  QMessageBox::information(this, "Pandora", "Loaded!\n", QMessageBox::Ok);
-
 }
 
 void MainWindow::reload()
