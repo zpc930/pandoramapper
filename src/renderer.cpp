@@ -38,12 +38,19 @@ RendererWidget::RendererWidget( QWidget *parent )
      : QGLWidget( parent )
 {
 
-  angley = 0;
-  anglex = 0;
-  anglez = 0;
-  userx = 0;
-  usery = 0;
-  userz = BASE_Z;		/* additional shift added by user */
+  print_debug(DEBUG_RENDERER , "in renderer constructor");
+
+  anglex = conf->get_renderer_angle_x();
+  angley = conf->get_renderer_angle_y();
+  anglez = conf->get_renderer_angle_z();
+  userx = (GLfloat) conf->get_renderer_position_x();
+  usery = (GLfloat) conf->get_renderer_position_y();
+    
+  userz = (GLfloat) conf->get_renderer_position_z();	/* additional shift added by user */
+
+  if (userz == 0)
+    userz = BASE_Z;
+
   curx = 0;
   cury = 0;
   curz = 0;			/* current rooms position */

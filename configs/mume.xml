@@ -7,6 +7,9 @@
   <engineflags briefmode="ON" automerge="ON"  angrylinker="ON">
   <regionsflags displayinrenderer="OFF" showinfo="ON">
   <guisettings always_on_top="ON">
+  <window x="796" y="103" height="341" width="428">
+  <rendererangles anglex="-1.000000" angley="3.000000" anglez="0.000000">
+  <rendererpositions userx="0.000000" usery="0.000000" userz="-14.000000">
   <refresh auto="ON" roomnamequote="10" descquote="10">
   <texture handle="INDOORS" file="images/indoors.png" pattern="[">
   <texture handle="CITY" file="images/city.png" pattern="#">
@@ -43,11 +46,12 @@
   <debug name="config"  state="ON">
   <debug name="dispatcher"  state="ON">
   <debug name="proxy"  state="ON">
-  <debug name="renderer"  state="OFF">
-  <debug name="roommanager"  state="OFF">
+  <debug name="renderer"  state="ON">
+  <debug name="roommanager"  state="ON">
   <debug name="stacks"  state="OFF">
   <debug name="tree"  state="OFF">
   <debug name="userfunc"  state="OFF">
-  <debug name="xml"  state="OFF">
-  <debug name="interface"  state="OFF">
+  <debug name="xml"  state="ON">
+  <debug name="interface"  state="ON">
+  <debug name="spells"  state="ON">
 </config>

@@ -83,6 +83,13 @@ class Cconfigurator {
     
     void reset_current_config();
     
+    // user window size/posiiton
+    QRect userWindowRect;
+
+    // renderer user defined angle's and shift
+    float anglex, angley, anglez;
+    float userx, usery, userz;    
+    
     
 public:
 
@@ -177,7 +184,27 @@ public:
     
     bool get_show_notes_renderer() { return show_notes_renderer; }
 
+    // App Window size
+    void set_window_rect(QRect rect) { userWindowRect = rect; set_conf_mod(true);  } 
+    void set_window_rect(int x, int y, int width, int height) 
+        { userWindowRect.setRect(x, y, width, height); set_conf_mod(true);  } 
+    QRect get_window_rect() {return userWindowRect; }
     
+    // renderer settings
+    void set_renderer_angles(float x, float y, float z) 
+       { anglex = x; angley = y; anglez = z; set_conf_mod(true);  } 
+    void set_renderer_position(float x, float y, float z) 
+       { userx = x; usery = y; userz = z; set_conf_mod(true);  } 
+    float get_renderer_angle_x() {return anglex;}   // this is ONLY what was read from CONFIG
+    float get_renderer_angle_y() {return angley;}
+    float get_renderer_angle_z() {return anglez;}
+
+    float get_renderer_position_x() {return userx; }
+    float get_renderer_position_y() {return usery; }
+    float get_renderer_position_z() {return userz; }
+
+
+
     int get_desc_quote() { return desc_quote; }
     int get_name_quote() { return name_quote; }
 };

@@ -686,7 +686,8 @@ USERCMD(usercmd_mdelete)
     Map.deleteRoom(r, 1);
   
   stacker.swap();
-  
+
+  toggle_renderer_reaction();
   
   
   send_to_user("--[ Removed.\r\n");

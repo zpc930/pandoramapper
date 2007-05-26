@@ -8,7 +8,8 @@
 #include <QMutex>
 #include <QObject>
 #include <QSplashScreen>
-
+#include <QRect>
+#include <QDesktopWidget>
 
 #include "defines.h"
 #include "CRoom.h"
@@ -238,6 +239,20 @@ int main(int argc, char *argv[])
     if ( !QGLFormat::hasOpenGL() ) {
         qWarning( "This system has no OpenGL support. Exiting." );
         return -1;
+    }
+
+    if (conf->get_window_rect().x() == 0) {
+        print_debug(DEBUG_SYSTEM && DEBUG_INTERFACE, "Autosettings for window size and position");
+        QRect rect = app.desktop()->screenGeometry(-1);
+        int x, y, height, width;
+
+        x = rect.width() / 3 * 2;
+        y = 0;
+        height = rect.height() / 3;
+        width = rect.width() - x;
+
+        conf->set_window_rect( x, y, width, height);        
+
     }
 
     renderer_window = new MainWindow( 0 );
