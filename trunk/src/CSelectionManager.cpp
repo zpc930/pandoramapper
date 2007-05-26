@@ -21,12 +21,14 @@ void CSelectionManager::select(unsigned int id)
 void CSelectionManager::unselect(unsigned int id)
 {
     selection.remove(id);
+    toggle_renderer_reaction();
 }
 
 
 void CSelectionManager::resetSelection()
 {
     selection.clear();
+    toggle_renderer_reaction();
 }
 
 CSelectionManager::CSelectionManager() 
@@ -48,8 +50,6 @@ void CSelectionManager::exclusiveSelection(unsigned int id)
         resetSelection();
         select(id);
     }   
-
-
 }
 
 

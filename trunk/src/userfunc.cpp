@@ -280,7 +280,7 @@ const struct user_command_type user_commands[] = {
     "     mdebug                        display current config and available options\r\n"
     "     mdebug analyzer on            allow analyzers debug messages\r\n\r\n"
     "   Configure your debug messages.\r\n"},
-  {"mdelete",               usercmd_mdelete,        0,       USERCMD_FLAG_SYNC | USERCMD_FLAG_REDRAW,
+  {"mdelete",               usercmd_mdelete,        0,       USERCMD_FLAG_REDRAW,
     "Delete current room.",
     "    Usage: mdelete [remove]\r\n"
     "   Deletes current room. Option remove forces exits and doors removal in other rooms.\r\n"},
@@ -675,6 +675,7 @@ USERCMD(usercmd_mdelete)
     if (Map.selections.isEmpty() == false) {
         r = Map.getRoom( Map.selections.getFirst() );
     } else {
+        CHECK_SYNC;
         r = stacker.first();
     }
     

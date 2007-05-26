@@ -323,33 +323,43 @@ QPoint MainWindow::mousePosInRenderer( QPoint pos ) {
     return inFramePos;
 }
 
-
-
-void MainWindow::mouseReleaseEvent( QMouseEvent *e)
+bool MainWindow::checkMouseSelection( QMouseEvent *e ) 
 {
     unsigned int id;
-    bool selectionAction = false;
 
-    if (mouseState.delta(e->pos()) <= 100) {
-        if (renderer->doSelect( mousePosInRenderer(e->pos()), id ) == true) {
-            if (e->modifiers().testFlag( Qt::ControlModifier ) == true ) 
+    if (mouseState.delta( e->pos() ) <= 100) {
+        if (renderer->doSelect( mousePosInRenderer( e->pos() ), id ) == true) {
+            if (e->modifiers().testFlag( Qt::ControlModifier ) == true ) {
+                if (Map.selections.isSelected( id ) == true) 
+                    printf("The room already WAS selected!\r\n");
+
                 if (Map.selections.isSelected( id) == true)
                     Map.selections.unselect( id );
                 else 
                     Map.selections.select( id );
-            else 
+            } else 
                 Map.selections.exclusiveSelection( id );
             
-            selectionAction = true; // only for right click atm ?
+            return true;
         }
     } 
 
+    return false;
+}
+
+void MainWindow::mouseReleaseEvent( QMouseEvent *e)
+{
+
+
     if (e->button() == Qt::LeftButton) {
         mouseState.LeftButtonPressed = false;
+        if (checkMouseSelection(e) == true) {
+            print_debug(DEBUG_INTERFACE, "Registred object selection with left mouse.");
+        }
     } else {
         mouseState.RightButtonPressed = false;
-
-        if (selectionAction) {
+        if (checkMouseSelection(e) == true) {
+            print_debug(DEBUG_INTERFACE, "Registred object selection with RIGHT mouse.");
             // Fall menu for selection
             QMenu menu(this);
             menu.addAction(actionManager->gotoAct);

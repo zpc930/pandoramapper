@@ -247,12 +247,34 @@ void CActionManager::enable_online_actions()
 
 void CActionManager::delete_room()
 {
-    userland_parser->parse_user_input_line("mdelete");
+    if (Map.selections.size() > 1) {
+        int ret = QMessageBox::warning(parent, tr("Pandora: Room's Deletion"),
+                   tr("Do you really want to delete this room/rooms?"),
+                   QMessageBox::Ok |  QMessageBox::Cancel,
+                   QMessageBox::Ok);
+
+
+        if (ret == QMessageBox::Cancel) 
+            return;
+    }
+//    while (Map.selections.isEmpty() != true)
+        userland_parser->parse_user_input_line("mdelete");
 }
 
 void CActionManager::deleteFully()
 {
-    userland_parser->parse_user_input_line("mdelete remove");
+    int ret = QMessageBox::warning(parent, tr("Pandora: Room's Deletion"),
+                   tr("Do you really want to delete this room/rooms?\n"
+                       "Note that this deletion will also remove all\n"
+                        "exits and doors leading to this room from all\n"
+                        "other rooms"),
+                   QMessageBox::Ok |  QMessageBox::Cancel,
+                   QMessageBox::Ok);
+
+    if (ret == QMessageBox::Cancel) 
+        return;
+//    while (Map.selections.isEmpty() == false)
+        userland_parser->parse_user_input_line("mdelete remove");
 }
 
 
