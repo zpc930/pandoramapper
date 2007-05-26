@@ -71,24 +71,6 @@ void roommanager::fixFreeRooms()
     exit(1);
 }
 
-/* ------------ fixfree ENDS -------- */
-
-
-/* ------------ getroom ------------- */
-CRoom *roommanager::getRoom(unsigned int id)
-{
-  return ids[id];
-}
-
-/* ----------- getroom ENDS --------- */
-
-QByteArray roommanager::getName(unsigned int id) 
-{     
-    if (ids[id])
-        return (*(ids[id])).getName();
-    return "";
-}
-
 /* ------------ addroom --------------*/
 void roommanager::addRoomNonsorted(CRoom *room)
 {

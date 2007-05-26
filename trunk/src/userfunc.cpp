@@ -655,44 +655,48 @@ USERCMD(usercmd_maction)
 
 USERCMD(usercmd_mdelete)
 {
-  char *p;
-  char arg[MAX_STR_LEN];
-  CRoom *r;
-  int remove;
+    char *p;
+    char arg[MAX_STR_LEN];
+    CRoom *r;
+    int remove;
+        
     
-
-  userfunc_print_debug;
-  
-  remove = 0;
-  p = skip_spaces(line);
-  if (*p) {
-    p = one_argument(p, arg, 0);
-    if (is_abbrev(arg, "remove"))
-      remove = 1;
+    userfunc_print_debug;
     
-  } 
-  
-  r = stacker.first();
-
-  if (r->id == 1) {
-      send_to_user("Sorry, you can not delete the base (first, id == 1) room!\r\n");
-      SEND_PROMPT;
-      return USER_PARSE_SKIP;
-  }
-
-  if (remove) 
-    Map.deleteRoom(r, 0);
-  else 
-    Map.deleteRoom(r, 1);
-  
-  stacker.swap();
-
-  toggle_renderer_reaction();
-  
-  
-  send_to_user("--[ Removed.\r\n");
-  SEND_PROMPT;
-  return USER_PARSE_SKIP;
+    remove = 0;
+    p = skip_spaces(line);
+    if (*p) {
+        p = one_argument(p, arg, 0);
+        if (is_abbrev(arg, "remove"))
+        remove = 1;
+        
+    } 
+    
+    if (Map.selections.isEmpty() == false) {
+        r = Map.getRoom( Map.selections.getFirst() );
+    } else {
+        r = stacker.first();
+    }
+    
+    if (r->id == 1) {
+        send_to_user("--[ Sorry, you can not delete the base (first, id == 1) room!\r\n");
+        SEND_PROMPT;
+        return USER_PARSE_SKIP;
+    }
+    
+    if (remove) 
+        Map.deleteRoom(r, 0);
+    else 
+        Map.deleteRoom(r, 1);
+    
+    stacker.swap();
+    
+    toggle_renderer_reaction();
+    
+    
+    send_to_user("--[ Removed.\r\n");
+    SEND_PROMPT;
+    return USER_PARSE_SKIP;
 }
 
 
@@ -747,49 +751,52 @@ USERCMD(usercmd_mrefresh)
 
 USERCMD(usercmd_mgoto)
 {
-  char *p;
-  char arg[MAX_STR_LEN];
-  unsigned int id;
-  CRoom *r;
-  int dir;
+    char *p;
+    char arg[MAX_STR_LEN];
+    unsigned int id;
+    CRoom *r;
+    int dir;
+    
+    userfunc_print_debug;
   
-  userfunc_print_debug;
-  
-  p = skip_spaces(line);
-  if (!*p) MISSING_ARGUMENTS
 
-  p = one_argument(p, arg, 0);
-  if (is_integer(arg)) {
-    id = atoi(arg);
-    if (Map.getRoom(id) == NULL) {
-      send_to_user("--[ There is no room with id %s.\r\n", arg);
-      SEND_PROMPT;
-      return USER_PARSE_SKIP;
-    }
-      
+    if (Map.selections.isEmpty() == false) {
+        stacker.put(Map.selections.getFirst());
+    } else {
+        p = skip_spaces(line);
+        if (!*p) MISSING_ARGUMENTS
+        
+        p = one_argument(p, arg, 0);
+        if (is_integer(arg)) {
+            id = atoi(arg);
+            if (Map.getRoom(id) == NULL) {
+            send_to_user("--[ There is no room with id %s.\r\n", arg);
+            SEND_PROMPT;
+            return USER_PARSE_SKIP;
+            }
+            
+            stacker.put(Map.getRoom(id));
+        } else {
+            
+            CHECK_SYNC;
+            r = stacker.first();
+            
+            PARSE_DIR_ARGUMENT(dir, arg);
+        
+            if ( r->isConnected(dir) == false ) {
+            send_to_user("--[ Bad direction - there is no connection.\r\n", arg);
+            SEND_PROMPT;
+            return USER_PARSE_SKIP;
+            }
+        
+            stacker.put(r->exits[dir]->id);
+        }
+    }    
+    
     engine->setMgoto(true);  /* ignore prompt while we are in mgoto mode */
-    stacker.put(Map.getRoom(id));
     stacker.swap();
-  } else {
-    
-    CHECK_SYNC;
-    r = stacker.first();
-    
-    PARSE_DIR_ARGUMENT(dir, arg);
-
-    if ( r->isConnected(dir) == false ) {
-      send_to_user("--[ Bad direction - there is no connection.\r\n", arg);
-      SEND_PROMPT;
-      return USER_PARSE_SKIP;
-    }
-
-    engine->setMgoto(true);  /* ignore prompt while we are in mgoto mode */
-    stacker.put(r->exits[dir]->id);
-    stacker.swap();
-  }
-    
-  SEND_PROMPT;
-  return USER_PARSE_SKIP;
+    SEND_PROMPT;
+    return USER_PARSE_SKIP;
 }
 
 
