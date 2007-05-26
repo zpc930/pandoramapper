@@ -3,6 +3,7 @@
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QFileDialog>
+#include <QDesktopWidget>
 
 #include "mainwindow.h"
 #include "utils.h"
@@ -346,10 +347,13 @@ MainWindow::MainWindow(QWidget *parent)
 {
   userland_parser = new Userland();
 
+  print_debug(DEBUG_INTERFACE, "in mainwindow constructor");
+
   setWindowTitle("Pandora");
   renderer =  new RendererWidget( this );
   setCentralWidget( renderer );
-  resize(640, 480);
+
+  setGeometry( conf->get_window_rect() );
 
   connect(proxy, SIGNAL(connectionEstablished()), this, SLOT(enable_online_actions()), Qt::AutoConnection );
   connect(proxy, SIGNAL(connectionLost()), this, SLOT(disable_online_actions()), Qt::AutoConnection );

@@ -10,6 +10,7 @@
 #include "defines.h"
 #include "CRoom.h"
 #include "Map.h"
+#include "mainwindow.h"
 
 #include "configurator.h"
 #include "utils.h"
@@ -21,6 +22,8 @@ class Cconfigurator *conf;
 Cconfigurator::Cconfigurator()
 {
     /* here we set the default configuration */
+
+    print_debug(DEBUG_CONFIG, "in configurator constructor");
     
     /* data */
     base_file = "";
@@ -30,6 +33,14 @@ Cconfigurator::Cconfigurator()
     db_modified = false;
     set_conf_mod(false);
     
+    userWindowRect.setRect(0, 0, 0, 0);  // means autodetect
+    anglex = 0;
+    angley = 0;
+    anglez = 0;
+    userx = 0;
+    usery = 0;
+    userz = 0;
+
     set_autorefresh(true);          /* default values */ 
     set_automerge(true);
     set_angrylinker(true);
@@ -454,6 +465,24 @@ int Cconfigurator::save_config_as(QByteArray path, QByteArray filename)
   fprintf(f, "  <guisettings always_on_top=\"%s\">\r\n", 
                   ON_OFF(get_always_on_top()) );
 
+  QRect window = renderer_window->geometry(); 
+  fprintf(f, "  <window x=\"%i\" y=\"%i\" height=\"%i\" width=\"%i\">\r\n",
+            window.x(), window.y(), window.height(), window.width() );                 
+
+
+  anglex = renderer_window->renderer->anglex;
+  angley = renderer_window->renderer->angley;
+  anglez = renderer_window->renderer->anglez;
+  fprintf(f, "  <rendererangles anglex=\"%f\" angley=\"%f\" anglez=\"%f\">\r\n", 
+                anglex, angley, anglez); 
+
+  userx = renderer_window->renderer->userx;
+  usery = renderer_window->renderer->usery;
+  userz = renderer_window->renderer->userz;
+  fprintf(f, "  <rendererpositions userx=\"%f\" usery=\"%f\" userz=\"%f\">\r\n",
+        userx, usery, userz);
+
+
   fprintf(f, "  <refresh auto=\"%s\" roomnamequote=\"%i\" descquote=\"%i\">\r\n",
                   ON_OFF( get_autorefresh() ), get_name_quote(), get_desc_quote() );
   
@@ -786,8 +815,50 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         
 //        printf("Debug option %s is now %s.\r\n", debug_data[i].name, ON_OFF(debug_data[i].state) );
         return TRUE;
-    } 
-    
+    } else if (qName == "window") {
+        int x = 0;
+        int y = 0;
+        int height = 0;
+        int width = 0;
+
+        x = attributes.value("x").toInt();
+        y = attributes.value("y").toInt();
+        height = attributes.value("height").toInt();
+        width = attributes.value("width").toInt();
+
+        conf->set_window_rect(x, y, width, height);
+        print_debug(DEBUG_CONFIG, "Loaded window settins: x %i, y %i, height %i, width %i",
+                        x, y, height, width);
+                        
+        return TRUE;
+    } else if (qName == "rendererangles") {
+        float x = 0;
+        float y = 0;
+        float z = 0;
+
+        x = attributes.value("anglex").toFloat();
+        y = attributes.value("angley").toFloat();
+        z = attributes.value("anglez").toFloat();
+        
+        conf->set_renderer_angles(x,y,z);
+            
+        print_debug(DEBUG_CONFIG, "Loaded renderer angles : x %f, y %f, z %f",x, y, z);
+        return TRUE;
+    } else if (qName == "rendererpositions") {
+        float x = 0;
+        float y = 0;
+        float z = 0;
+
+        x = attributes.value("userx").toFloat();
+        y = attributes.value("usery").toFloat();
+        z = attributes.value("userz").toFloat();
+        
+        conf->set_renderer_position(x,y,z);
+            
+        print_debug(DEBUG_CONFIG, "Loaded renderer shift : x %f, y %f, z %f",x, y, z);
+        return TRUE;
+    }
+
   return TRUE;
 }
 
