@@ -148,7 +148,7 @@ void MainWindow::saveAs()
   
   QString s = QFileDialog::getSaveFileName(
                     this,
-                    "Choose a filename to save under",
+                    "Save Map",
                     "database/",
                     "XML database files (*.xml)");
                     
@@ -156,10 +156,8 @@ void MainWindow::saveAs()
     
   if (!s.isEmpty()) { 
     usercmd_msave(0, 0,  data, data);  
+    QMessageBox::information(this, "Saving...", "Saved!\n", QMessageBox::Ok);
   }  
-  
-  QMessageBox::information(this, "Saving...", "Saved!\n", QMessageBox::Ok);
-
 }
 
 
