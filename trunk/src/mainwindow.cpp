@@ -329,7 +329,7 @@ bool MainWindow::checkMouseSelection( QMouseEvent *e )
 
     if (mouseState.delta( e->pos() ) <= 100) {
         if (renderer->doSelect( mousePosInRenderer( e->pos() ), id ) == true) {
-            if (e->modifiers().testFlag( Qt::ControlModifier ) == true ) {
+            if (e->modifiers() & Qt::ControlModifier) {
                 if (Map.selections.isSelected( id ) == true) 
                     printf("The room already WAS selected!\r\n");
 
