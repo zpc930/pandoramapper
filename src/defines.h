@@ -28,6 +28,7 @@
 
 /* global flags */
 extern int glredraw;		/* redraw is needed */
+extern QString *logFileName;
 
 void toggle_renderer_reaction();
 void notify_analyzer();

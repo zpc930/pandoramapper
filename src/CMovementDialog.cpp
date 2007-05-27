@@ -10,7 +10,7 @@
 CMovementDialog::CMovementDialog(QWidget *parent) : QDialog(parent)
 {
     setupUi(this);                        
-    setWindowTitle(tr("General Settings"));
+    setWindowTitle(tr("Room's Movement Dialog"));
 
 }
 
