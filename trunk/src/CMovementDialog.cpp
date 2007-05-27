@@ -1,5 +1,6 @@
 
 #include <QMessageBox>
+#include <QIntValidator>
 
 #include "configurator.h"
 #include "CMovementDialog.h"
@@ -11,7 +12,9 @@ CMovementDialog::CMovementDialog(QWidget *parent) : QDialog(parent)
 {
     setupUi(this);                        
     setWindowTitle(tr("Room's Movement Dialog"));
-
+    lineEdit_x->setValidator(new QIntValidator(this));
+    lineEdit_y->setValidator(new QIntValidator(this));
+    lineEdit_z->setValidator(new QIntValidator(this));
 }
 
 void CMovementDialog::run()
