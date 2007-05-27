@@ -71,6 +71,10 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     mergeAct->setStatusTip(tr("Tries to merge two twin rooms"));
     connect(mergeAct, SIGNAL(triggered()), this, SLOT(merge_room()));    
     
+    moveRoomAct= new QAction(tr("Move"), this);
+    moveRoomAct->setStatusTip(tr("Moves the room or rooms by given shift"));
+    connect(moveRoomAct, SIGNAL(triggered()), parent, SLOT(moveRoomDialog()));    
+
     /* Mapping menu */
     
     mappingAct= new QAction(tr("Mapping"), this);

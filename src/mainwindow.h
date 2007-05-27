@@ -13,6 +13,7 @@
 #include "RoomEditDialog.h"
 #include "ConfigWidget.h"
 #include "SpellsDialog.h"
+#include "CMovementDialog.h"
 #include "renderer.h"
 
 #include "CActionManager.h"
@@ -50,6 +51,7 @@ public:
     ConfigWidget      *generalSettingsDialog;
     RoomEditDialog    *edit_dialog;
     SpellsDialog      *spells_dialog;
+    CMovementDialog   *movementDialog;
 
     QAction       *hide_status_action;
     QAction       *hide_menu_action;
@@ -71,6 +73,7 @@ public slots:
   void hide_status();
   void hide();                              /* hide all extra widgets */
 
+  void moveRoomDialog();
 
 signals:
   void newLocationLabel(const QString &label);
