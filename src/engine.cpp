@@ -470,8 +470,11 @@ void CEngine::mapCurrentRoom(CRoom *room, int dir)
     addedroom->setRegion( users_region );
     
     room->setExit(dir, addedroom);
-    addedroom->setExit(reversenum(dir), room);
-    
+    if (conf->get_duallinker() == true) 
+        addedroom->setExit(reversenum(dir), room);
+    else 
+        Map.oneway_room_id = room->id;    
+
     setExits(event.exits);
     do_exits((const char *) event.exits);
     
@@ -668,11 +671,11 @@ void CEngine::printStacks()
     sprintf(line,
 	    "Conf: Mapping %s, AutoChecks [Desc %s, Exits %s, Terrain %s],\r\n"
             "      AutoRefresh settings %s (RName/Desc quotes %i/%i), \r\n"
-            "      AngryLinker %s\r\n", 
+            "      AngryLinker %s DualLinker %s\r\n", 
             ON_OFF(mapping), ON_OFF(conf->get_automerge()), 
             ON_OFF(conf->get_exits_check() ), ON_OFF(conf->get_terrain_check() ),
             ON_OFF(conf->get_autorefresh() ), conf->get_name_quote(), conf->get_desc_quote(),
-            ON_OFF(conf->get_angrylinker() )             );
+            ON_OFF(conf->get_angrylinker() ),ON_OFF(conf->get_duallinker() )              );
     
     send_to_user(line);
     stacker.printStacks();

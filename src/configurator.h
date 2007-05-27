@@ -38,7 +38,9 @@ typedef struct {
     bool        up;             /* is this spell currently up ? */
 } TSpell;
 
-class Cconfigurator {
+class Cconfigurator : public QObject {
+    Q_OBJECT
+
     /* general */
     bool        conf_mod;       /* if the config was modified */
     QByteArray  config_file;
@@ -60,6 +62,8 @@ class Cconfigurator {
     bool autorefresh;             /* automatic room desc refresh */
     bool automerge;               /* automatic twins merging based on roomdesc */
     bool angrylinker;             /* automatic linking based on coordinates */
+    bool duallinker;              /* auto-link to the room you came from */
+
     bool exits_check;             /* apply exits check to stacks */
     bool terrain_check;           /* apply terrain check to stacks */
     bool brief_mode;
@@ -136,7 +140,7 @@ public:
     void set_remote_host(QByteArray str);
     void set_remote_port(int i);
     void set_local_port(int i);
-    void set_conf_mod(bool b) { conf_mod = b; }
+    void set_conf_mod(bool b) { conf_mod = b; emit configurationChanged(); }
 
     void set_config_file(QByteArray p, QByteArray f) { config_file = f; config_path = p; }
 
@@ -203,10 +207,15 @@ public:
     float get_renderer_position_y() {return usery; }
     float get_renderer_position_z() {return userz; }
 
+    void set_duallinker(bool b);
+    bool get_duallinker();
 
 
     int get_desc_quote() { return desc_quote; }
     int get_name_quote() { return name_quote; }
+
+signals:
+    void configurationChanged();
 };
 
 extern class Cconfigurator *conf;

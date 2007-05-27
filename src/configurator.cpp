@@ -285,6 +285,18 @@ void Cconfigurator::set_automerge(bool b)
     set_conf_mod(true);
 }
 
+void Cconfigurator::set_duallinker(bool b)  
+{ 
+    duallinker = b; 
+    set_conf_mod(true); 
+}
+
+bool Cconfigurator::get_duallinker() 
+{ 
+    return duallinker; 
+}
+
+
 void Cconfigurator::set_angrylinker(bool b)
 {
     angrylinker = b;
@@ -449,12 +461,13 @@ int Cconfigurator::save_config_as(QByteArray path, QByteArray filename)
   fprintf(f, "  <GLvisibility textures=\"%i\" details=\"%i\" shownotes=\"%s\">\r\n", 
                   get_texture_vis(),  get_details_vis(), ON_OFF(get_show_notes_renderer()) );
   
-  fprintf(f, "  <analyzers desc=\"%s\" exits=\"%s\"  terrain=\"%s\">\r\n", 
-                  "ON", ON_OFF(get_exits_check() ), ON_OFF(get_terrain_check() ) );
+  fprintf(f, "  <analyzers exits=\"%s\"  terrain=\"%s\">\r\n", 
+                  ON_OFF(get_exits_check() ), ON_OFF(get_terrain_check() ) );
 
-  fprintf(f, "  <engineflags briefmode=\"%s\" automerge=\"%s\"  angrylinker=\"%s\">\r\n", 
+  fprintf(f, "  <engineflags briefmode=\"%s\" automerge=\"%s\"  angrylinker=\"%s\" duallinker=\"%s\">\r\n", 
                   ON_OFF(get_brief_mode()), 
-                  ON_OFF(get_automerge() ), ON_OFF( get_angrylinker()) );
+                  ON_OFF(get_automerge() ), ON_OFF( get_angrylinker()), 
+                  ON_OFF(get_duallinker() ) );
                   
               
   fprintf(f, "  <regionsflags displayinrenderer=\"%s\" showinfo=\"%s\">\r\n", 
@@ -617,7 +630,7 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         
         return TRUE;
     } else if (qName == "analyzers") {
-        if (attributes.length() < 3) {
+        if (attributes.length() < 2) {
             print_debug(DEBUG_CONFIG, "(analyzers token) Not enough attributes in XML file!");
             exit(1);
         }        
@@ -710,9 +723,18 @@ bool ConfigParser::startElement( const QString& , const QString& ,
         else 
             conf->set_angrylinker(false);
 
+        s = attributes.value("duallinker");
+        s = s.toLower();
+        if (s == "on") 
+            conf->set_duallinker(true);
+        else 
+            conf->set_duallinker(false);
+
+
+
         print_debug(DEBUG_CONFIG, "Engine flags: briefmode %s, automerge %s, angrylinker %s.",
                ON_OFF(conf->get_brief_mode()), ON_OFF(conf->get_automerge()), 
-                ON_OFF(conf->get_angrylinker()) );
+                ON_OFF(conf->get_angrylinker()), ON_OFF(conf->get_duallinker()) );
         
         return TRUE;
     } else if (qName == "refresh") {

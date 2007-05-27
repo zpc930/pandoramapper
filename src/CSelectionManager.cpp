@@ -16,12 +16,14 @@ void CSelectionManager::select(unsigned int id)
         print_debug(DEBUG_INTERFACE, "selecting %i", id);
     }
     toggle_renderer_reaction();
+    renderer_window->update_status_bar();
 }
 
 void CSelectionManager::unselect(unsigned int id)
 {
     selection.remove(id);
     toggle_renderer_reaction();
+    renderer_window->update_status_bar();
 }
 
 
@@ -29,6 +31,7 @@ void CSelectionManager::resetSelection()
 {
     selection.clear();
     toggle_renderer_reaction();
+    renderer_window->update_status_bar();
 }
 
 CSelectionManager::CSelectionManager() 
