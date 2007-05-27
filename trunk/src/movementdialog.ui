@@ -5,92 +5,118 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>324</width>
-    <height>200</height>
+    <width>374</width>
+    <height>240</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Dialog</string>
   </property>
+  <widget class="QDialogButtonBox" name="buttonBox" >
+   <property name="geometry" >
+    <rect>
+     <x>11</x>
+     <y>208</y>
+     <width>359</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="orientation" >
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons" >
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="Line" name="line" >
+   <property name="geometry" >
+    <rect>
+     <x>11</x>
+     <y>92</y>
+     <width>359</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="orientation" >
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4" >
+   <property name="geometry" >
+    <rect>
+     <x>11</x>
+     <y>21</y>
+     <width>359</width>
+     <height>65</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>How far do you want to move this room/each room?</string>
+   </property>
+  </widget>
   <widget class="QWidget" name="" >
    <property name="geometry" >
     <rect>
-     <x>10</x>
-     <y>20</y>
-     <width>315</width>
-     <height>174</height>
+     <x>12</x>
+     <y>102</y>
+     <width>231</width>
+     <height>29</height>
     </rect>
    </property>
-   <layout class="QGridLayout" >
-    <item row="0" column="0" >
-     <widget class="QLabel" name="label_4" >
+   <layout class="QHBoxLayout" >
+    <item>
+     <widget class="QLabel" name="label" >
       <property name="text" >
-       <string>How far do you want to move this room/each room?</string>
+       <string>X Shift</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0" >
-     <widget class="Line" name="line" >
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
+    <item>
+     <widget class="QLineEdit" name="lineEdit_x" />
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="" >
+   <property name="geometry" >
+    <rect>
+     <x>12</x>
+     <y>137</y>
+     <width>231</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" >
+    <item>
+     <widget class="QLabel" name="label_2" >
+      <property name="text" >
+       <string>Y Shift</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="0" >
-     <layout class="QVBoxLayout" >
-      <item>
-       <layout class="QHBoxLayout" >
-        <item>
-         <widget class="QLabel" name="label" >
-          <property name="text" >
-           <string>X Shift</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit_x" />
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <item>
-         <widget class="QLabel" name="label_2" >
-          <property name="text" >
-           <string>Y Shift</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit_y" />
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <item>
-         <widget class="QLabel" name="label_3" >
-          <property name="text" >
-           <string>Z Shift</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit_z" />
-        </item>
-       </layout>
-      </item>
-     </layout>
+    <item>
+     <widget class="QLineEdit" name="lineEdit_y" />
     </item>
-    <item row="3" column="0" >
-     <widget class="QDialogButtonBox" name="buttonBox" >
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="standardButtons" >
-       <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="" >
+   <property name="geometry" >
+    <rect>
+     <x>12</x>
+     <y>172</y>
+     <width>231</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" >
+    <item>
+     <widget class="QLabel" name="label_3" >
+      <property name="text" >
+       <string>Z Shift</string>
       </property>
      </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="lineEdit_z" />
     </item>
    </layout>
   </widget>

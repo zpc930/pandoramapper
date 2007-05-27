@@ -39,6 +39,7 @@ class RendererWidget : public QGLWidget
     void renderPickupObjects();  
     void renderPickupRoom(CRoom *p);
 
+
     // this sets curx, cury, curz based on hrm internal rules
     void setupNewBaseCoordinates();
 public:
@@ -48,8 +49,9 @@ public:
     float         userx;
     float         usery;
     float         userz;		/* additional shift added by user */
+    int           userLayerShift;       // this affect curz.
     
-    int           current_plane_z;        /* to avoid arguments usage */
+    int           current_plane_z;        
     GLuint        basic_gllist;
     
         
@@ -65,6 +67,7 @@ public:
     void initializeGL();
     void resizeGL( int width, int height );
     void paintGL();
+    void changeUserLayerShift(int byValue) { userLayerShift += byValue; curz += byValue; }
     
     bool doSelect(QPoint pos, unsigned int &id);
     

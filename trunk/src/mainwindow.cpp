@@ -305,13 +305,24 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
           glredraw = 1;
           break;
         
+        case Qt::Key_Plus:
+          renderer->changeUserLayerShift( +1 );
+          glredraw = 1;
+          break;
+
+        case Qt::Key_Minus:
+          renderer->changeUserLayerShift( -1 );
+          glredraw = 1;
+          break;
+        
          case Qt::Key_Escape:           
             renderer->angley = 0;
             renderer->anglex = 0;
             renderer->anglez = 0;
             renderer->userx = 0;
             renderer->usery = 0;
-            renderer->userz = BASE_Z;		
+            renderer->userz = BASE_Z;	
+            renderer->userLayerShift = 0;
             glredraw = 1;
             break;				
 
