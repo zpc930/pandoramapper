@@ -28,6 +28,7 @@ public:
     QAction       *roomeditAct;
     QAction       *deleteAct;
     QAction       *mergeAct;
+    QAction       *moveRoomAct;
 
     QAction       *always_on_top_action;
     QAction       *saveConfigAct;
@@ -45,41 +46,40 @@ public:
     QAction       *emulationAct;
 
 public slots:
-  void disable_online_actions();
-  void enable_online_actions();
-  void updateActionsSettings();
-
-
-  void always_on_top(bool);
-  void newFile();
-  void open();
-  void reload();
-  void quit();
-  void save();
-  void saveAs();
-
-  void mapping_mode();
-  void automerge();
-  void angrylinker();
-  void duallinker();
-
-  void delete_room(); 
-  void merge_room(); 
-
-
-  void saveConfig();
-  void saveAsConfig();
-  void loadConfig();
-
-  void generalSetting();
-  void spellsSettings();
-  void edit_current_room();
-
-  void emulation_mode();  
-  void publish_map();
-  void about();
-  void gotoAction();
-  void deleteFully(); // delete with remove flag
+    void disable_online_actions();
+    void enable_online_actions();
+    void updateActionsSettings();
+    
+    
+    void always_on_top(bool);
+    void newFile();
+    void open();
+    void reload();
+    void quit();
+    void save();
+    void saveAs();
+    
+    void mapping_mode();
+    void automerge();
+    void angrylinker();
+    void duallinker();
+    
+    void delete_room(); 
+    void merge_room(); 
+    
+    void saveConfig();
+    void saveAsConfig();
+    void loadConfig();
+    
+    void generalSetting();
+    void spellsSettings();
+    void edit_current_room();
+    
+    void emulation_mode();  
+    void publish_map();
+    void about();
+    void gotoAction();
+    void deleteFully(); // delete with remove flag
 };
 
 

@@ -12,6 +12,7 @@ QT += xml opengl gui network
 FORMS +=	configedit.ui
 FORMS +=        roomedit.ui
 FORMS +=	spellsdialog.ui
+FORMS +=	movementdialog.ui
 
 HEADERS		+=configurator.h
 HEADERS		+=CRoom.h
@@ -37,6 +38,7 @@ HEADERS		+=CSquare.h
 HEADERS		+=CSelectionManager.h
 HEADERS         +=CEvent.h
 HEADERS         +=CActionManager.h
+HEADERS         +=CMovementDialog.h
 
 
 
@@ -63,6 +65,7 @@ SOURCES		+=Frustum.cpp
 SOURCES         +=CSquare.cpp
 SOURCES         +=CSelectionManager.cpp
 SOURCES         +=CActionManager.cpp
+SOURCES         +=CMovementDialog.cpp
 
 TARGET		= ../pandora
 
