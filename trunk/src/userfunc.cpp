@@ -668,6 +668,7 @@ USERCMD(usercmd_mdelete)
     char arg[MAX_STR_LEN];
     CRoom *r;
     int remove;
+    QList<int> ids;
         
     
     userfunc_print_debug;
@@ -682,22 +683,32 @@ USERCMD(usercmd_mdelete)
     } 
     
     if (Map.selections.isEmpty() == false) {
-        r = Map.getRoom( Map.selections.getFirst() );
+        //r = Map.getRoom( Map.selections.getFirst() );
+        ids = Map.selections.getList();
+
     } else {
         CHECK_SYNC;
         r = stacker.first();
+        ids.append(r->id);
     }
     
-    if (r->id == 1) {
-        send_to_user("--[ Sorry, you can not delete the base (id == 1) room!\r\n");
-        SEND_PROMPT;
-        return USER_PARSE_SKIP;
+
+    for (int i = 0; i < ids.size(); ++i) {
+        r = Map.getRoom( ids.at(i) );
+        if ( r == NULL )
+            continue;
+        if (r->id == 1) {
+            send_to_user("--[ Sorry, you can not delete the base (id == 1) room!\r\n");
+            SEND_PROMPT;
+            return USER_PARSE_SKIP;
+        }
+
+        if (remove) 
+            Map.deleteRoom(r, 0);
+        else 
+            Map.deleteRoom(r, 1);
     }
     
-    if (remove) 
-        Map.deleteRoom(r, 0);
-    else 
-        Map.deleteRoom(r, 1);
     
     stacker.swap();
     
