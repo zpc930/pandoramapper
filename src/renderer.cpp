@@ -603,6 +603,7 @@ void RendererWidget::setupNewBaseCoordinates()
 
 
 
+
 void RendererWidget::draw(void)
 {
     CPlane *plane;  

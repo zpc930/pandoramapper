@@ -797,6 +797,7 @@ USERCMD(usercmd_mgoto)
             }
             
             stacker.put(Map.getRoom(id));
+
         } else {
             
             CHECK_SYNC;
@@ -813,6 +814,11 @@ USERCMD(usercmd_mgoto)
             stacker.put(r->exits[dir]->id);
         }
     }    
+
+    renderer_window->renderer->userx = 0;
+    renderer_window->renderer->usery = 0;
+//    renderer_window->renderer->userz = 0;
+
     
     engine->setMgoto(true);  /* ignore prompt while we are in mgoto mode */
     stacker.swap();
