@@ -55,6 +55,8 @@ RendererWidget::RendererWidget( QWidget *parent )
   cury = 0;
   curz = 0;			/* current rooms position */
   
+  userLayerShift = 0;
+
   last_drawn_marker = 0;
   last_drawn_trail = 0;
 
@@ -586,7 +588,7 @@ void RendererWidget::setupNewBaseCoordinates()
         p = stacker.get(i);
         newX = curx - p->getX();
         newY = cury - p->getY();
-        newZ = curz - p->getZ();
+        newZ = curz - p->getZ() + userLayerShift;
         dist = newX * newX + newY * newY + newZ * newZ; 
         if (dist < bestDistance) {
             bestDistance = dist;
@@ -596,7 +598,7 @@ void RendererWidget::setupNewBaseCoordinates()
 
     curx = newRoom->getX();
     cury = newRoom->getY();
-    curz = newRoom->getZ();
+    curz = newRoom->getZ() + userLayerShift;
 }
 
 
