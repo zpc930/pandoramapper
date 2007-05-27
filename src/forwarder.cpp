@@ -45,6 +45,7 @@
 #include "engine.h"
 #include "forwarder.h"
 #include "utils.h"
+#include "stacks.h"
 
 class Proxy       *proxy;
 
@@ -209,8 +210,12 @@ void Proxy::sendMudEmulationGreeting()
     CRoom *r;
     
     user.send_line( "Welcome to Pandora MUD Emulation!\r\n\r\n" );
-    
-    r = Map.getRoom( 1 );
+
+    if (stacker.amount() == 0) 
+        r = Map.getRoom( 1 );
+    else
+        r = stacker.first();
+
     r->sendRoom();
     
     user.send_line( "-->" );

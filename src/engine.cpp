@@ -694,7 +694,7 @@ void CEngine::clear()
     last_exits.clear();
     last_terrain = 0;
     last_prompt.clear();
-    last_prompt = "- mapper nosync prompt ->";
+    last_prompt = "-->";
     
     set_users_region(Map.getRegionByName("default"));
     set_last_region(Map.getRegionByName("default"));
