@@ -148,9 +148,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::moveRoomDialog()
 {
-    QList<int> ids;
-    CRoom *r;
-
     print_debug(DEBUG_INTERFACE, "move room dialog action called");
 
     // check if there is an objective for this operation
@@ -170,40 +167,6 @@ void MainWindow::moveRoomDialog()
     movementDialog->raise();
     movementDialog->activateWindow();
 
-    // now proceed if needed to the actuall operation
-    if (movementDialog->result() == QDialog::Accepted) {
-        print_debug(DEBUG_INTERFACE, "movement dialog accepted");
-        printf("movement dialog accepted\r\n");
-        if (movementDialog->x != 0 || movementDialog->y != 0 || movementDialog->z != 0) {
-            print_debug(DEBUG_INTERFACE, "moving rooms by shift : x %i, y %i, z %i", 
-                movementDialog->x, movementDialog->y, movementDialog->z);
-    
-            printf("moving rooms by shift : x %i, y %i, z %i\r\n", 
-                movementDialog->x, movementDialog->y, movementDialog->z);
-            
-            // collect the room for the movement            
-            if (Map.selections.isEmpty() == false) {
-                ids = Map.selections.getList();
-            } else {
-                if (stacker.amount() != 1) {
-                    QMessageBox::critical(this, "Movement Dialog", QString("You are not in sync!"));
-                    return;
-                } 
-                ids.append(stacker.first()->id);
-            }
-
-            for (int i = 0; i < ids.size(); ++i) {
-                r = Map.getRoom( ids.at(i) );
-                r->setX( r->getX() + movementDialog->x);
-                r->setY( r->getY() + movementDialog->y);
-                if (movementDialog->z != 0) 
-                    r->setZ( r->getZ() + movementDialog->z);
-            }
-            toggle_renderer_reaction();
-
-
-        }
-    }
 }
 
 
