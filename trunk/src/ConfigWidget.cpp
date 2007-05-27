@@ -11,7 +11,6 @@ ConfigWidget::ConfigWidget (QWidget *parent) : QDialog(parent)
     setWindowTitle(tr("General Settings"));
     
     connect(checkBox_autorefresh, SIGNAL(toggled(bool)), this, SLOT(autorefreshUpdated(bool)) );
-    connect(checkBox_promptIAC, SIGNAL(toggled(bool)), this, SLOT(promptIACclicked(bool)) );
 }
 
 
@@ -51,6 +50,12 @@ void ConfigWidget::run()
     else
         checkBox_angrylinker->setChecked(false);
 
+    if (conf->get_duallinker()) 
+        checkBox_duallinker->setChecked(true);
+    else
+        checkBox_duallinker->setChecked(false);
+
+
     if (conf->get_show_notes_renderer()) 
         checkShowNotes->setChecked(true);    
     else 
@@ -66,26 +71,6 @@ void ConfigWidget::run()
     else 
         checkShowSecrets->setChecked(false);    
 
-
-    if (conf->get_exits_check()) 
-        checkBox_exits->setChecked(true);
-    else
-        checkBox_exits->setChecked(false);
-
-    if (conf->get_terrain_check()) 
-        checkBox_terrain->setChecked(true);
-    else
-        checkBox_terrain->setChecked(false);
-
-/*    checkBox_promptIAC->setChecked( conf->is_prompt_IAC() );
-    checkBox_forwardIAC->setChecked( conf->is_forward_IAC() );
-    promptIACclicked( conf->is_prompt_IAC() );
-    checkBox_forwardPromptColour->setChecked( conf->is_forwardPromptColour() );
-*/
-    checkBox_promptIAC->setEnabled( false );
-    checkBox_forwardIAC->setEnabled( false );
-    checkBox_forwardPromptColour->setEnabled( false );     
-        
     lineEdit_visrange->setText(QString("%1").arg(conf->get_texture_vis()) );
     lineEdit_detrange->setText(QString("%1").arg(conf->get_details_vis()) );
 }
@@ -98,15 +83,6 @@ void ConfigWidget::autorefreshUpdated(bool state)
     } else {
         spinBox_namequote->setEnabled(false);
         spinBox_descquote->setEnabled(false);
-    }
-}
-
-void ConfigWidget::promptIACclicked(bool state)
-{
-    if (state) {
-        checkBox_forwardIAC->setEnabled(true);
-    } else {
-        checkBox_forwardIAC->setEnabled(false);
     }
 }
 
@@ -154,16 +130,11 @@ void ConfigWidget::accept()
     
     if (conf->get_angrylinker() != checkBox_angrylinker->isChecked() )
         conf->set_angrylinker(checkBox_angrylinker->isChecked() );
+
+    if (conf->get_duallinker() != checkBox_duallinker->isChecked() )
+        conf->set_duallinker(checkBox_duallinker->isChecked() );
+
  
-    if (conf->get_exits_check() != checkBox_exits->isChecked() ) 
-        conf->set_exits_check(checkBox_exits->isChecked() );
-    if (conf->get_exits_check() != checkBox_exits->isChecked() ) 
-        conf->set_exits_check(checkBox_exits->isChecked() );
-        
-    if (conf->get_terrain_check() != checkBox_terrain->isChecked() )
-        conf->set_terrain_check( checkBox_terrain->isChecked() );
-        
-        
     if (conf->get_show_regions_info() != checkShowSecrets->isChecked() )
         conf->set_show_regions_info( checkShowSecrets->isChecked() );
         
@@ -174,9 +145,6 @@ void ConfigWidget::accept()
     if (conf->get_display_regions_renderer() != checkShowRegions->isChecked() )
         conf->set_display_regions_renderer( checkShowRegions->isChecked() );
         
-    if (conf->get_terrain_check() != checkBox_terrain->isChecked() )
-        conf->set_terrain_check( checkBox_terrain->isChecked() );
-    
     i = lineEdit_visrange->text().toInt();
     if (i == 0) {
             QMessageBox::critical(this, "Cofiguration",

@@ -23,17 +23,27 @@ class roommanager Map;
 /*------------ merge_rooms ------------------------- */
 int roommanager::tryMergeRooms(CRoom *r, CRoom *copy, int j)
 {
-  int i;
+  unsigned int i;
   CRoom *p;
 
   if (j == -1) {
     /* oneway ?! */
     print_debug(DEBUG_ROOMS, "fixing one way in previous room, repointing at merged room");
     
-    p = getRoom(oneway_room_id);
-    for (i = 0; i <= 5; i++)
-        if (p->isExitLeadingTo(i, copy) == true) 
-            p->setExit(i, r);
+     p = getRoom(oneway_room_id);
+     for (i = 0; i <= 5; i++)
+         if (p->isExitLeadingTo(i, copy) == true) 
+             p->setExit(i, r);
+     
+/*    for (i = 0; i < rooms.size(); i++) 
+	for (k = 0; k <= 5; k++)
+	    if (rooms[i]->isExitLeadingTo(k, r) == true) {
+                if (mode == 0) {
+                    rooms[i]->removeExit(k);
+                } else if (mode == 1) {
+                    rooms[i]->setExitUndefined(k);
+                }
+	    }*/
     
     smallDeleteRoom(copy);
 
@@ -264,6 +274,7 @@ void roommanager::smallDeleteRoom(CRoom *r)
     
     delete r;    
     fixFreeRooms();
+    toggle_renderer_reaction();
 }
 /* --------- small_delete_room ENDS --------- */
 

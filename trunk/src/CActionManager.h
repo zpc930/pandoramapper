@@ -23,6 +23,7 @@ public:
     QAction       *mappingAct;
     QAction       *automergeAct;
     QAction       *angryLinkerAct;
+    QAction       *duallinkerAct;
 
     QAction       *roomeditAct;
     QAction       *deleteAct;
@@ -46,6 +47,8 @@ public:
 public slots:
   void disable_online_actions();
   void enable_online_actions();
+  void updateActionsSettings();
+
 
   void always_on_top(bool);
   void newFile();
@@ -58,6 +61,7 @@ public slots:
   void mapping_mode();
   void automerge();
   void angrylinker();
+  void duallinker();
 
   void delete_room(); 
   void merge_room(); 

@@ -150,6 +150,9 @@ void  RoomEditDialog::changedExitsFlag(int dir, int index)
 {
     set_door_context(dir);  
       
+    if (flags->currentIndex() == index)
+        return;
+
     if (index == ROOMFLAG_NONE) {
         leads->setEnabled(true);
         leads->setText("??ID??");

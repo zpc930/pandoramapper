@@ -37,6 +37,7 @@ class Userland *userland_parser;
 
 #define USER_CONF_AUTOMERGE   8
 #define USER_CONF_ANGRYLINKER 9
+#define USER_CONF_DUALLINKER  10
 
 
 #define SEND_PROMPT \
@@ -129,6 +130,14 @@ const struct user_command_type user_commands[] = {
    "    AngryLinker attempts to link the surrounding rooms based on its coordinates\r\n"
    "Be VERY careful using this - you can easily get mistakenly linked rooms.\r\n"
    "Though this is a very helpful option for 10x10 zones.\r\n"},
+  {"mduallinker",   usercmd_config,   USER_CONF_DUALLINKER,     0,   
+    "Turn the DualLinker on/off.",
+   "    Usage: mduallinker [boolean]\r\n"
+   "    Examples: mduallinker / mduallinker on / mduallinker true\r\n\r\n"
+   "    DualLinker simply makes every mapped connection dual. IF you turn it off every\r\n"
+   "new mapped connection will be a one-way connection\r\n"
+   "It's very helpful to have it ON for all normal exits. Turn it off only when mapping\r\n"
+   "randoms and generally strange areas\r\n"},
   {"mcheckterrain",   usercmd_config,   USER_CONF_TERRAIN,     0,   
     "Turn terrain analyzer on/off.",
    "    Usage: mcheckterrain [boolean]\r\n"
@@ -680,7 +689,7 @@ USERCMD(usercmd_mdelete)
     }
     
     if (r->id == 1) {
-        send_to_user("--[ Sorry, you can not delete the base (first, id == 1) room!\r\n");
+        send_to_user("--[ Sorry, you can not delete the base (id == 1) room!\r\n");
         SEND_PROMPT;
         return USER_PARSE_SKIP;
     }
@@ -1262,6 +1271,16 @@ USERCMD(usercmd_config)
                 
                 send_to_user("----[ AngryLinker is now %s.\r\n", 
                               ON_OFF(conf->get_angrylinker()) );
+		break;
+
+	case  USER_CONF_DUALLINKER:
+                if (desired == -1)
+                  conf->set_duallinker( !conf->get_duallinker());
+                else 
+                  conf->set_duallinker(desired);
+                
+                send_to_user("----[ DualLinker is now %s.\r\n", 
+                              ON_OFF(conf->get_duallinker()) );
 		break;
 
         case  USER_CONF_EXITS:

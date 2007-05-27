@@ -52,8 +52,8 @@ MainWindow::MainWindow(QWidget *parent)
     
     setGeometry( conf->get_window_rect() );
     
-    connect(proxy, SIGNAL(connectionEstablished()), this, SLOT(enable_online_actions()), Qt::AutoConnection );
-    connect(proxy, SIGNAL(connectionLost()), this, SLOT(disable_online_actions()), Qt::AutoConnection );
+    connect(proxy, SIGNAL(connectionEstablished()), actionManager, SLOT(enable_online_actions()), Qt::QueuedConnection );
+    connect(proxy, SIGNAL(connectionLost()), actionManager, SLOT(disable_online_actions()), Qt::QueuedConnection );
 
 
 
@@ -81,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent)
     mappingMenu->addAction(actionManager->mappingAct);
     mappingMenu->addAction(actionManager->automergeAct);
     mappingMenu->addAction(actionManager->angryLinkerAct);
+    mappingMenu->addAction(actionManager->duallinkerAct);
 
     hide_status_action = new QAction(tr("Hide Status Bar"), this);
     hide_status_action->setShortcut(tr("F11"));
@@ -137,6 +138,9 @@ MainWindow::MainWindow(QWidget *parent)
             modLabel, SLOT(setText(const QString &)));
     
     actionManager->disable_online_actions();
+    connect(conf, SIGNAL(configurationChanged()),
+            actionManager, SLOT(updateActionsSettings() ), Qt::QueuedConnection);
+    
 }
 
 
@@ -192,19 +196,26 @@ void MainWindow::hide_menu()
 
 void MainWindow::update_status_bar()
 {
-  char str[20];
-  
-  print_debug(DEBUG_INTERFACE, "Updating status bar\r\n");
+    char str[20];
+        
+    
+    print_debug(DEBUG_INTERFACE, "Updating status bar\r\n");
 
-  if (conf->get_data_mod() )
-    emit newModLabel("Data: MOD ");     
-  else 
-    emit newModLabel("Data: --- ");
-  
+    QString modLabel;
+    QString firstPart;
+    
+    if (conf->get_data_mod() )
+        firstPart = "Data: MOD ";
+    else 
+        firstPart = "Data: --- ";
 
-  stacker.getCurrent(str);
-  emit newLocationLabel(str);
-  print_debug(DEBUG_INTERFACE, "Done updating interface!\r\n");
+    modLabel = QString("Rooms Selected %1 ").arg( Map.selections.size() );   
+
+    emit newModLabel(modLabel + firstPart);     
+    
+    stacker.getCurrent(str);
+    emit newLocationLabel(str);
+    print_debug(DEBUG_INTERFACE, "Done updating interface!\r\n");
 }
 
 void MainWindow::keyPressEvent( QKeyEvent *k )

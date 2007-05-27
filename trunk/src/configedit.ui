@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>ConfigDialog</class>
  <widget class="QDialog" name="ConfigDialog" >
   <property name="geometry" >
@@ -37,11 +34,20 @@
     </rect>
    </property>
    <layout class="QHBoxLayout" >
-    <property name="margin" >
-     <number>0</number>
-    </property>
     <property name="spacing" >
      <number>6</number>
+    </property>
+    <property name="leftMargin" >
+     <number>0</number>
+    </property>
+    <property name="topMargin" >
+     <number>0</number>
+    </property>
+    <property name="rightMargin" >
+     <number>0</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>0</number>
     </property>
     <item>
      <spacer>
@@ -82,7 +88,7 @@
     </rect>
    </property>
    <property name="currentIndex" >
-    <number>4</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab" >
     <attribute name="title" >
@@ -94,23 +100,41 @@
        <x>10</x>
        <y>10</y>
        <width>251</width>
-       <height>95</height>
+       <height>101</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>6</number>
       </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
         </property>
         <item>
          <widget class="QLabel" name="label" >
@@ -122,9 +146,7 @@
         <item>
          <widget class="QLineEdit" name="lineEdit_localport" >
           <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>7</hsizetype>
-            <vsizetype>0</vsizetype>
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
             <horstretch>2</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -135,11 +157,20 @@
       </item>
       <item>
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
         </property>
         <item>
          <widget class="QLabel" name="label_2" >
@@ -155,11 +186,20 @@
       </item>
       <item>
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
         </property>
         <item>
          <widget class="QLabel" name="label_3" >
@@ -193,146 +233,63 @@
     <attribute name="title" >
      <string>Engine</string>
     </attribute>
-    <widget class="QWidget" name="layoutWidget" >
+    <widget class="QWidget" name="" >
      <property name="geometry" >
       <rect>
        <x>10</x>
-       <y>10</y>
-       <width>348</width>
-       <height>87</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="label_descquote" >
-        <property name="text" >
-         <string>Description quote</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QSpinBox" name="spinBox_descquote" />
-      </item>
-      <item row="1" column="1" >
-       <widget class="QSpinBox" name="spinBox_namequote" />
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="label_4" >
-        <property name="text" >
-         <string>Room name quote</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QCheckBox" name="checkBox_autorefresh" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>1</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>1</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text" >
-         <string>Enable automatic refresh of data</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-    <widget class="QCheckBox" name="checkBox_promptIAC" >
-     <property name="geometry" >
-      <rect>
-       <x>11</x>
-       <y>101</y>
-       <width>236</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text" >
-      <string>Use IAC for prompt detection</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="checkBox_forwardIAC" >
-     <property name="geometry" >
-      <rect>
-       <x>11</x>
-       <y>131</y>
-       <width>233</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text" >
-      <string>Forward the IAC to the client</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="checkBox_forwardPromptColour" >
-     <property name="geometry" >
-      <rect>
-       <x>11</x>
-       <y>161</y>
-       <width>259</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text" >
-      <string>Forward Prompt Colour to Client</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="tab" >
-    <attribute name="title" >
-     <string>Analysers</string>
-    </attribute>
-    <widget class="QWidget" name="layoutWidget_3" >
-     <property name="geometry" >
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>131</width>
-       <height>141</height>
+       <y>12</y>
+       <width>225</width>
+       <height>153</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
       <item>
-       <widget class="QCheckBox" name="checkBox_brief" >
-        <property name="text" >
-         <string>Brief Mode</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" >
+        <item>
+         <widget class="QCheckBox" name="checkBox_autorefresh" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>Enable automatic refresh of data</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_brief" >
+          <property name="text" >
+           <string>Brief Mode</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_desc" >
-        <property name="text" >
-         <string>Desc Check</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBox_exits" >
-        <property name="text" >
-         <string>Exits Check</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBox_terrain" >
-        <property name="text" >
-         <string>Terrain Check</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="label_4" >
+          <property name="text" >
+           <string>Room name quote</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QSpinBox" name="spinBox_namequote" />
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="label_descquote" >
+          <property name="text" >
+           <string>Description quote</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QSpinBox" name="spinBox_descquote" />
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -367,6 +324,19 @@
       <string>Automerge</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="checkBox_duallinker" >
+     <property name="geometry" >
+      <rect>
+       <x>11</x>
+       <y>69</y>
+       <width>221</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>Duallinker</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab" >
     <attribute name="title" >
@@ -382,10 +352,22 @@
       </rect>
      </property>
      <layout class="QGridLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>0</number>
       </property>
-      <property name="spacing" >
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
        <number>6</number>
       </property>
       <item row="1" column="1" >
@@ -410,7 +392,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="" >
+    <widget class="QWidget" name="layoutWidget" >
      <property name="geometry" >
       <rect>
        <x>20</x>
@@ -420,11 +402,20 @@
       </rect>
      </property>
      <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>6</number>
+      </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
       </property>
       <item>
        <widget class="QCheckBox" name="checkShowNotes" >
@@ -452,7 +443,25 @@
    </widget>
   </widget>
  </widget>
- <pixmapfunction></pixmapfunction>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>lineEdit_localport</tabstop>
+  <tabstop>lineEdit_remotehost</tabstop>
+  <tabstop>lineEdit_remoteport</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+  <tabstop>checkBox_autorefresh</tabstop>
+  <tabstop>checkBox_brief</tabstop>
+  <tabstop>spinBox_namequote</tabstop>
+  <tabstop>spinBox_descquote</tabstop>
+  <tabstop>checkBox_angrylinker</tabstop>
+  <tabstop>checkBox_automerge</tabstop>
+  <tabstop>lineEdit_visrange</tabstop>
+  <tabstop>lineEdit_detrange</tabstop>
+  <tabstop>checkShowNotes</tabstop>
+  <tabstop>checkShowRegions</tabstop>
+  <tabstop>checkShowSecrets</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

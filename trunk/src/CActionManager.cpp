@@ -81,15 +81,19 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     
     automergeAct= new QAction(tr("AutoMerge"), this);
     automergeAct->setCheckable(true);
-    conf->get_automerge() ? automergeAct->setChecked(true) : automergeAct->setChecked(false);
     automergeAct->setStatusTip(tr("Automatically merge twin (same name/desc) rooms"));
     connect(automergeAct, SIGNAL(triggered()), this, SLOT(automerge()));    
     
     angryLinkerAct= new QAction(tr("AngryLinker"), this);
     angryLinkerAct->setCheckable(true);
-    conf->get_angrylinker() ? angryLinkerAct->setChecked(false) : angryLinkerAct->setChecked(false);
     angryLinkerAct->setStatusTip(tr("Auto-link neightbour rooms"));
     connect(angryLinkerAct, SIGNAL(triggered()), this, SLOT(angrylinker()));    
+
+
+    duallinkerAct= new QAction(tr("DualLinker"), this);
+    duallinkerAct->setCheckable(true);
+    duallinkerAct->setStatusTip(tr("Binds the connection in the mapped room with the room you came from"));
+    connect(duallinkerAct, SIGNAL(triggered()), this, SLOT(duallinker()));    
     
   
     
@@ -163,6 +167,19 @@ void CActionManager::edit_current_room()
     parent->editRoomDialog( id );
 }
 
+
+void CActionManager::updateActionsSettings()
+{
+    printf("Updating configuratior of Actions!\r\n");
+
+    conf->get_duallinker() ? duallinkerAct->setChecked(true) : duallinkerAct->setChecked(false);
+    conf->get_angrylinker() ? angryLinkerAct->setChecked(true) : angryLinkerAct->setChecked(false);
+    proxy->isMudEmulation() ? emulationAct->setChecked(true) : emulationAct->setChecked(false);
+    engine->isMapping() ?  mappingAct->setChecked(true) : mappingAct->setChecked(false);
+    conf->get_automerge() ? automergeAct->setChecked(true) : automergeAct->setChecked(false);
+}
+
+
 void CActionManager::spellsSettings()
 {
     if (!parent->spells_dialog) {
@@ -234,6 +251,7 @@ void CActionManager::disable_online_actions()
     mappingAct->setEnabled(false);
     automergeAct->setEnabled(false);
     angryLinkerAct->setEnabled(false);
+    duallinkerAct->setEnabled(false);
 }
 
 
@@ -242,6 +260,7 @@ void CActionManager::enable_online_actions()
     mappingAct->setEnabled(true);
     automergeAct->setEnabled(true);
     angryLinkerAct->setEnabled(true);
+    duallinkerAct->setEnabled(true);
 }
 
 
@@ -402,6 +421,17 @@ void CActionManager::angrylinker()
         userland_parser->parse_user_input_line("mangrylinker on");
     } else {
         userland_parser->parse_user_input_line("mangrylinker off");
+    }
+}
+
+
+void CActionManager::duallinker()
+{
+    if (angryLinkerAct->isChecked()) 
+    {
+        userland_parser->parse_user_input_line("mduallinker on");
+    } else {
+        userland_parser->parse_user_input_line("mduallinker off");
     }
 }
 
