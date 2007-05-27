@@ -14,6 +14,7 @@
 #include "ConfigWidget.h"
 #include "SpellsDialog.h"
 #include "CMovementDialog.h"
+#include "CLogDialog.h"
 #include "renderer.h"
 
 #include "CActionManager.h"
@@ -36,6 +37,7 @@ class MainWindow : public QMainWindow
     QMenu       *mappingMenu;
     QMenu       *actionsMenu;
     QMenu       *optionsMenu;
+    QMenu       *logMenu;
     QMenu       *helpMenu;
 
  
@@ -52,6 +54,7 @@ public:
     RoomEditDialog    *edit_dialog;
     SpellsDialog      *spells_dialog;
     CMovementDialog   *movementDialog;
+    CLogDialog        *logdialog;
 
     QAction       *hide_status_action;
     QAction       *hide_menu_action;

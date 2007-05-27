@@ -139,6 +139,11 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     loadConfigAct->setStatusTip(tr("Save current configuration to a different file"));
     connect(loadConfigAct, SIGNAL(triggered()), this, SLOT(loadConfig()));    
     
+    showLogAct = new QAction(tr("&Show Log"), this);
+    showLogAct->setStatusTip(tr("Show the application's Log file"));
+    connect(showLogAct, SIGNAL(triggered()), this, SLOT(showLog() ));
+
+
     /* Help menu. */
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
@@ -174,13 +179,25 @@ void CActionManager::edit_current_room()
 
 void CActionManager::updateActionsSettings()
 {
-    printf("Updating configuratior of Actions!\r\n");
-
     conf->get_duallinker() ? duallinkerAct->setChecked(true) : duallinkerAct->setChecked(false);
     conf->get_angrylinker() ? angryLinkerAct->setChecked(true) : angryLinkerAct->setChecked(false);
     proxy->isMudEmulation() ? emulationAct->setChecked(true) : emulationAct->setChecked(false);
     engine->isMapping() ?  mappingAct->setChecked(true) : mappingAct->setChecked(false);
     conf->get_automerge() ? automergeAct->setChecked(true) : automergeAct->setChecked(false);
+}
+
+
+void CActionManager::showLog()
+{
+    if (!parent->logdialog) {
+        parent->logdialog = new CLogDialog(parent);
+    }
+
+    printf("Launching the DIALOG");
+    parent->logdialog->run();
+    parent->logdialog->show();
+    parent->logdialog->raise();
+    parent->logdialog->activateWindow();
 }
 
 

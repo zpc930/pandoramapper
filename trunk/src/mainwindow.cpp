@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     edit_dialog = NULL;
     generalSettingsDialog = NULL;
     movementDialog = NULL;
-    
+    logdialog = NULL;
 
     userland_parser = new Userland();
     actionManager = new CActionManager(this);
@@ -112,6 +112,13 @@ MainWindow::MainWindow(QWidget *parent)
     optionsMenu->addAction(actionManager->saveConfigAct);
     //  optionsMenu->addAction(saveConfigAsAct);
     optionsMenu->addAction(actionManager->loadConfigAct);
+
+
+
+    logMenu = menuBar()->addMenu(tr("&Log") );
+    logMenu->addAction(actionManager->showLogAct );
+
+    menuBar()->addSeparator();
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(actionManager->aboutAct);

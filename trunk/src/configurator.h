@@ -94,7 +94,7 @@ class Cconfigurator : public QObject {
     float anglex, angley, anglez;
     float userx, usery, userz;    
     
-    
+
 public:
 
     /* spells */

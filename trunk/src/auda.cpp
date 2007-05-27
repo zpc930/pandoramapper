@@ -33,7 +33,7 @@
 
 /* global flags */
 int glredraw = 1;		/* redraw is needed */
-
+QString *logFileName;
 
 
 

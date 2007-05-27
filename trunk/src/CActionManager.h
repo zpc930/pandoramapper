@@ -37,6 +37,8 @@ public:
     QAction       *setupGeneralAct;
     QAction       *spellsAct;
 
+    QAction       *showLogAct;
+
     QAction       *gotoAct;
     QAction       *deleteFullyAct;
     
@@ -58,6 +60,8 @@ public slots:
     void quit();
     void save();
     void saveAs();
+
+    void showLog();
     
     void mapping_mode();
     void automerge();
