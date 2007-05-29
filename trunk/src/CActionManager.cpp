@@ -43,8 +43,8 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     saveAsAct->setStatusTip(tr("Save the map As"));
     connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
     
-    publishAct= new QAction(tr("Clear secrets"), this);
-    publishAct->setStatusTip(tr("Removes all secret exits and rooms behind them"));
+    publishAct= new QAction(tr("Remove Secrets"), this);
+    publishAct->setStatusTip(tr("Removes all secret exits and rooms behind them from the map"));
     connect(publishAct, SIGNAL(triggered()), this, SLOT(publish_map()));    
     
         
@@ -519,14 +519,15 @@ void CActionManager::publish_map()
     CRoom *r;
     unsigned int i;
     unsigned int z;
-    
+
     if (mappingAct->isChecked()) {
         emulationAct->setChecked(false); 
         QMessageBox::critical(parent, "Pandora",
-                          QString("You have to disconnect first!"));
+                          QString("You have to disconnect from the game first!"));
         return;        
     }
-        
+
+    // "wave" over all rooms reacheable over non-secret exits.         
     memset(mark, 0, MAX_ROOMS);
     stacker.reset();
     stacker.put(1);
@@ -535,22 +536,20 @@ void CActionManager::publish_map()
         for (i = 0; i < stacker.amount(); i++) {
             r = stacker.get(i);
             mark[r->id] = true;
-            for (z = 0; z <= 5; z++) {
-                if (r->isConnected(z) && mark[ r->exits[z]->id  ] != true ) {
-                    if ( r->isDoorSecret(z) == true  ) {
-                        stacker.put(r->exits[z]->id);
-                    }
-                }
-            }
+            for (z = 0; z <= 5; z++) 
+                if (r->isConnected(z) && mark[ r->exits[z]->id  ] != true  && r->isDoorSecret(z) != true  ) 
+                    stacker.put(r->exits[z]->id);
         }
         stacker.swap();
     }
     
-    
-    for (i = 0; i < Map.size(); i++) {
-        r = Map.rooms[i];
+    // delete all unreached rooms    
+    for (i = 0; i < MAX_ROOMS; i++) {
+        r = Map.getRoom( i );
+        if (r == NULL)
+            continue;
         if (r) {
-            if (!mark[r->id]) {
+            if (mark[r->id] == false) {
                 Map.deleteRoom(r, 0);
                 continue;        
             }
@@ -558,6 +557,7 @@ void CActionManager::publish_map()
         
     }
     
+    // roll over all still accessible rooms and delete the secret doors if they are still left in the database
     for (i = 0; i < Map.size(); i++) {
         r = Map.rooms[i];
         if (r) {

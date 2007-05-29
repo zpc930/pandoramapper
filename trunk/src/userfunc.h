@@ -80,7 +80,6 @@ extern class Userland *userland_parser;
 #define USER_PARSE_NONE 0 /* 0 - not my area - send the line futher */
 #define USER_PARSE_SKIP 1 /* skip this line */
 #define USER_PARSE_DONE 2 /* parsed the line, pass corrected line futher */
-int parse_user_input_line(char *line);
 
 #endif
 
