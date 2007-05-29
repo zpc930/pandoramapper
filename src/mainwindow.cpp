@@ -61,7 +61,6 @@ MainWindow::MainWindow(QWidget *parent)
     /* now building a menu and adding actions to menu */
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(actionManager->newAct);
-    fileMenu->addAction(actionManager->publishAct);
     fileMenu->addSeparator();
     fileMenu->addAction(actionManager->openAct);  
     fileMenu->addAction(actionManager->reloadAct);  
@@ -84,6 +83,8 @@ MainWindow::MainWindow(QWidget *parent)
     mappingMenu->addAction(actionManager->automergeAct);
     mappingMenu->addAction(actionManager->angryLinkerAct);
     mappingMenu->addAction(actionManager->duallinkerAct);
+    mappingMenu->addSeparator();
+    mappingMenu->addAction(actionManager->publishAct);
 
     hide_status_action = new QAction(tr("Hide Status Bar"), this);
     hide_status_action->setShortcut(tr("F11"));
@@ -111,7 +112,7 @@ MainWindow::MainWindow(QWidget *parent)
     optionsMenu->addSeparator();
     optionsMenu->addAction(actionManager->saveConfigAct);
     //  optionsMenu->addAction(saveConfigAsAct);
-    optionsMenu->addAction(actionManager->loadConfigAct);
+    //optionsMenu->addAction(actionManager->loadConfigAct);
 
 
 

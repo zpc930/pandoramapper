@@ -336,12 +336,12 @@ void Userland::parse_command()
   print_debug(DEBUG_USERFUNC, "in parseCommand");
     
 
-  t = commands_queue.front();
-  ((*user_commands[t.id].command_pointer) (t.id, user_commands[t.id].subcmd, t.arg, t.arg));  
-
   queue_mutex.lock();
+  t = commands_queue.front();
   commands_queue.pop_front();
   queue_mutex.unlock();
+
+  ((*user_commands[t.id].command_pointer) (t.id, user_commands[t.id].subcmd, t.arg, t.arg));  
 
   print_debug(DEBUG_USERFUNC, "leaving parseCommand");
 }
