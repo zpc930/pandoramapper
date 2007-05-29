@@ -85,6 +85,6 @@ unix:LIBS		+= -lm
 
 #CFLAGS_VAR	= $$system(pkg-config --cflags OGRE)
 #CLIBS_VAR	= $$system(pkg-config --libs OGRE)
-#QMAKE_CXXFLAGS_RELEASE	+=  $$CFLAGS_VAR
-#QMAKE_CXXFLAGS_DEBUG	+=  -O2 $$CFLAGS_VAR
+QMAKE_CXXFLAGS_RELEASE	+=  -O2 -pipe $$CFLAGS_VAR
+QMAKE_CXXFLAGS_DEBUG	+=  $$CFLAGS_VAR
 #LIBS 		+= $$CLIBS_VAR
