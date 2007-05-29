@@ -114,11 +114,11 @@ size_t write_debug(unsigned int flag, const char *format, va_list args)
     return size;
 }
 
+
 void print_debug(unsigned int flag, const char *messg, ...)
 {
   va_list args;
 
-  /* check the general switch state */
   if (!debug_data[0].state)
     return;
   
