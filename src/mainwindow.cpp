@@ -349,10 +349,28 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
          case Qt::Key_F10:
             //hide_roominfo();
             break;				
+         case Qt::Key_Space:
+            if (!k->isAutoRepeat()) {
+                setMapMoveMode(true);
+            }
+            break;
     }
     update_status_bar();
     renderer->display();
     print_debug(DEBUG_INTERFACE, "Done processing events at keyEventPress\r\n");
+}
+
+void MainWindow::keyReleaseEvent( QKeyEvent *k )
+{
+
+    print_debug(DEBUG_INTERFACE, "Processing events in keyReleaseEvent\r\n");
+    switch ( k->key() ) {
+        case Qt::Key_Space:
+            if (!k->isAutoRepeat()) {
+                setMapMoveMode(false);
+            }
+            break;
+    }
 }
 
 void MainWindow::mousePressEvent( QMouseEvent *e )
@@ -367,7 +385,7 @@ void MainWindow::mousePressEvent( QMouseEvent *e )
         mouseState.RightButtonPressed = true;
 
     if (mapMoveMode) {
-        setCursor(Qt::ClosedHandCursor);
+        renderer->setCursor(Qt::ClosedHandCursor);
     } else {
         /* Select rooms if not in map moving mode. */
         if (e->button() == Qt::LeftButton) {
@@ -438,7 +456,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent *e )
     }
 
     if (mapMoveMode)
-        setCursor(Qt::OpenHandCursor);
+        renderer->setCursor(Qt::OpenHandCursor);
 }
 
 void MainWindow::mouseMoveEvent( QMouseEvent *e)
@@ -486,11 +504,14 @@ void MainWindow::wheelEvent(QWheelEvent *e)
 
 void MainWindow::setMapMoveMode(bool b)
 {
+    if (mapMoveMode != b)
+        emit mapMoveValueChanged(b);
+
     mapMoveMode = b;
 
     if (mapMoveMode) {
-        setCursor(Qt::OpenHandCursor);
+        renderer->setCursor(Qt::OpenHandCursor);
     } else {
-        setCursor(Qt::ArrowCursor);
+        renderer->setCursor(Qt::ArrowCursor);
     }
 }

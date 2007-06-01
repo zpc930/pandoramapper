@@ -73,6 +73,7 @@ private slots:
   void mouseMoveEvent( QMouseEvent *);
   void wheelEvent(QWheelEvent *);
   void keyPressEvent( QKeyEvent * );
+  void keyReleaseEvent( QKeyEvent * );
 
 public slots:
   void hide_menu();
@@ -85,7 +86,7 @@ public slots:
 signals:
   void newLocationLabel(const QString &label);
   void newModLabel(const QString &label);
-
+  void mapMoveValueChanged(bool);
 
 };
 
