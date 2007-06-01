@@ -82,6 +82,7 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     moveMapAct->setCheckable(true);
     moveMapAct->setChecked(false);
     connect(moveMapAct, SIGNAL(toggled(bool)), parent, SLOT(setMapMoveMode(bool)));
+    connect(parent, SIGNAL(mapMoveValueChanged(bool)), moveMapAct, SLOT(setChecked(bool)));
     
 
 
