@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
     generalSettingsDialog = NULL;
     movementDialog = NULL;
     logdialog = NULL;
+    mapMoveMode = false;
 
     userland_parser = new Userland();
     actionManager = new CActionManager(this);
@@ -77,6 +78,9 @@ MainWindow::MainWindow(QWidget *parent)
     actionsMenu->addAction(actionManager->deleteAct);
     actionsMenu->addAction(actionManager->deleteFullyAct);
     actionsMenu->addAction(actionManager->mergeAct);
+    
+    toolsMenu = menuBar()->addMenu(tr("&Tools"));
+    toolsMenu->addAction(actionManager->moveMapAct);
     
     mappingMenu = menuBar()->addMenu(tr("&Mapping"));
     mappingMenu->addAction(actionManager->mappingAct);
@@ -351,20 +355,41 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
     print_debug(DEBUG_INTERFACE, "Done processing events at keyEventPress\r\n");
 }
 
-void MainWindow::mousePressEvent( QMouseEvent *e)
+void MainWindow::mousePressEvent( QMouseEvent *e )
 {
-  
-    if (e->button() == Qt::LeftButton) {
-        mouseState.LeftButtonPressed = true;
 
-
-    } else {
-        mouseState.RightButtonPressed = true;
-    }
     mouseState.oldPos = e->pos();
     mouseState.origPos = e->pos();
-  
-  
+
+    if (e->button() == Qt::LeftButton)
+        mouseState.LeftButtonPressed = true;
+    else if (e->button() == Qt::RightButton)
+        mouseState.RightButtonPressed = true;
+
+    if (mapMoveMode) {
+        setCursor(Qt::ClosedHandCursor);
+    } else {
+        /* Select rooms if not in map moving mode. */
+        if (e->button() == Qt::LeftButton) {
+            if (!mapMoveMode && checkMouseSelection(e) == true) {
+                print_debug(DEBUG_INTERFACE, "Registered object selection with left mouse button.");
+            }
+        } else if (e->button() == Qt::RightButton) {
+            if (!mapMoveMode && checkMouseSelection(e) == true) {
+                print_debug(DEBUG_INTERFACE, "Registered object selection with right mouse button.");
+
+                /* Context menu */
+                QMenu menu(this);
+                menu.addAction(actionManager->gotoAct);
+                menu.addAction(actionManager->roomeditAct);
+                menu.addAction(actionManager->moveRoomAct);
+                menu.addAction(actionManager->deleteAct);
+                menu.addAction(actionManager->deleteFullyAct);
+
+                menu.exec(e->globalPos());
+            }
+        }
+    }
 }
 
 QPoint MainWindow::mousePosInRenderer( QPoint pos ) {
@@ -403,30 +428,17 @@ bool MainWindow::checkMouseSelection( QMouseEvent *e )
     return false;
 }
 
-void MainWindow::mouseReleaseEvent( QMouseEvent *e)
+void MainWindow::mouseReleaseEvent( QMouseEvent *e )
 {
-
 
     if (e->button() == Qt::LeftButton) {
         mouseState.LeftButtonPressed = false;
-        if (checkMouseSelection(e) == true) {
-            print_debug(DEBUG_INTERFACE, "Registred object selection with left mouse.");
-        }
     } else {
         mouseState.RightButtonPressed = false;
-        if (checkMouseSelection(e) == true) {
-            print_debug(DEBUG_INTERFACE, "Registred object selection with RIGHT mouse.");
-            // Fall menu for selection
-            QMenu menu(this);
-            menu.addAction(actionManager->gotoAct);
-            menu.addAction(actionManager->roomeditAct);
-            menu.addAction(actionManager->moveRoomAct);
-            menu.addAction(actionManager->deleteAct);
-            menu.addAction(actionManager->deleteFullyAct);
-
-            menu.exec(e->globalPos());
-        }
     }
+
+    if (mapMoveMode)
+        setCursor(Qt::OpenHandCursor);
 }
 
 void MainWindow::mouseMoveEvent( QMouseEvent *e)
@@ -441,26 +453,24 @@ void MainWindow::mouseMoveEvent( QMouseEvent *e)
   print_debug(DEBUG_INTERFACE, "mouseEvent. LeftMouse %s, RightMouse %s. Dist_x %i, dist_y %i.",
       ON_OFF(LeftButtonPressed), ON_OFF(RightButtonPressed), dist_x, dist_y);
 */  
-  if (mouseState.LeftButtonPressed) {
-      renderer->userx += (float) dist_x / 10.0;
-      renderer->usery -= (float) dist_y / 10.0;
-      glredraw = 1;
 
-      renderer->display();
-      mouseState.oldPos = pos;
-  } else if (mouseState.RightButtonPressed) {
-    renderer->anglex += dist_y;
-    renderer->angley += dist_x;
-    glredraw = 1;
-    
-    
-    renderer->display();
-    mouseState.oldPos = pos;
+    if (mapMoveMode) {
+        if (mouseState.LeftButtonPressed) {
+            renderer->userx += (float) dist_x / 10.0;
+            renderer->usery -= (float) dist_y / 10.0;
+            glredraw = 1;
 
-  }
+            renderer->display();
+            mouseState.oldPos = pos;
+        } else if (mouseState.RightButtonPressed) {
+            renderer->anglex += dist_y;
+            renderer->angley += dist_x;
+            glredraw = 1;
 
-  
-  
+            renderer->display();
+            mouseState.oldPos = pos;
+        }
+    }
 }
 
 void MainWindow::wheelEvent(QWheelEvent *e)
@@ -474,6 +484,13 @@ void MainWindow::wheelEvent(QWheelEvent *e)
   renderer->display();
 }
 
+void MainWindow::setMapMoveMode(bool b)
+{
+    mapMoveMode = b;
 
-
-
+    if (mapMoveMode) {
+        setCursor(Qt::OpenHandCursor);
+    } else {
+        setCursor(Qt::ArrowCursor);
+    }
+}

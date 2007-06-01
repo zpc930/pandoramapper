@@ -75,6 +75,16 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     moveRoomAct->setStatusTip(tr("Moves the room or rooms by given shift"));
     connect(moveRoomAct, SIGNAL(triggered()), parent, SLOT(moveRoomDialog()));    
 
+    /* Tools menu */
+
+    moveMapAct = new QAction(tr("Move map"), this);
+    moveMapAct->setStatusTip(tr("Move map around"));
+    moveMapAct->setCheckable(true);
+    moveMapAct->setChecked(false);
+    connect(moveMapAct, SIGNAL(toggled(bool)), parent, SLOT(setMapMoveMode(bool)));
+    
+
+
     /* Mapping menu */
     
     mappingAct= new QAction(tr("Mapping"), this);
