@@ -36,6 +36,7 @@ class MainWindow : public QMainWindow
     QMenu       *fileMenu;
     QMenu       *mappingMenu;
     QMenu       *actionsMenu;
+    QMenu       *toolsMenu;
     QMenu       *optionsMenu;
     QMenu       *logMenu;
     QMenu       *helpMenu;
@@ -63,6 +64,8 @@ public:
     void update_status_bar();
     void editRoomDialog(unsigned int id);
 
+private:
+    bool mapMoveMode;
 
 private slots:
   void mousePressEvent( QMouseEvent *);
@@ -77,6 +80,7 @@ public slots:
   void hide();                              /* hide all extra widgets */
 
   void moveRoomDialog();
+  void setMapMoveMode(bool);
 
 signals:
   void newLocationLabel(const QString &label);

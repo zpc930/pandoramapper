@@ -25,6 +25,8 @@ public:
     QAction       *angryLinkerAct;
     QAction       *duallinkerAct;
 
+    QAction       *moveMapAct;
+
     QAction       *roomeditAct;
     QAction       *deleteAct;
     QAction       *mergeAct;
