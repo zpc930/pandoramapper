@@ -1,14 +1,7 @@
 #ifndef MAINWINDOW_H 
 #define MAINWINDOW_H 
 
-#include <QLabel>
-#include <QAction>
-#include <QMenu>
 #include <QMainWindow>
-#include <QMouseEvent>
-#include <QWheelEvent>
-#include <QKeyEvent>
-
 
 #include "RoomEditDialog.h"
 #include "ConfigWidget.h"
@@ -66,6 +59,7 @@ public:
 
 private:
     bool mapMoveMode;
+    bool deleteMode;
 
 private slots:
   void mousePressEvent( QMouseEvent *);
@@ -82,6 +76,7 @@ public slots:
 
   void moveRoomDialog();
   void setMapMoveMode(bool);
+  void setDeleteMode(bool);
 
 signals:
   void newLocationLabel(const QString &label);

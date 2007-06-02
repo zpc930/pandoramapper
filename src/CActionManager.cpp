@@ -77,13 +77,26 @@ CActionManager::CActionManager(MainWindow *parentWindow)
 
     /* Tools menu */
 
-    moveMapAct = new QAction(tr("Move map"), this);
-    moveMapAct->setStatusTip(tr("Move map around"));
-    moveMapAct->setCheckable(true);
-    moveMapAct->setChecked(false);
-    connect(moveMapAct, SIGNAL(toggled(bool)), parent, SLOT(setMapMoveMode(bool)));
-    connect(parent, SIGNAL(mapMoveValueChanged(bool)), moveMapAct, SLOT(setChecked(bool)));
-    
+    selectToolAct = new QAction(tr("Select tool"), this);
+    selectToolAct->setStatusTip(tr("Select one or more rooms"));
+    selectToolAct->setCheckable(true);
+
+    mapMoveToolAct = new QAction(tr("Move map"), this);
+    mapMoveToolAct->setStatusTip(tr("Move map around"));
+    mapMoveToolAct->setCheckable(true);
+    connect(mapMoveToolAct, SIGNAL(toggled(bool)), parent, SLOT(setMapMoveMode(bool)));
+    connect(parent, SIGNAL(mapMoveValueChanged(bool)), mapMoveToolAct, SLOT(setChecked(bool)));
+ 
+    deleteToolAct = new QAction(tr("Delete tool"), this);
+    deleteToolAct->setStatusTip(tr("Delete tool"));
+    deleteToolAct->setCheckable(true);
+    connect(deleteToolAct, SIGNAL(toggled(bool)), parent, SLOT(setDeleteMode(bool)));
+
+    toolsGroup = new QActionGroup(this);
+    toolsGroup->addAction(selectToolAct);
+    toolsGroup->addAction(mapMoveToolAct);
+    toolsGroup->addAction(deleteToolAct);
+    selectToolAct->setChecked(true);
 
 
     /* Mapping menu */
