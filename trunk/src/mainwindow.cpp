@@ -1,8 +1,4 @@
-#include <QApplication>
-#include <QMenuBar>
-#include <QStatusBar>
-#include <QMessageBox>
-#include <QDesktopWidget>
+#include <QtGui>
 
 #include "mainwindow.h"
 #include "utils.h"
@@ -42,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     movementDialog = NULL;
     logdialog = NULL;
     mapMoveMode = false;
+    deleteMode = false;
 
     userland_parser = new Userland();
     actionManager = new CActionManager(this);
@@ -80,7 +77,11 @@ MainWindow::MainWindow(QWidget *parent)
     actionsMenu->addAction(actionManager->mergeAct);
     
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
-    toolsMenu->addAction(actionManager->moveMapAct);
+    toolsMenu->addAction(actionManager->selectToolAct);
+    toolsMenu->addAction(actionManager->mapMoveToolAct);
+    toolsMenu->addAction(actionManager->deleteToolAct);
+
+
     
     mappingMenu = menuBar()->addMenu(tr("&Mapping"));
     mappingMenu->addAction(actionManager->mappingAct);
@@ -386,14 +387,21 @@ void MainWindow::mousePressEvent( QMouseEvent *e )
 
     if (mapMoveMode) {
         renderer->setCursor(Qt::ClosedHandCursor);
+    } else if (deleteMode) {
+        if (e->button() == Qt::LeftButton) {
+            if (checkMouseSelection(e) == true) {
+                print_debug(DEBUG_INTERFACE, "Deleting room.");
+                userland_parser->parse_user_input_line("mdelete");
+            }
+        }
     } else {
         /* Select rooms if not in map moving mode. */
         if (e->button() == Qt::LeftButton) {
-            if (!mapMoveMode && checkMouseSelection(e) == true) {
+            if (checkMouseSelection(e) == true) {
                 print_debug(DEBUG_INTERFACE, "Registered object selection with left mouse button.");
             }
         } else if (e->button() == Qt::RightButton) {
-            if (!mapMoveMode && checkMouseSelection(e) == true) {
+            if (checkMouseSelection(e) == true) {
                 print_debug(DEBUG_INTERFACE, "Registered object selection with right mouse button.");
 
                 /* Context menu */
@@ -511,6 +519,17 @@ void MainWindow::setMapMoveMode(bool b)
 
     if (mapMoveMode) {
         renderer->setCursor(Qt::OpenHandCursor);
+    } else {
+        renderer->setCursor(Qt::ArrowCursor);
+    }
+}
+
+void MainWindow::setDeleteMode(bool b)
+{
+    deleteMode = b;
+
+    if (deleteMode) {
+        renderer->setCursor(Qt::CrossCursor);
     } else {
         renderer->setCursor(Qt::ArrowCursor);
     }

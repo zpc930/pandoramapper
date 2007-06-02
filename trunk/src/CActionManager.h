@@ -25,7 +25,10 @@ public:
     QAction       *angryLinkerAct;
     QAction       *duallinkerAct;
 
-    QAction       *moveMapAct;
+    QActionGroup  *toolsGroup;
+    QAction       *selectToolAct;
+    QAction       *mapMoveToolAct;
+    QAction       *deleteToolAct;
 
     QAction       *roomeditAct;
     QAction       *deleteAct;
