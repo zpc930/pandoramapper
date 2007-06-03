@@ -73,6 +73,7 @@ void ConfigWidget::run()
 
     lineEdit_visrange->setText(QString("%1").arg(conf->get_texture_vis()) );
     lineEdit_detrange->setText(QString("%1").arg(conf->get_details_vis()) );
+    lineEdit_layers->setText(QString("%1").arg(conf->getVisibleLayers()) );
 }
 
 void ConfigWidget::autorefreshUpdated(bool state)
@@ -163,6 +164,15 @@ void ConfigWidget::accept()
     }
     if (conf->get_details_vis() != i)
         conf->set_details_vis(i);
+
+    i = lineEdit_layers->text().toInt();
+    if (i == 0) {
+            QMessageBox::critical(this, "Cofiguration",
+                              QString("Bad visible Layers settings!"));
+            return;    
+    }
+    if (conf->getVisibleLayers() != i)
+        conf->setVisibleLayers(i);
 
     done(Accepted);
 }

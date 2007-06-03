@@ -23,8 +23,11 @@ class RendererWidget : public QGLWidget
     int           cury;
     int           curz;			/* current rooms position */ 
     Frustum       frustum;
-    QFont		textFont;
+    QFont         textFont;
     
+    int           lowerZ;
+    int           upperZ;
+
     unsigned int last_drawn_marker;
     unsigned int last_drawn_trail;
     
