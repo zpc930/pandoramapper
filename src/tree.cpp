@@ -11,14 +11,11 @@ class CTree NameMap;
 
 void CTree::removeId(unsigned int id, TTree *p)
 {
-  vector<unsigned int>::iterator i;
-
-  for (i = p->ids.begin(); i != p->ids.end(); i++)
-      if (*i == id) {
-          i = p->ids.erase(i);
+  for (int i = 0; i < p->ids.size(); ++i)
+      if (p->ids[i] == id) {
+          p->ids.remove(i);
           return;
       }
-    
 }
 
 
@@ -139,7 +136,7 @@ int CTree::divingDelete(TTree * p, char *part, unsigned int id)
 void CTree::deleteItem(const char *name, unsigned int id)
 {
     TTree *p;
-    unsigned int i;
+    int i;
     char hash[MAX_HASH_LEN];	
 	
     genHash(name, hash);
@@ -197,7 +194,8 @@ void CTree::addName(const char *name, unsigned int id)
   }
 
   /* ok, we found totaly similar or created new entry, add id to it */
-  p->ids.push_back(id);
+  if (p->ids.contains(id) == false)
+    p->ids.push_back(id);
 }
 
 TTree *CTree::findByName(const char *name)

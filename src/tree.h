@@ -1,8 +1,7 @@
 #ifndef TREE_H 
 #define TREE_H 
 
-#include <vector>
-using namespace std;
+#include <QVector>
 
 #define ALPHABET_SIZE	27	/*  26 letters */
 #define A_SIZE		ALPHABET_SIZE
@@ -11,7 +10,7 @@ using namespace std;
 
 struct TTree {
     TTree *leads[A_SIZE];	/* pointers to the next part letter */
-    vector<unsigned int>        ids;
+    QVector<unsigned int> ids;
 };
 
 struct levels_data_type {
