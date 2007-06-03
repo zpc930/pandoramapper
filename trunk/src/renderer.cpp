@@ -604,7 +604,8 @@ void RendererWidget::setupNewBaseCoordinates()
 void RendererWidget::draw(void)
 {
     CPlane *plane;  
-
+    const float alphaChannelTable[] = { 0.85, 0.4, 0.37, 0.28, 0.25, 0.15, 0.15, 0.13, 0.1, 0.1, 0.1};
+//                                       0    1     2      3    4      5     6    7    8     9    10 
     
     rooms_drawn_csquare=0;
     rooms_drawn_total=0;
@@ -653,25 +654,15 @@ void RendererWidget::draw(void)
         }
         
         z = plane->z - curz;
+        if (z < 0)
+            z = -z;
 
+        if (z > 10) 
+            z = 10;
         
-        if (z == -1) {
-          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.4; 
-        } else if (z == 0) {
-          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.8; 
-        } else if (z == 1) {
-          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.2; 
-        } else if (z > 1) {
-          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.1; 
-        } else if (z < -1) {
-          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.3; 
-        } else if (z <= -5) {
-          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.2; 
-        } else if (z <= -10) {
-          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.1; 
-        } else if (z <= -14) {
-          colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0; 
-        }
+        colour[0] = 1; colour[1] = 1; colour[2] = 1; 
+        colour[3] = alphaChannelTable[z];
+
         glColor4f(colour[0], colour[1], colour[2], colour[3]);
         
         current_plane_z = plane->z;

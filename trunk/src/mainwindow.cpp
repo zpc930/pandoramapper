@@ -328,7 +328,8 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
           glredraw = 1;
           break;
         
-         case Qt::Key_Escape:           
+         case Qt::Key_Escape:        
+            printf("Escape pressed!\r\n");   
             renderer->angley = 0;
             renderer->anglex = 0;
             renderer->anglez = 0;
