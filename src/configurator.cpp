@@ -41,6 +41,8 @@ Cconfigurator::Cconfigurator()
     usery = 0;
     userz = 0;
 
+    visibleLayers = 5;
+
     set_autorefresh(true);          /* default values */ 
     set_automerge(true);
     set_angrylinker(true);
@@ -458,8 +460,9 @@ int Cconfigurator::save_config_as(QByteArray path, QByteArray filename)
   fprintf(f, "  <basefile filename=\"%s\">\r\n", 
                   (const char *) get_base_file() );
   
-  fprintf(f, "  <GLvisibility textures=\"%i\" details=\"%i\" shownotes=\"%s\">\r\n", 
-                  get_texture_vis(),  get_details_vis(), ON_OFF(get_show_notes_renderer()) );
+  fprintf(f, "  <GLvisibility textures=\"%i\" details=\"%i\" shownotes=\"%s\" layers=\"%i\">\r\n", 
+                  get_texture_vis(),  get_details_vis(), ON_OFF(get_show_notes_renderer()),  
+                  getVisibleLayers() );
   
   fprintf(f, "  <analyzers exits=\"%s\"  terrain=\"%s\">\r\n", 
                   ON_OFF(get_exits_check() ), ON_OFF(get_terrain_check() ) );
@@ -623,6 +626,9 @@ bool ConfigParser::startElement( const QString& , const QString& ,
             conf->set_show_notes_renderer( true);
         else 
             conf->set_show_notes_renderer( false);
+
+        s = attributes.value("layers");
+        conf->setVisibleLayers(s.toInt() );
         
         
         print_debug(DEBUG_CONFIG, "OpenGL visibility ranges set to %i (texture) and %i (details).",

@@ -595,11 +595,6 @@ void CActionManager::publish_map()
         
     }
 
-    
-    
-    
-    
-    
     print_debug(DEBUG_INTERFACE && DEBUG_ROOMS,"Finished removing secrets from the map!\r\n");
     //    QMessageBox::information(parent, "Removing secrets...", "Done!\n", QMessageBox::Ok);
 }

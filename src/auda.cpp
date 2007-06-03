@@ -237,11 +237,11 @@ int main(int argc, char *argv[])
     print_debug(DEBUG_SYSTEM, "Starting renderer ...\n");
 
     if ( !QGLFormat::hasOpenGL() ) {
-        qWarning( "This system has no OpenGL support. Exiting." );
+        qWarning( "This system has no OpenGL support. Quiting." );
         return -1;
     }
 
-    QRect rect = app.desktop()->screenGeometry(-1);
+    QRect rect = app.desktop()->availableGeometry(-1);
     if (conf->get_window_rect().x() == 0 || conf->get_window_rect().x() >= rect.width() || 
         conf->get_window_rect().y() >= rect.height() ) {
         print_debug(DEBUG_SYSTEM && DEBUG_INTERFACE, "Autosettings for window size and position");

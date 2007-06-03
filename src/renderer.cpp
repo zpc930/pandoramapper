@@ -311,17 +311,14 @@ void RendererWidget::glDrawRoom(CRoom *p)
         
        if (conf->get_display_regions_renderer() &&  engine->get_last_region() == p->getRegion()  ) {
 
+
+            // The Regions rectangle around the room
             glColor4f(0.20, 0.20, 0.20, colour[3]-0.1);
 
             glRectf(-ROOM_SIZE*2, -ROOM_SIZE, -ROOM_SIZE, ROOM_SIZE); // left  
             glRectf(ROOM_SIZE, -ROOM_SIZE, ROOM_SIZE*2, ROOM_SIZE);   // right
             glRectf(-ROOM_SIZE, ROOM_SIZE, +ROOM_SIZE, ROOM_SIZE*2);  // upper 
             glRectf(-ROOM_SIZE, -ROOM_SIZE*2, +ROOM_SIZE, -ROOM_SIZE);   // lower
-
-//            glRectf(ROOM_SIZE, -ROOM_SIZE, -ROOM_SIZE*2, ROOM_SIZE);   
-//            glRectf(-ROOM_SIZE*2, -ROOM_SIZE*2, -ROOM_SIZE, -ROOM_SIZE);   
-//            glRectf(-ROOM_SIZE*2, -ROOM_SIZE*2, -ROOM_SIZE, -ROOM_SIZE);   
-
 
             glColor4f(colour[0], colour[1], colour[2], colour[3]);
         } 
@@ -636,7 +633,13 @@ void RendererWidget::draw(void)
     
     frustum.calculateFrustum(curx, cury, curz);
     
-    
+    // calculate the lower and the upper borders
+    int visibleLayers = conf->getVisibleLayers();
+    int side = visibleLayers >> 1;    
+
+    lowerZ = curz - (side * 2);
+    upperZ = curz + (side * 2);
+    upperZ -= (1 - visibleLayers % 2) << 1; 
 //    print_debug(DEBUG_RENDERER, "drawing %i rooms", Map.size());
 
     glColor4f(0.1, 0.8, 0.8, 0.4);
@@ -644,8 +647,13 @@ void RendererWidget::draw(void)
 
     plane = Map.planes;
     while (plane) {
+        if (plane->z < lowerZ || plane->z > upperZ) {
+            plane = plane->next;
+            continue;
+        }
         
         z = plane->z - curz;
+
         
         if (z == -1) {
           colour[0] = 1; colour[1] = 1; colour[2] = 1; colour[3] = 0.4; 

@@ -155,7 +155,6 @@ MainWindow::MainWindow(QWidget *parent)
     actionManager->disable_online_actions();
     connect(conf, SIGNAL(configurationChanged()),
             actionManager, SLOT(updateActionsSettings() ), Qt::QueuedConnection);
-    
 }
 
 
@@ -181,6 +180,7 @@ void MainWindow::moveRoomDialog()
     movementDialog->activateWindow();
 
 }
+
 
 
 void MainWindow::hide_status()

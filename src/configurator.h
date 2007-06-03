@@ -93,6 +93,8 @@ class Cconfigurator : public QObject {
     // renderer user defined angle's and shift
     float anglex, angley, anglez;
     float userx, usery, userz;    
+
+    int visibleLayers;
     
 
 public:
@@ -209,6 +211,9 @@ public:
 
     void set_duallinker(bool b);
     bool get_duallinker();
+
+    void setVisibleLayers(int i) { visibleLayers = i; set_conf_mod(true); }
+    int getVisibleLayers() { return visibleLayers; }
 
 
     int get_desc_quote() { return desc_quote; }
