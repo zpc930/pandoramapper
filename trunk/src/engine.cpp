@@ -47,7 +47,7 @@ void CEngine::swap()
 /*---------------- * RESYNC * ------------------------- */
 void CEngine::resync()
 {
-  unsigned int j;
+  int j;
   TTree *n;
   
   mappingOff();
