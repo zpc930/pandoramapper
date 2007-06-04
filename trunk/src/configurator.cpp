@@ -63,7 +63,7 @@ Cconfigurator::Cconfigurator()
     set_display_regions_renderer( true );
     set_show_notes_renderer( true );
 
-    
+    setSelectOAnyLayer( true );
     
     /* colours */
     

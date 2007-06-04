@@ -80,6 +80,9 @@ MainWindow::MainWindow(QWidget *parent)
     toolsMenu->addAction(actionManager->selectToolAct);
     toolsMenu->addAction(actionManager->mapMoveToolAct);
     toolsMenu->addAction(actionManager->deleteToolAct);
+    toolsMenu->addSeparator();
+    toolsMenu->addAction(actionManager->selectionTypeAct);
+
 
 
     

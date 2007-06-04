@@ -96,6 +96,7 @@ class Cconfigurator : public QObject {
 
     int visibleLayers;
     
+    bool selectOAnyLayer;
 
 public:
 
@@ -211,6 +212,9 @@ public:
 
     void set_duallinker(bool b);
     bool get_duallinker();
+
+    void setSelectOAnyLayer(bool b) { selectOAnyLayer=b; set_conf_mod(true); }
+    bool getSelectOAnyLayer() { return selectOAnyLayer; }
 
     void setVisibleLayers(int i) { visibleLayers = i; set_conf_mod(true); }
     int getVisibleLayers() { return visibleLayers; }
