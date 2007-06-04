@@ -66,6 +66,13 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     deleteFullyAct->setStatusTip(tr("Deletes this room and everything that leads to it, including doors in other rooms"));
     connect(deleteFullyAct, SIGNAL(triggered()), this, SLOT(deleteFully()));    
 
+    selectionTypeAct= new QAction(tr("Select On Any Layer"), this);
+    selectionTypeAct->setStatusTip(tr("Selection can either pick the rooms on your current layer or on any lLayer."));
+    selectionTypeAct->setCheckable(true);
+    selectionTypeAct->setChecked( conf->getSelectOAnyLayer() );
+    connect(selectionTypeAct, SIGNAL(triggered()), this, SLOT( selectionType() ));    
+
+
     
     mergeAct= new QAction(tr("Merge"), this);
     mergeAct->setStatusTip(tr("Tries to merge two twin rooms"));
@@ -448,6 +455,13 @@ void CActionManager::mapping_mode()
         userland_parser->parse_user_input_line("mmap off");
     }
 }
+
+void CActionManager::selectionType()
+{
+    // set_conf_mod() will take care of switching the state of the Action itself
+    conf->setSelectOAnyLayer( !conf->getSelectOAnyLayer() );
+}
+
 
 void CActionManager::automerge()
 {

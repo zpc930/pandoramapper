@@ -34,6 +34,7 @@ public:
     QAction       *deleteAct;
     QAction       *mergeAct;
     QAction       *moveRoomAct;
+    QAction       *selectionTypeAct;
 
     QAction       *always_on_top_action;
     QAction       *saveConfigAct;
@@ -72,9 +73,11 @@ public slots:
     void automerge();
     void angrylinker();
     void duallinker();
+
     
     void delete_room(); 
     void merge_room(); 
+    void selectionType();
     
     void saveConfig();
     void saveAsConfig();

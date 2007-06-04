@@ -725,9 +725,23 @@ void RendererWidget::renderPickupObjects()
 
     frustum.calculateFrustum(curx, cury, curz);
 
+
+    // calculate the lower and the upper borders
+    int visibleLayers = conf->getVisibleLayers();
+    int side = visibleLayers >> 1;    
+
+    lowerZ = curz - (side * 2);
+    upperZ = curz + (side * 2);
+    upperZ -= (1 - visibleLayers % 2) << 1; 
+//    print_debug(DEBUG_RENDERER, "drawing %i rooms", Map.size());
+
     plane = Map.planes;
     while (plane) {
-        
+        if (plane->z < lowerZ || plane->z > upperZ) {
+            plane = plane->next;
+            continue;
+        }
+
         z = plane->z - curz;
         
         current_plane_z = plane->z;
@@ -761,6 +775,7 @@ bool RendererWidget::doSelect(QPoint pos, unsigned int &id)
     int i;
     GLint   hits, temphit;
     GLuint  zval;
+    bool    selected;
 
     glSelectBuffer( MAXHITS, selectBuf );
     glRenderMode( GL_SELECT );
@@ -789,24 +804,48 @@ bool RendererWidget::doSelect(QPoint pos, unsigned int &id)
     glLoadIdentity();
     setupViewingModel( width(), height() );
 
+    selected = false;
     if (hits <= 0) {
         return false;
     } else {
-        zval = selectBuf[1];
-        temphit = selectBuf[3];
-        for ( i = 1; i < hits; i++) { // for each hit
-            if (selectBuf[4*i + 1] < zval ) {
-                zval = selectBuf[4 * i + 1];
-                temphit = selectBuf[ 4 * i + 3 ];
+        zval = 50000;
+        for ( i = 0; i < hits; i++) { // for each hit
+            int tempId = selectBuf[ 4 * i + 3 ] - 1;
+            CRoom *r = Map.getRoom( tempId );
+            if (r == NULL) 
+                continue;
+            
+
+            // and now the selection logic
+            if (conf->getSelectOAnyLayer() ) {
+                unsigned int val = abs(curz - r->getZ());
+                // if we select on any layers ...
+                // then favour the ones with minimal distance to our current layer
+                if (val < zval ) {
+                    zval = val;
+                    temphit = selectBuf[ 4 * i + 3 ] - 1;
+                    selected = true;
+                }
+            } else { 
+                if (r->getZ() == curz ) {
+                    zval = 0;
+                    temphit = selectBuf[ 4 * i + 3 ] - 1;
+                    selected = true;
+                }
             }
+
 
         }
 
     }
 
-    id = temphit - 1;
+    if (selected) 
+        print_debug(DEBUG_INTERFACE, "Clicked on : %i", temphit);
+    else 
+        print_debug(DEBUG_INTERFACE, "Selection failed");
+    id = temphit;
 
-    return true;
+    return selected;
 }
 
 
