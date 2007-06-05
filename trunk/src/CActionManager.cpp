@@ -77,6 +77,11 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     mergeAct= new QAction(tr("Merge"), this);
     mergeAct->setStatusTip(tr("Tries to merge two twin rooms"));
     connect(mergeAct, SIGNAL(triggered()), this, SLOT(merge_room()));    
+
+    refreshAct= new QAction(tr("Refresh"), this);
+    refreshAct->setStatusTip(tr("Switches to selected room and refreshes it"));
+    connect(refreshAct, SIGNAL(triggered()), this, SLOT(refreshRoom()));    
+
     
     moveRoomAct= new QAction(tr("Move"), this);
     moveRoomAct->setStatusTip(tr("Moves the room or rooms by given shift"));
@@ -454,6 +459,34 @@ void CActionManager::mapping_mode()
         userland_parser->parse_user_input_line("mmap off");
     }
 }
+
+void CActionManager::refreshRoom()
+{
+    QString command;
+    CRoom *r;
+
+    if (Map.selections.isEmpty() == true) {
+        if (stacker.amount() != 1) {
+            QMessageBox::critical(parent, "Pandora",
+                              QString("You have to be in sync or select just one room!"));
+            return;
+        }        
+        r = stacker.first();
+    } else {
+        if (Map.selections.size() != 1) {
+            QMessageBox::critical(parent, "Pandora",
+                              QString("You have to select just one room!"));
+            return;
+        }
+
+        r = Map.getRoom( Map.selections.getFirst() );
+    }
+
+    command = QString("mgoto %1").arg(r->id);
+    userland_parser->parse_user_input_line( (const char *) command.toAscii() );
+    userland_parser->parse_user_input_line("mrefresh");
+}
+
 
 void CActionManager::selectionType()
 {

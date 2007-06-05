@@ -346,7 +346,7 @@ void Userland::parse_command()
   print_debug(DEBUG_USERFUNC, "leaving parseCommand");
 }
 
-int Userland::parse_user_input_line(char *line)
+int Userland::parse_user_input_line(const char *line)
 {
   char *p;
   char arg[MAX_STR_LEN];
@@ -377,7 +377,7 @@ int Userland::parse_user_input_line(char *line)
       
       result = USER_PARSE_SKIP;
       if (IS_SET(user_commands[i].flags, USERCMD_FLAG_INSTANT)) {
-        result = ((*user_commands[i].command_pointer) (i, user_commands[i].subcmd, p, line));
+        result = ((*user_commands[i].command_pointer) (i, user_commands[i].subcmd, p, (char *) line));
       }
       else {
         userland_parser->add_command(i, p);

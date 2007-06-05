@@ -35,6 +35,7 @@ public:
     QAction       *mergeAct;
     QAction       *moveRoomAct;
     QAction       *selectionTypeAct;
+    QAction       *refreshAct;
 
     QAction       *always_on_top_action;
     QAction       *saveConfigAct;
@@ -78,6 +79,7 @@ public slots:
     void delete_room(); 
     void merge_room(); 
     void selectionType();
+    void refreshRoom();
     
     void saveConfig();
     void saveAsConfig();

@@ -64,7 +64,7 @@ extern const boolean_struct input_booleans[];
 extern const char *exits[];
 
 int is_integer(char *p);
-char *skip_spaces(char *str);
+char *skip_spaces(const char *str);
 char *next_space(char *str);
 char *one_argument(char *argument, char *first_arg, int mode);
 int is_abbrev(const char *arg1, const char *arg2);
