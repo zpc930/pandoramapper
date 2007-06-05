@@ -14,7 +14,9 @@ void CSelectionManager::select(unsigned int id)
     if (isSelected(id) == false) {
         selection.insert(id);
         print_debug(DEBUG_INTERFACE, "selecting %i", id);
+        emit roomSelected( id );
     }
+
     toggle_renderer_reaction();
     renderer_window->update_status_bar();
 }

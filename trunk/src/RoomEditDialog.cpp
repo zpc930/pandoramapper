@@ -54,7 +54,22 @@ RoomEditDialog::RoomEditDialog(QWidget *parent) :
     connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 */
+    connect(&Map.selections, SIGNAL( roomSelected(unsigned int)), SLOT( roomSelected(unsigned int)) );
 }
+
+void RoomEditDialog::roomSelected(unsigned int id) 
+{
+    printf("Room selection event received!\r\n");
+    if (this->isVisible() == true) {
+        for (int i = 0; i < 5; i++) {
+            set_door_context( i );
+            if (leads->text() == "select Room!")
+                leads->setText( QString("%1").arg(id) );
+        }
+    
+    }
+}
+
 
 int RoomEditDialog::updateExitsInfo(int dir, CRoom *r)
 {
@@ -157,7 +172,7 @@ void  RoomEditDialog::changedExitsFlag(int dir, int index)
 
     if (index == ROOMFLAG_NONE) {
         leads->setEnabled(true);
-        leads->setText("??ID??");
+        leads->setText("select Room!");
         flags->setCurrentIndex(ROOMFLAG_NONE);
     } else if (index == ROOMFLAG_UNDEFINED) {
         leads->setText("UNDEF");
