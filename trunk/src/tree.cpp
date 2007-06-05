@@ -136,7 +136,6 @@ int CTree::divingDelete(TTree * p, char *part, unsigned int id)
 void CTree::deleteItem(const char *name, unsigned int id)
 {
     TTree *p;
-    int i;
     char hash[MAX_HASH_LEN];	
 	
     genHash(name, hash);
@@ -144,15 +143,17 @@ void CTree::deleteItem(const char *name, unsigned int id)
     if (p == NULL) {
 	return;
     }
-
-    for (i = 0; i < p->ids.size(); i++)
+    for (int i = 0; i < p->ids.size(); i++) {
         if (p->ids[i] == id) {
             if (divingDelete(root, hash, id) == 1) {
                 /* meaning - occasioanly freed our ROOT element */
                 CTree();	/* reinit */
                 return;
-            }
+            } else 
+                break;
         }
+    }
+
 }
 
 void CTree::resetTTree(TTree * t)
@@ -161,6 +162,7 @@ void CTree::resetTTree(TTree * t)
 
     for (i = 0; i < A_SIZE; i++)
 	t->leads[i] = NULL;
+    t->ids.clear();
 }
 
 CTree::CTree()
