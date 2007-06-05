@@ -168,11 +168,11 @@ int get_input_boolean(char *input)
 }
 
 
-char *skip_spaces(char *str)
+char *skip_spaces(const char *str)
 {
   while (isspace(*str) && (*str != 0))
     str++;
-  return str;
+  return (char *) str;
 }
 
 char *next_space(char *str)

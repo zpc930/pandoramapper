@@ -69,6 +69,8 @@ MainWindow::MainWindow(QWidget *parent)
     actionsMenu->addAction(actionManager->deleteAct);
     actionsMenu->addAction(actionManager->deleteFullyAct);
     actionsMenu->addAction(actionManager->mergeAct);
+    actionsMenu->addAction(actionManager->refreshAct);
+
     
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(actionManager->selectToolAct);
@@ -409,6 +411,8 @@ void MainWindow::mousePressEvent( QMouseEvent *e )
                 menu.addAction(actionManager->moveRoomAct);
                 menu.addAction(actionManager->deleteAct);
                 menu.addAction(actionManager->deleteFullyAct);
+                menu.addAction(actionManager->refreshAct);
+
 
                 menu.exec(e->globalPos());
             }
