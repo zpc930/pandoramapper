@@ -256,6 +256,7 @@ void CEngine::parseEvent()
         print_debug(DEBUG_ANALYZER, "EMPTY name and no blind set. Assuming addedroom-data update incoming.");
         if (addedroom) {
             addedroom->setTerrain(last_terrain);
+            resetAddedRoomVar();
             toggle_renderer_reaction();
         }
         return;            

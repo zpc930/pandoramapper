@@ -552,17 +552,11 @@ void RendererWidget::glDrawCSquare(CSquare *p, int renderingMode)
             glDrawCSquare( p->subsquares[ CSquare::Right_Lower ], renderingMode);
     } else {
         if (renderingMode == GL_SELECT) {
-            for (k = 0; k < p->rooms.size(); k++) {
+            for (k = 0; k < p->rooms.size(); k++) 
                 renderPickupRoom(p->rooms[k]);
-            } 
         } else {
-            for (k = 0; k < p->rooms.size(); k++) {
-                
-                if (p->rooms[k]->id == deletedRoom)
-                    printf("Redrawing the deleted Room with id %i!!!\r\n", p->rooms[k]->id);
-
+            for (k = 0; k < p->rooms.size(); k++) 
                 glDrawRoom(p->rooms[k]);
-            } 
         }
 
     }

@@ -75,20 +75,22 @@ void roommanager::fixFreeRooms()
 /* ------------ addroom --------------*/
 void roommanager::addRoomNonsorted(CRoom *room)
 {
-  if (ids[room->id] != NULL) {
-      print_debug(DEBUG_ROOMS, "Error while adding new element to database! This id already exists!\n");
-      exit(1);
-  }
-
-
-  rooms.push_back(room);
-  ids[room->id] = room;	/* add to the first array */
-  NameMap.addName(room->getName(), room->id);	/* update name-searhing engine */
-
-
-
-  fixFreeRooms();
-  addToPlane(room);
+    if (ids[room->id] != NULL) {
+        print_debug(DEBUG_ROOMS, "Error while adding new element to database! This id already exists!\n");
+        exit(1);
+    }
+    
+    
+    if (ids[room->id] != NULL)
+        return;
+    rooms.push_back(room);
+    ids[room->id] = room;	/* add to the first array */
+    NameMap.addName(room->getName(), room->id);	/* update name-searhing engine */
+    
+    
+    
+    fixFreeRooms();
+    addToPlane(room);
 }
 
 void roommanager::addRoom(CRoom *room)

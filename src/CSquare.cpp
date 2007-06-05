@@ -140,7 +140,6 @@ void CSquare::remove(CRoom *room)
             /* just for check */
             for ( i=0; i < p->rooms.size(); ++i) {
                 if ( room->id == p->rooms[i]->id ) {
-                    printf("CSquare: Removing the room with id %i\r\n", room->id);
                     p->rooms.remove(i);
                     return;
                 }
