@@ -12,6 +12,7 @@
 
 #include "CActionManager.h"
 
+
 void toggle_renderer_reaction();
 void notify_analyzer();
 

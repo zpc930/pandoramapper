@@ -8,24 +8,18 @@
 #include "forwarder.h"
 #include "CActionManager.h"
 
-/* global classless */
-
 void toggle_renderer_reaction()
 {
-    print_debug(DEBUG_INTERFACE,"Toggling renderer reaction\r\n");
-    proxy->startRendererCall();
-//    print_debug(DEBUG_RENDERER, "toggle_renderer_reaction called()");
-//    QKeyEvent *k = new QKeyEvent(QEvent::KeyPress, Qt::Key_R,0, "r", false , 1);
-//    QApplication::postEvent( renderer_window->renderer, k );
+    if (renderer_window->renderer->redraw == false) {
+        renderer_window->renderer->redraw = true;
+        proxy->startRendererCall();
+    }
 }
 
 void notify_analyzer()
 {
     proxy->startEngineCall();
-//    QKeyEvent *k = new QKeyEvent(QEvent::KeyPress, Qt::Key_C,0, "c", false , 1);
-//    QApplication::postEvent( renderer_window->renderer, k );
 }
-
 
 /*  globals end */
 
@@ -268,68 +262,68 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
          
         case Qt::Key_X :
             renderer->userz += 1;
-            glredraw = 1;
+            toggle_renderer_reaction();
             break;
     
          case Qt::Key_Y:
             renderer->userz -= 1;
-            glredraw = 1;
+            toggle_renderer_reaction();
             break;
     
          case Qt::Key_Q:
             renderer->userx -= 1;
-            glredraw = 1;
+            toggle_renderer_reaction();
             break;
          
          case Qt::Key_W:
             renderer->userx += 1;
-            glredraw = 1;
+            toggle_renderer_reaction();
             break;
          
          case Qt::Key_A:
             renderer->usery += 1;
-            glredraw = 1;
+            toggle_renderer_reaction();
             break;
     
          case Qt::Key_S:
             renderer->usery -= 1;
-            glredraw = 1;
+            toggle_renderer_reaction();
             break;
     
         case Qt::Key_Up:
-          renderer->anglex += 5;
-          glredraw = 1;
-          break;
+            renderer->anglex += 5;
+            toggle_renderer_reaction();
+            break;
         case Qt::Key_Down:
-          renderer->anglex -= 5;
-          glredraw = 1;
-          break;
+            renderer->anglex -= 5;
+            toggle_renderer_reaction();
+            break;
         case Qt::Key_Left:
-          renderer->angley -= 5;
-          glredraw = 1;
-          break;
+            renderer->angley -= 5;
+            toggle_renderer_reaction();
+            break;
         case Qt::Key_Right:
-          renderer->angley += 5;
-          glredraw = 1;
-          break;
+            renderer->angley += 5;
+            toggle_renderer_reaction();
+            break;
         case Qt::Key_PageUp:
-          renderer->anglez += 5;
-          glredraw = 1;
-          break;
+            renderer->anglez += 5;
+            toggle_renderer_reaction();
+            break;
         case Qt::Key_PageDown:
-          renderer->anglez -= 5;
-          glredraw = 1;
-          break;
+            renderer->anglez -= 5;
+            toggle_renderer_reaction();
+            break;
         
         case Qt::Key_Plus:
-          renderer->changeUserLayerShift( +1 );
-          glredraw = 1;
-          break;
+            renderer->changeUserLayerShift( +1 );
+            toggle_renderer_reaction();
+            break;
 
         case Qt::Key_Minus:
-          renderer->changeUserLayerShift( -1 );
-          glredraw = 1;
-          break;
+            renderer->changeUserLayerShift( -1 );
+            toggle_renderer_reaction();
+            break;
         
          case Qt::Key_Escape:        
             printf("Escape pressed!\r\n");   
@@ -340,7 +334,7 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
             renderer->usery = 0;
             renderer->userz = BASE_Z;	
             renderer->userLayerShift = 0;
-            glredraw = 1;
+            toggle_renderer_reaction();
             break;				
 
          case Qt::Key_F12:
@@ -488,16 +482,14 @@ void MainWindow::mouseMoveEvent( QMouseEvent *e)
         if (mouseState.LeftButtonPressed) {
             renderer->userx += (float) dist_x / 10.0;
             renderer->usery -= (float) dist_y / 10.0;
-            glredraw = 1;
+            toggle_renderer_reaction();
 
-            renderer->display();
             mouseState.oldPos = pos;
         } else if (mouseState.RightButtonPressed) {
             renderer->anglex += dist_y;
             renderer->angley += dist_x;
-            glredraw = 1;
 
-            renderer->display();
+            toggle_renderer_reaction();
             mouseState.oldPos = pos;
         }
     }
@@ -505,13 +497,12 @@ void MainWindow::mouseMoveEvent( QMouseEvent *e)
 
 void MainWindow::wheelEvent(QWheelEvent *e)
 {
-  int delta;
-
-  delta = e->delta();
-
-  renderer->userz += delta / 120;
-  glredraw = 1;
-  renderer->display();
+    int delta;
+    
+    delta = e->delta();
+    
+    renderer->userz += delta / 120;
+    toggle_renderer_reaction();
 }
 
 void MainWindow::setMapMoveMode(bool b)

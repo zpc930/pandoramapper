@@ -224,7 +224,6 @@ void CActionManager::showLog()
         parent->logdialog = new CLogDialog(parent);
     }
 
-    printf("Launching the DIALOG");
     parent->logdialog->run();
     parent->logdialog->show();
     parent->logdialog->raise();

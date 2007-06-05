@@ -104,7 +104,7 @@ bool CSquare::toBePassed()
 void CSquare::add(CRoom *room)
 {
     CRoom *r;
-    unsigned int i;
+    int i;
     
     if (toBePassed() ) 
     {
@@ -114,7 +114,8 @@ void CSquare::add(CRoom *room)
     
     if (( rooms.size() < MAX_SQUARE_ROOMS) && ( (rightx - leftx) < MAX_SQUARE_SIZE) ) 
     {
-        rooms.push_back(room);
+        if (rooms.contains(room) == false)
+            rooms.push_back(room);
         return;
     } else {
         
@@ -131,15 +132,16 @@ void CSquare::add(CRoom *room)
 void CSquare::remove(CRoom *room)
 {
     CSquare *p;
-    vector<CRoom *>::iterator i;
+    int i;
     
     p = this;
     while (p) {
         if (!p->toBePassed()) {       
             /* just for check */
-            for (i=p->rooms.begin(); i != p->rooms.end(); ++i) {
-                if ( room->id == ((*i)->id) ) {
-                    i = p->rooms.erase(i);
+            for ( i=0; i < p->rooms.size(); ++i) {
+                if ( room->id == p->rooms[i]->id ) {
+                    printf("CSquare: Removing the room with id %i\r\n", room->id);
+                    p->rooms.remove(i);
                     return;
                 }
             }
@@ -211,8 +213,8 @@ CPlane::CPlane(CRoom *room)
             squares->leftx, squares->lefty, squares->rightx, squares->righty, 
             squares->centerx, squares->centery, room->x, room->y);
 */
-    
-    squares->rooms.push_back(room);
+    if (squares->rooms.contains(room) == false)
+        squares->rooms.push_back(room);
 }
 
 

@@ -31,12 +31,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-/* global flags */
-int glredraw = 1;		/* redraw is needed */
 QString *logFileName;
-
-
-
 
 void print_usage()
 {
@@ -277,7 +272,7 @@ int main(int argc, char *argv[])
     proxy->init();
     proxy->start();
     QObject::connect(proxy, SIGNAL(startEngine()), engine, SLOT(slotRunEngine()), Qt::QueuedConnection );
-    QObject::connect(proxy, SIGNAL(startRenderer()), renderer_window->renderer, SLOT(draw()), Qt::QueuedConnection);
+    QObject::connect(proxy, SIGNAL(startRenderer()), renderer_window->renderer, SLOT(display()), Qt::QueuedConnection);
 
     return app.exec();
 }

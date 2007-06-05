@@ -7,7 +7,7 @@
 #include "utils.h"
 #include "Map.h"
 #include "mainwindow.h"
-
+#include "forwarder.h"
 
 void CSelectionManager::select(unsigned int id)
 {

@@ -1,10 +1,10 @@
 #ifndef CSQUARE_H
 #define CSQUARE_H
 
-#include <vector>
-using namespace std;
+#include <QVector>
 
 class CRoom;
+
 
 class CSquare {
 public:
@@ -24,7 +24,7 @@ public:
     int         centerx, centery;
     
     /* amount of rooms in this square, -1 for empty */
-    vector<CRoom *> rooms;
+    QVector<CRoom *> rooms;
 
     CSquare(int leftx, int lefty, int rightx, int righty);
     CSquare();
