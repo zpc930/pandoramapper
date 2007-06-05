@@ -83,7 +83,6 @@ signals:
   void newLocationLabel(const QString &label);
   void newModLabel(const QString &label);
   void mapMoveValueChanged(bool);
-
 };
 
 

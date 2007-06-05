@@ -50,6 +50,7 @@ public slots:
     void changedExitsStateU(bool state) { changedExitsState(UP, state); }
     void changedExitsStateD(bool state) { changedExitsState(DOWN, state); }
 
+    void roomSelected(unsigned int id);
 };
 
 #endif

@@ -26,6 +26,9 @@ public:
 
     QList<int>  getList() { return selection.toList(); }
     bool isEmpty() { return selection.empty(); }
+
+signals:
+  void roomSelected(unsigned int id);
 };
 
 class CMouseState : public QObject {
