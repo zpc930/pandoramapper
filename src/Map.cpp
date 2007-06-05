@@ -260,6 +260,8 @@ void roommanager::smallDeleteRoom(CRoom *r)
     removeFromPlane(r);
     stacker.removeRoom(r->id);
     selections.unselect(r->id);
+    if (engine->addedroom == r)
+        engine->resetAddedRoomVar();
 
     
     vector<CRoom *>::iterator i;

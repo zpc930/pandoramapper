@@ -14,7 +14,7 @@ RoomEditDialog::RoomEditDialog(QWidget *parent) :
                                     QDialog(parent)
 {
     setupUi(this);
-    
+
     comboBox_N->insertItem(ROOMFLAG_UNDEFINED, "Undefined Exit");    
     comboBox_E->insertItem(ROOMFLAG_UNDEFINED, "Undefined Exit");    
     comboBox_S->insertItem(ROOMFLAG_UNDEFINED, "Undefined Exit");    
@@ -35,8 +35,7 @@ RoomEditDialog::RoomEditDialog(QWidget *parent) :
     comboBox_W->insertItem(ROOMFLAG_NONE, "NONE");
     comboBox_U->insertItem(ROOMFLAG_NONE, "NONE");
     comboBox_D->insertItem(ROOMFLAG_NONE, "NONE");
-    
-    
+
     connect(comboBox_N, SIGNAL(activated(int)), this, SLOT(changedExitsFlagN(int)) );
     connect(comboBox_S, SIGNAL(activated(int)), this, SLOT(changedExitsFlagS(int)) );
     connect(comboBox_E, SIGNAL(activated(int)), this, SLOT(changedExitsFlagE(int)) );
@@ -74,8 +73,8 @@ int RoomEditDialog::updateExitsInfo(int dir, CRoom *r)
             lead = leads->text().toInt();
             if (Map.getRoom(lead) == NULL) {
                 QMessageBox::critical(this, "Room Info Edit",
-                              QString("Bad door to the north!"));
-                return -1;
+                              QString("Bad ID given for connection to the %1").arg(exits[dir]) );
+               return -1;
             }
             r->setExit(dir, lead);
         }
@@ -83,12 +82,12 @@ int RoomEditDialog::updateExitsInfo(int dir, CRoom *r)
         dname = door->text();
         if (dname.length() > 40) {
             QMessageBox::critical(this, "Room Info Edit",
-                              QString("Bad door to the north!"));
+                              QString("Too long doorname for connection to the %1").arg(exits[dir]));
             return -1;    
         }
         r->setDoor(dir, dname.toAscii());    
     } else {
-        r->removeDoor(dir);    
+        r->removeExit(dir);    
         return 0;        
     }
     
@@ -97,6 +96,9 @@ int RoomEditDialog::updateExitsInfo(int dir, CRoom *r)
 
 void RoomEditDialog::clear_data()
 {
+
+
+
     textEdit_note->clear();
     textEdit_desc->clear();
 }
@@ -150,8 +152,8 @@ void  RoomEditDialog::changedExitsFlag(int dir, int index)
 {
     set_door_context(dir);  
       
-    if (flags->currentIndex() == index)
-        return;
+//    if (flags->currentIndex() == index)
+//        return;
 
     if (index == ROOMFLAG_NONE) {
         leads->setEnabled(true);
@@ -174,6 +176,8 @@ void RoomEditDialog::setup_exit_widgets(int dir, CRoom *r)
 {
     set_door_context(dir);
     
+    door->clear();
+    leads->clear();
     
     /* Exit North */
     door->setText(r->getDoor(dir) );        

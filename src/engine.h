@@ -38,12 +38,12 @@ Q_OBJECT
     bool testRoom(CRoom *room);
 
     void mapCurrentRoom(CRoom *room, int dir);
-    
+
 public:
     CEngine();
     ~CEngine();
 
-    CRoom *addedroom;	/* new room, contains new data is addinrroom==1 */
+    CRoom *addedroom;	/* fresh added room */
     
     void addEvent(Event e) { eventPipe.addEvent(e); }
 
@@ -81,6 +81,8 @@ public:
     CRegion *get_last_region();
 
     void updateRegions();
+
+    void resetAddedRoomVar() { addedroom = NULL; }    
 public slots:
     void slotRunEngine();
 };

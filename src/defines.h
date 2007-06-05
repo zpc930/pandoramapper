@@ -10,10 +10,6 @@
 #define MAX_DATA_LEN 3072
 #define MAX_LINES_DESC  20
 
-//#define DIST_Z	2	/* the distance between 2 rooms */
-#define BASE_Z  -12	/* the distance to the "camera" */
-#define ROOM_SIZE 0.4f	/* the size of the rooms walls */
-
 #define NORTH           0         
 #define EAST            1
 #define SOUTH           2         
