@@ -33,7 +33,7 @@ class RendererWidget : public QGLWidget
 
     unsigned int last_drawn_marker;
     unsigned int last_drawn_trail;
-    
+
     GLuint selectBuf[MAXHITS];
     
     void glDrawMarkers();
@@ -48,6 +48,9 @@ class RendererWidget : public QGLWidget
 
     // this sets curx, cury, curz based on hrm internal rules
     void setupNewBaseCoordinates();
+
+    void draw();
+
 public:
     GLfloat       angley;
     GLfloat       anglex;
@@ -60,14 +63,17 @@ public:
     int           current_plane_z;        
     GLuint        basic_gllist;
     
-        
+    bool          redraw;       
+
     int           rooms_drawn_csquare;
     int           rooms_drawn_total;
+
+    unsigned int deletedRoom;
+
     
     RendererWidget( QWidget *parent = 0);
     
     
-    void display(void);
     
     
     void initializeGL();
@@ -76,9 +82,10 @@ public:
     void changeUserLayerShift(int byValue) { userLayerShift += byValue; curz += byValue; }
     
     bool doSelect(QPoint pos, unsigned int &id);
+
     
 public slots:
-    void draw();
+    void display(void);
 };
 
 

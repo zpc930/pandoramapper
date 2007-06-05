@@ -60,6 +60,7 @@ RendererWidget::RendererWidget( QWidget *parent )
   last_drawn_marker = 0;
   last_drawn_trail = 0;
 
+  redraw = false;
 }
 
 
@@ -126,7 +127,7 @@ void RendererWidget::resizeGL( int width, int height )
   
     setupViewingModel( width, height );
     
-    glredraw = 1;
+    redraw = true;
 //    display();
 }
 
@@ -533,7 +534,7 @@ void RendererWidget::glDrawRoom(CRoom *p)
 // renderingMode serves for separating Pickup GLSELECT and normal GL_SELECT mode
 void RendererWidget::glDrawCSquare(CSquare *p, int renderingMode)
 {
-    unsigned int k;
+    int k;
     
     if (!frustum.isSquareInFrustum(p)) {
         return; // this square is not in view 
@@ -556,6 +557,10 @@ void RendererWidget::glDrawCSquare(CSquare *p, int renderingMode)
             } 
         } else {
             for (k = 0; k < p->rooms.size(); k++) {
+                
+                if (p->rooms[k]->id == deletedRoom)
+                    printf("Redrawing the deleted Room with id %i!!!\r\n", p->rooms[k]->id);
+
                 glDrawRoom(p->rooms[k]);
             } 
         }
@@ -606,6 +611,9 @@ void RendererWidget::draw(void)
     CPlane *plane;  
     const float alphaChannelTable[] = { 0.85, 0.4, 0.37, 0.28, 0.25, 0.15, 0.15, 0.13, 0.1, 0.1, 0.1};
 //                                       0    1     2      3    4      5     6    7    8     9    10 
+
+
+    redraw = false;
     
     rooms_drawn_csquare=0;
     rooms_drawn_total=0;
@@ -681,21 +689,17 @@ void RendererWidget::draw(void)
 //    print_debug(DEBUG_RENDERER, "draw() done");
   
     this->swapBuffers();
-    glredraw = 0;
 }
 
 void RendererWidget::display(void)
 {
-  
-
-  if (glredraw) {
+  if (redraw) {
     QTime t;
     t.start();
 
     draw();
     print_debug(DEBUG_RENDERER, "Rendering's done. Time elapsed %d ms", t.elapsed());
   }  
-  
 }
 
 

@@ -14,7 +14,8 @@
 #include "tree.h"
 #include "stacks.h"
 #include "dispatch.h"
-#include "renderer.h"
+#include "mainwindow.h"
+
 
 class roommanager Map;
 
@@ -35,16 +36,6 @@ int roommanager::tryMergeRooms(CRoom *r, CRoom *copy, int j)
          if (p->isExitLeadingTo(i, copy) == true) 
              p->setExit(i, r);
      
-/*    for (i = 0; i < rooms.size(); i++) 
-	for (k = 0; k <= 5; k++)
-	    if (rooms[i]->isExitLeadingTo(k, r) == true) {
-                if (mode == 0) {
-                    rooms[i]->removeExit(k);
-                } else if (mode == 1) {
-                    rooms[i]->setExitUndefined(k);
-                }
-	    }*/
-    
     smallDeleteRoom(copy);
 
 
@@ -226,7 +217,7 @@ void roommanager::reinit()
 void roommanager::deleteRoom(CRoom *r, int mode)
 {
     int k;
-    unsigned int i;
+    int i;
     
     
     if (r->id == 1) {
@@ -263,18 +254,22 @@ void roommanager::smallDeleteRoom(CRoom *r)
     if (engine->addedroom == r)
         engine->resetAddedRoomVar();
 
+    renderer_window->renderer->deletedRoom = r->id;
+
     
-    vector<CRoom *>::iterator i;
+    int i;
     ids[ r->id ] = NULL;
     
-    for (i = rooms.begin(); i != rooms.end(); i++)
-        if ((*i)->id == r->id ) {
+    for (i = 0; i < rooms.size(); i++)
+        if (rooms[i]->id == r->id ) {
             print_debug(DEBUG_ROOMS,"Deleting the room from rooms vector.\r\n");
-            i = rooms.erase(i);
+            rooms.remove(i);
             break;
         }
     
     delete r;    
+
+
     fixFreeRooms();
     toggle_renderer_reaction();
 }

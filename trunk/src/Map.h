@@ -1,16 +1,16 @@
 #ifndef ROOMS_H 
 #define ROOMS_H 
 
-#include <vector>
 #include "defines.h"
 #include "CRoom.h"
 #include "Regions.h"
 #include "CSelectionManager.h"
 
-using namespace std;
+#include <QVector>
 
 class CPlane;
 class CSquare;
+
 
 #define MAX_ROOMS       30000		/* maximal amount of rooms */
 
@@ -18,7 +18,7 @@ class roommanager {
 
     QList<CRegion *>    regions;
 public:
-    vector<CRoom *> rooms;   		/* rooms */
+    QVector<CRoom *> rooms;   		/* rooms */
     CRoom *ids[MAX_ROOMS];	/* array of pointers */
     CSelectionManager   selections;
     
