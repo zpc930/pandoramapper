@@ -4,8 +4,8 @@ OBJECTS_DIR	= obj
 MOC_DIR		= moc
 
 CONFIG		+= qt opengl warn_on thread
-CONFIG		-= release
-CONFIG		+= debug
+CONFIG		+= release
+CONFIG		-= debug
 
 QT += xml opengl gui network
 

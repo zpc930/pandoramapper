@@ -29,7 +29,7 @@
 GLfloat marker_colour[4] =  {1.0, 0.1, 0.1, 0.9};
 
 
-#define MARKER_SIZE           (ROOM_SIZE/2.0)
+#define MARKER_SIZE           (ROOM_SIZE/1.85)
 #define PICK_TOL              20 
 
 class MainWindow *renderer_window;
@@ -249,7 +249,7 @@ void RendererWidget::glDrawMarkers()
     }
 
     if (last_drawn_trail) {
-        glColor4f(marker_colour[0] / 1.1, marker_colour[1] / 1.5, marker_colour[2] / 1.5, marker_colour[3] / 1.5);
+        glColor4f(marker_colour[0] / 1.1, marker_colour[1] / 1.3, marker_colour[2] / 1.3, marker_colour[3] / 1.3);
         p = Map.getRoom(last_drawn_trail);
         if (p != NULL) {
             dx = p->getX() - curx;
@@ -773,7 +773,8 @@ bool RendererWidget::doSelect(QPoint pos, unsigned int &id)
 {
     int viewport[4];
     int i;
-    GLint   hits, temphit;
+    GLint   hits;
+    GLint temphit = 32767;
     GLuint  zval;
     bool    selected;
 

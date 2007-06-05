@@ -699,7 +699,7 @@ void CEngine::clear()
     set_users_region(Map.getRegionByName("default"));
     set_last_region(Map.getRegionByName("default"));
     
-    addedroom = NULL;  
+    resetAddedRoomVar();
 }
 
 void CEngine::set_users_region(CRegion *reg)

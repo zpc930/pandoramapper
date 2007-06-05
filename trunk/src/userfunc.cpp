@@ -1377,7 +1377,6 @@ USERCMD(usercmd_mload)
   send_to_user(" * Clearing events stacks...\r\n");
   engine->clear();
   
-  engine->addedroom = NULL;       /* possible memory leak, but who cares ... */
   engine->setMapping(false);
   
 
