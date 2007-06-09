@@ -40,6 +40,7 @@
   <spell addon="NO" name="nightvision" up="Your eyes tingle." refresh="" down="Your vision blurs.">
   <spell addon="NO" name="battleglory" up="Hearing the horn blow, you feel your urge to battle increase!" refresh="" down="You feel your newfound strength leaving you again.">
   <spell addon="NO" name="breath of briskness" up="An energy begins to flow within your legs as your body becomes lighter." refresh="The energy in your legs is refreshed." down="Your legs feel heavier.">
+  <spell addon="NO" name="protection from evil" up="You have a righteous feeling!" refresh="You feel a renewed righteousness." down="You feel less righteous.">
   <debug name="general"  state="ON">
   <debug name="analyzer"  state="ON">
   <debug name="system"  state="ON">
