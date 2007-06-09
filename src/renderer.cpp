@@ -597,8 +597,25 @@ void RendererWidget::setupNewBaseCoordinates()
     curz = newRoom->getZ() + userLayerShift;
 }
 
+void RendererWidget::centerOnRoom(unsigned int id)
+{
+    CRoom *r = Map.getRoom(id);
 
+    userx = (double) (curx - r->getX());
+    usery = (double) (cury - r->getY());
+    changeUserLayerShift(0 - (curz - r->getZ()));
 
+/*
+    curx = r->getX();
+    cury = r->getY();
+    curz = r->getZ();
+    userx = 0;
+    usery = 0;
+    userLayerShift = 0;
+*/
+
+    toggle_renderer_reaction();
+}
 
 void RendererWidget::draw(void)
 {

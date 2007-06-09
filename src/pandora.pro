@@ -14,6 +14,7 @@ FORMS +=        roomedit.ui
 FORMS +=	spellsdialog.ui
 FORMS +=	movementdialog.ui
 FORMS +=	logdialog.ui
+FORMS +=	finddialog.ui
 
 
 HEADERS		+=configurator.h
@@ -42,6 +43,7 @@ HEADERS         +=CEvent.h
 HEADERS         +=CActionManager.h
 HEADERS         +=CMovementDialog.h
 HEADERS         +=CLogDialog.h
+HEADERS         +=finddialog.h
 
 
 
@@ -70,6 +72,7 @@ SOURCES         +=CSelectionManager.cpp
 SOURCES         +=CActionManager.cpp
 SOURCES         +=CMovementDialog.cpp
 SOURCES         +=CLogDialog.cpp
+SOURCES         +=finddialog.cpp
 
 TARGET		= ../pandora
 

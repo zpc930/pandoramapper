@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     generalSettingsDialog = NULL;
     movementDialog = NULL;
     logdialog = NULL;
+    findDialog = NULL;
     mapMoveMode = false;
     deleteMode = false;
 
@@ -64,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     actionsMenu = menuBar()->addMenu(tr("&Room"));
+    actionsMenu->addAction(actionManager->findAct);
     actionsMenu->addAction(actionManager->roomeditAct);
     actionsMenu->addAction(actionManager->moveRoomAct);
     actionsMenu->addAction(actionManager->deleteAct);

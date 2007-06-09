@@ -82,6 +82,7 @@ public:
     void changeUserLayerShift(int byValue) { userLayerShift += byValue; curz += byValue; }
     
     bool doSelect(QPoint pos, unsigned int &id);
+    void centerOnRoom(unsigned int id);
 
     
 public slots:
