@@ -60,6 +60,9 @@ public:
     void deleteRoom(CRoom *r, int mode);  /* user interface function */
     void smallDeleteRoom(CRoom *r);  /* user interface function */
 
+    QList<int> searchNames(QString s, Qt::CaseSensitivity cs);
+    QList<int> searchDescs(QString s, Qt::CaseSensitivity cs);
+    QList<int> searchNotes(QString s, Qt::CaseSensitivity cs);
 };
 
 extern class roommanager Map;/* room manager */
