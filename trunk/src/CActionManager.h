@@ -30,6 +30,7 @@ public:
     QAction       *mapMoveToolAct;
     QAction       *deleteToolAct;
 
+    QAction       *findAct;
     QAction       *roomeditAct;
     QAction       *deleteAct;
     QAction       *mergeAct;
@@ -94,6 +95,9 @@ public slots:
     void about();
     void gotoAction();
     void deleteFully(); // delete with remove flag
+
+private slots:
+    void find();
 };
 
 

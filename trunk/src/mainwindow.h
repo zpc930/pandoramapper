@@ -8,6 +8,7 @@
 #include "SpellsDialog.h"
 #include "CMovementDialog.h"
 #include "CLogDialog.h"
+#include "finddialog.h"
 #include "renderer.h"
 
 #include "CActionManager.h"
@@ -50,6 +51,7 @@ public:
     SpellsDialog      *spells_dialog;
     CMovementDialog   *movementDialog;
     CLogDialog        *logdialog;
+    FindDialog        *findDialog;
 
     QAction       *hide_status_action;
     QAction       *hide_menu_action;

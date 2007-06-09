@@ -54,6 +54,10 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     connect(quitAct, SIGNAL(triggered()), this, SLOT(quit()));
         
     /* Room menu */
+    findAct = new QAction(tr("Find..."), this);
+    findAct->setStatusTip(tr("Find matching rooms"));
+    connect(findAct, SIGNAL(triggered()), this, SLOT(find()));
+    
     roomeditAct= new QAction(tr("Edit"), this);
     roomeditAct->setStatusTip(tr("View/Edit current Room's info"));
     connect(roomeditAct, SIGNAL(triggered()), this, SLOT(edit_current_room()));    
@@ -649,4 +653,13 @@ void CActionManager::publish_map()
 
 void CActionManager::gotoAction() {
     userland_parser->parse_user_input_line("mgoto");
+}
+
+void CActionManager::find()
+{
+    if (!parent->findDialog) {
+        parent->findDialog = new FindDialog(parent);
+    }
+    parent->findDialog->show();
+    parent->findDialog->activateWindow();
 }
