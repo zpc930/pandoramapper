@@ -372,3 +372,41 @@ void  roommanager::addToPlane(CRoom *room)
     prev->next = new CPlane(room);
 }
 
+QList<int> roommanager::searchNames(QString s, Qt::CaseSensitivity cs)
+{
+    QList<int> results;
+
+    for (int i = 0; i < rooms.size(); i++) {
+        if (QString(rooms[i]->getName()).contains(s, cs)) {
+            results << rooms[i]->id;
+        }
+    }
+
+    return results;
+}
+
+QList<int> roommanager::searchDescs(QString s, Qt::CaseSensitivity cs)
+{
+    QList<int> results;
+
+    for (int i = 0; i < rooms.size(); i++) {
+        if (QString(rooms[i]->getDesc()).contains(s, cs)) {
+            results << rooms[i]->id;
+        }
+    }
+
+    return results;
+}
+
+QList<int> roommanager::searchNotes(QString s, Qt::CaseSensitivity cs)
+{
+    QList<int> results;
+
+    for (int i = 0; i < rooms.size(); i++) {
+        if (QString(rooms[i]->getNote()).contains(s, cs)) {
+            results << rooms[i]->id;
+        }
+    }
+
+    return results;
+}
