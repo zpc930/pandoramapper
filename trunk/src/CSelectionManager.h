@@ -20,6 +20,7 @@ public:
     void unselect(unsigned int id);
 
     unsigned int getFirst() { return selection.values().at(0); }
+    unsigned int get(int index) { return selection.values().at(index); }
 
     int size() {return selection.size(); }
     void exclusiveSelection(unsigned int id); 

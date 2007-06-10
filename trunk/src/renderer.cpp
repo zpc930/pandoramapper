@@ -30,7 +30,7 @@ GLfloat marker_colour[4] =  {1.0, 0.1, 0.1, 0.9};
 
 
 #define MARKER_SIZE           (ROOM_SIZE/1.85)
-#define PICK_TOL              20 
+#define PICK_TOL              50 
 
 class MainWindow *renderer_window;
 
@@ -718,7 +718,6 @@ void RendererWidget::display(void)
 void RendererWidget::renderPickupObjects()
 {
     CPlane *plane;  
-
     int z = 0;
     
     print_debug(DEBUG_RENDERER, "in Object pickup fake draw()");
@@ -727,6 +726,8 @@ void RendererWidget::renderPickupObjects()
     glLoadIdentity();
 
     glEnable(GL_TEXTURE_2D);
+
+    glColor3ub(255, 0, 0);
 
     glTranslatef(0, 0, userz);
 
@@ -777,8 +778,16 @@ void RendererWidget::renderPickupRoom(CRoom *p)
     dy = p->getY() - cury;
     dz = (p->getZ() - curz) /* * DIST_Z */;
 
+
+    //if (p->id == 20989 || p->id == 20973) 
+      //  printf("preparing to render the room in pickup mode! id %i\r\n", p->id);
+
     if (frustum.isPointInFrustum(dx, dy, dz) != true)
       return;
+
+        
+    //printf("Rendering the pickup room %i\r\n", p->id);
+
     glTranslatef(dx, dy, dz);
     glLoadName( p->id + 1 );
     glCallList(basic_gllist);

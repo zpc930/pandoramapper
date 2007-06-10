@@ -82,6 +82,11 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     mergeAct->setStatusTip(tr("Tries to merge two twin rooms"));
     connect(mergeAct, SIGNAL(triggered()), this, SLOT(merge_room()));    
 
+    bindRoomsAct= new QAction(tr("Bind Rooms"), this);
+    bindRoomsAct->setStatusTip(tr("Tries to connect two rooms"));
+    connect(bindRoomsAct, SIGNAL(triggered()), this, SLOT(bindRooms()));    
+
+
     refreshAct= new QAction(tr("Refresh"), this);
     refreshAct->setStatusTip(tr("Switches to selected room and refreshes it"));
     connect(refreshAct, SIGNAL(triggered()), this, SLOT(refreshRoom()));    
@@ -198,6 +203,52 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     connect(gotoAct, SIGNAL(triggered()), this, SLOT(gotoAction()));
 }
 
+
+void CActionManager::bindRooms()
+{
+    CRoom *one, *two;
+    int dir;
+
+    if (Map.selections.size() != 2) {
+        QMessageBox::critical(parent, "Failure", QString("You have to select two rooms to bind them."));
+        return;
+    }
+
+
+    one = Map.getRoom( Map.selections.get(0) );
+    two = Map.getRoom( Map.selections.get(1) );
+
+    // roll over all dirs
+    for (dir = 0; dir <= 5; dir++) 
+        // and check if there are connections like undefined exits north-south etc
+        if (one->isExitUndefined( dir) == true && two->isExitUndefined( reversenum( dir ) ) ) {
+            // now test is the connection is geometrically right
+            bool fits = false;
+
+            if ( (dir == NORTH && one->getY() < two->getY()) ||
+                 (dir == EAST && one->getX() < two->getX())  ||
+                 (dir == WEST && one->getX() > two->getX())  ||
+                 (dir == SOUTH && one->getY() > two->getY()) ||
+                 (dir == UP && one->getZ() < two->getZ())    ||
+                 (dir == DOWN && one->getZ() > two->getZ()) ) 
+            {
+                fits = true;
+            }
+
+            if (fits == true) {
+                one->setExit(dir, two);
+                if (conf->get_duallinker() == true)
+                    two->setExit( reversenum( dir ), one);
+                return;
+            }
+                
+        }
+
+    
+    QMessageBox::critical(parent, "Failure", QString("No fitting exits found. Rooms are badly positioned or exits are not marked as Undefined."));
+        
+
+}
 
 void CActionManager::edit_current_room()
 {
