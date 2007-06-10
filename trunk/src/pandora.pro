@@ -86,6 +86,11 @@ unix:LIBS		+= -lm
 	unix:QMAKE_POST_LINK=strip $(TARGET)
 }
 
+SVN_REVISION=$$system("svn info | grep Revision | sed s/Revision:\ //")
+!isEmpty(SVN_REVISION) {
+	DEFINES += SVN_REVISION=$$SVN_REVISION
+}
+
 #CFLAGS_VAR	= $$system(pkg-config --cflags OGRE)
 #CLIBS_VAR	= $$system(pkg-config --libs OGRE)
 QMAKE_CXXFLAGS_RELEASE	+=  -O2 -pipe $$CFLAGS_VAR
