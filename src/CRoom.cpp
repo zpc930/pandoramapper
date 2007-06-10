@@ -443,6 +443,16 @@ void CRoom::removeExit(int dir)
     doors[dir].clear();
 }
 
+QString CRoom::toolTip()
+{
+    QString s;
+    s += "#";
+    s += QString::number(id);
+    s += "\n";
+    s += name;
+
+    return s;
+}
 
 /* ------------------------------ prints the given room --------------------*/
 void CRoom::sendRoom()

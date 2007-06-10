@@ -90,6 +90,7 @@ public:
     bool isNameSet();
     bool isEqualNameAndDesc(CRoom *room);
     
+    QString toolTip();
     
     void setModified(bool b);
     bool isConnected(int dir);

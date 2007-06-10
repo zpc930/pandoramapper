@@ -49,6 +49,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(proxy, SIGNAL(connectionEstablished()), actionManager, SLOT(enable_online_actions()), Qt::QueuedConnection );
     connect(proxy, SIGNAL(connectionLost()), actionManager, SLOT(disable_online_actions()), Qt::QueuedConnection );
 
+    /* Enable mouse tracking to be able to show tooltips. */
+    setMouseTracking(true);
 
 
     /* now building a menu and adding actions to menu */
@@ -256,6 +258,21 @@ void MainWindow::update_status_bar()
     stacker.getCurrent(str);
     emit newLocationLabel(str);
     print_debug(DEBUG_INTERFACE, "Done updating interface!\r\n");
+}
+
+/* Reimplement main even handler to catch tooltip events. */
+bool MainWindow::event(QEvent *event)
+{
+    unsigned int id;
+
+    if (event->type() == QEvent::ToolTip) {
+        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+        if (renderer->doSelect( mousePosInRenderer( helpEvent->pos() ), id ))
+            QToolTip::showText(helpEvent->globalPos(), Map.getRoom(id)->toolTip());
+        else
+            QToolTip::hideText();
+    }
+    return QWidget::event(event);
 }
 
 void MainWindow::keyPressEvent( QKeyEvent *k )
