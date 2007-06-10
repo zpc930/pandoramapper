@@ -342,12 +342,6 @@ void RendererWidget::glDrawRoom(CRoom *p)
     if (details == 0)
       return;
     
-    if (conf->get_show_notes_renderer() == true) {
-        glColor4f(0.60, 0.4, 0.3, colour[3]);
-        renderText(dx, dy, dz + ROOM_SIZE / 2, p->getNote(), textFont);    
-        glColor4f(colour[0], colour[1], colour[2], colour[3]);
-    }
-
     for (k = 0; k <= 5; k++) 
       if (p->isExitPresent(k) == true) {
         if (p->isExitNormal(k)) {
@@ -429,6 +423,13 @@ void RendererWidget::glDrawRoom(CRoom *p)
             glVertex3f(dx + kx, dy + ky, dz + kz);
             glVertex3f(dx2, dy2, dz2);
             glEnd();
+
+
+            if (conf->get_show_notes_renderer() == true) {
+                glColor4f( 0.4, 1.0, 0.98, colour[3]);
+                renderText(dx, dy, dz + ROOM_SIZE / 2, p->getNote(), textFont);    
+            }
+
 
             glColor4f(colour[0], colour[1], colour[2], colour[3]);
 
@@ -738,9 +739,9 @@ void RendererWidget::renderPickupObjects()
 
     setupNewBaseCoordinates(); 
 
+
     frustum.calculateFrustum(curx, cury, curz);
-
-
+    
     // calculate the lower and the upper borders
     int visibleLayers = conf->getVisibleLayers();
     int side = visibleLayers >> 1;    

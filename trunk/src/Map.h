@@ -42,7 +42,13 @@ public:
     void addRoom(CRoom *room);
     
     
-    inline CRoom * getRoom(unsigned int id)        { return ids[id]; }
+    inline CRoom * getRoom(unsigned int id)        { 
+            if (id < MAX_ROOMS) 
+                return ids[id]; 
+            else 
+                return NULL; 
+    }
+
     inline QByteArray getName(unsigned int id)  { if (ids[id]) return (*(ids[id])).getName(); return "";}
         
     int tryMergeRooms(CRoom *room, CRoom *copy, int j);

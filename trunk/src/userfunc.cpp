@@ -779,36 +779,38 @@ USERCMD(usercmd_mgoto)
     int dir;
     
     userfunc_print_debug;
-  
 
-    if (Map.selections.isEmpty() == false) {
-        stacker.put(Map.selections.getFirst());
+    // check for mgoto ID syntax  
+    p = skip_spaces(line);
+    // if not go on with selection
+    if (!*p) {
+        if (Map.selections.isEmpty() == false) {
+            stacker.put(Map.selections.getFirst());
+        } else 
+            MISSING_ARGUMENTS
+
     } else {
-        p = skip_spaces(line);
-        if (!*p) MISSING_ARGUMENTS
-        
         p = one_argument(p, arg, 0);
         if (is_integer(arg)) {
             id = atoi(arg);
             if (Map.getRoom(id) == NULL) {
-            send_to_user("--[ There is no room with id %s.\r\n", arg);
-            SEND_PROMPT;
-            return USER_PARSE_SKIP;
+                send_to_user("--[ There is no room with id %s.\r\n", arg);
+                SEND_PROMPT;
+                return USER_PARSE_SKIP;
             }
             
             stacker.put(Map.getRoom(id));
 
         } else {
-            
             CHECK_SYNC;
             r = stacker.first();
             
             PARSE_DIR_ARGUMENT(dir, arg);
         
             if ( r->isConnected(dir) == false ) {
-            send_to_user("--[ Bad direction - there is no connection.\r\n", arg);
-            SEND_PROMPT;
-            return USER_PARSE_SKIP;
+                send_to_user("--[ Bad direction - there is no connection.\r\n", arg);
+                SEND_PROMPT;
+                return USER_PARSE_SKIP;
             }
         
             stacker.put(r->exits[dir]->id);
