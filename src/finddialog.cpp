@@ -43,6 +43,8 @@ void FindDialog::findClicked()
         results = Map.searchDescs(text, cs);
     else if (notesRadioButton->isChecked())
         results = Map.searchNotes(text, cs);
+    else if (exitsRadioButton->isChecked())
+        results = Map.searchExits(text, cs);
 
     for (int i = 0; i < results.size(); i++) {
         QString id = QString(tr("%1").arg( results.at(i) ));

@@ -63,6 +63,7 @@ public:
     QList<int> searchNames(QString s, Qt::CaseSensitivity cs);
     QList<int> searchDescs(QString s, Qt::CaseSensitivity cs);
     QList<int> searchNotes(QString s, Qt::CaseSensitivity cs);
+    QList<int> searchExits(QString s, Qt::CaseSensitivity cs);
 };
 
 extern class roommanager Map;/* room manager */
