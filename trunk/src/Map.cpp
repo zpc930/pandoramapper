@@ -410,3 +410,20 @@ QList<int> roommanager::searchNotes(QString s, Qt::CaseSensitivity cs)
 
     return results;
 }
+
+QList<int> roommanager::searchExits(QString s, Qt::CaseSensitivity cs)
+{
+    QList<int> results;
+
+    for (int i = 0; i < rooms.size(); i++) {
+        for (int j = 0; j <= 5; j++) {
+            if (rooms[i]->isDoorSecret( j ) == true) {
+                if (QString(rooms[i]->getDoor(j)).contains(s, cs)) {
+                    results << rooms[i]->id;
+                }
+            }
+        }
+    }
+
+    return results;
+}

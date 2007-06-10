@@ -20,7 +20,10 @@
        <item>
         <widget class="QLabel" name="label" >
          <property name="text" >
-          <string>Find:</string>
+          <string>&amp;Find:</string>
+         </property>
+         <property name="buddy" >
+          <cstring>lineEdit</cstring>
          </property>
         </widget>
        </item>
@@ -56,6 +59,13 @@
              <widget class="QRadioButton" name="notesRadioButton" >
               <property name="text" >
                <string>N&amp;otes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="exitsRadioButton" >
+              <property name="text" >
+               <string>Secret &amp;exits</string>
               </property>
              </widget>
             </item>
