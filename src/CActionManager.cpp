@@ -269,6 +269,9 @@ void CActionManager::about()
 {
     QMessageBox::about(parent, tr("About Pandora"),
             tr("<h2>Pandora MUME Mapper</h2>"
+#ifdef SVN_REVISION
+               "<p>SVN revision ") + QString::number(SVN_REVISION) + tr(
+#endif
                "<p>Copyright &copy; 2003-2007 Azazello and contributors."
                "<p>This is an automatic mapper and database software for "
                "a game named MUME. It uses MUME's XML for parsing the "
