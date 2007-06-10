@@ -432,6 +432,13 @@ void MainWindow::mousePressEvent( QMouseEvent *e )
                 menu.addAction(actionManager->deleteFullyAct);
                 menu.addAction(actionManager->refreshAct);
 
+                menu.addAction(actionManager->bindRoomsAct);
+                if (Map.selections.size() == 2)
+                    actionManager->bindRoomsAct->setEnabled(true);
+                else 
+                    actionManager->bindRoomsAct->setEnabled(false);
+            
+
 
                 menu.exec(e->globalPos());
             }
