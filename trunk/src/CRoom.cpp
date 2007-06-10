@@ -451,6 +451,15 @@ QString CRoom::toolTip()
     s += "\n";
     s += name;
 
+    for (int i = 0; i <= 5; i++) {
+        if (isDoorSecret(i)) {
+            s += "\n";
+            s += (dirbynum(i));
+            s += ": ";
+            s += doors[i];
+        }
+    }
+
     return s;
 }
 
