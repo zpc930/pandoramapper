@@ -65,6 +65,7 @@ private:
     bool deleteMode;
 
 private slots:
+  bool event(QEvent *event);
   void mousePressEvent( QMouseEvent *);
   void mouseReleaseEvent( QMouseEvent *e);
   void mouseMoveEvent( QMouseEvent *);
