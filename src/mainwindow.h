@@ -64,6 +64,8 @@ private:
     bool mapMoveMode;
     bool deleteMode;
 
+    void createContextMenu( QMouseEvent *e );
+
 private slots:
   bool event(QEvent *event);
   void mousePressEvent( QMouseEvent *);
