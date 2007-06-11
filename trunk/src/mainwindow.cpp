@@ -423,27 +423,51 @@ void MainWindow::mousePressEvent( QMouseEvent *e )
             if (checkMouseSelection(e) == true) {
                 print_debug(DEBUG_INTERFACE, "Registered object selection with right mouse button.");
 
-                /* Context menu */
-                QMenu menu(this);
-                menu.addAction(actionManager->gotoAct);
-                menu.addAction(actionManager->roomeditAct);
-                menu.addAction(actionManager->moveRoomAct);
-                menu.addAction(actionManager->deleteAct);
-                menu.addAction(actionManager->deleteFullyAct);
-                menu.addAction(actionManager->refreshAct);
-
-                menu.addAction(actionManager->bindRoomsAct);
-                if (Map.selections.size() == 2)
-                    actionManager->bindRoomsAct->setEnabled(true);
-                else 
-                    actionManager->bindRoomsAct->setEnabled(false);
-            
-
-
-                menu.exec(e->globalPos());
+                createContextMenu(e);
             }
         }
     }
+}
+
+/*
+ * FIXME: The dialogs that pop up from context menu get rooms from selection.
+ * If more than one room was previously selected, strange results may happen.
+ */
+void MainWindow::createContextMenu( QMouseEvent *e )
+{
+    unsigned int id;
+    QAction *roomNameAct;
+    QMenu menu(this);
+    QString roomName;
+
+    if (renderer->doSelect( mousePosInRenderer( e->pos() ), id )) {
+        roomName = Map.getRoom(id)->getName();
+    } else {
+        roomName = tr("No room here");
+    }
+
+    /* Trim room name to 25 characters. */
+    if (roomName.length() > 25)
+        roomName = roomName.left(22) + "...";
+
+    roomNameAct = new QAction(roomName, this);
+    roomNameAct->setEnabled(false);
+    menu.addAction(roomNameAct);
+    menu.addSeparator();
+    menu.addAction(actionManager->gotoAct);
+    menu.addAction(actionManager->roomeditAct);
+    menu.addAction(actionManager->moveRoomAct);
+    menu.addAction(actionManager->deleteAct);
+    menu.addAction(actionManager->deleteFullyAct);
+    menu.addAction(actionManager->refreshAct);
+
+    menu.addAction(actionManager->bindRoomsAct);
+    if (Map.selections.size() == 2)
+        actionManager->bindRoomsAct->setEnabled(true);
+    else 
+        actionManager->bindRoomsAct->setEnabled(false);
+
+    menu.exec(e->globalPos());
 }
 
 QPoint MainWindow::mousePosInRenderer( QPoint pos ) {
