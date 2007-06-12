@@ -39,8 +39,6 @@ MainWindow::MainWindow(QWidget *parent)
     movementDialog = NULL;
     logdialog = NULL;
     findDialog = NULL;
-    mapMoveMode = false;
-    deleteMode = false;
 
     userland_parser = new Userland();
     actionManager = new CActionManager(this);
@@ -59,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
     /* Enable mouse tracking to be able to show tooltips. */
     setMouseTracking(true);
 
+    setToolMode(SelectMode);
 
     /* now building a menu and adding actions to menu */
     fileMenu = menuBar()->addMenu(tr("&File"));
@@ -382,7 +381,7 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
             break;				
          case Qt::Key_Space:
             if (!k->isAutoRepeat()) {
-                setMapMoveMode(true);
+                setToolMode(MoveMode);
             }
             break;
     }
@@ -398,7 +397,7 @@ void MainWindow::keyReleaseEvent( QKeyEvent *k )
     switch ( k->key() ) {
         case Qt::Key_Space:
             if (!k->isAutoRepeat()) {
-                setMapMoveMode(false);
+                setToolMode(SelectMode);
             }
             break;
     }
@@ -415,19 +414,21 @@ void MainWindow::mousePressEvent( QMouseEvent *e )
     else if (e->button() == Qt::RightButton)
         mouseState.RightButtonPressed = true;
 
-    if (mapMoveMode) {
+    switch (toolMode) {
+    case MoveMode:
 #if QT_VERSION >= 0x040200
         renderer->setCursor(Qt::ClosedHandCursor);
 #endif
-    } else if (deleteMode) {
+        break;
+    case DeleteMode:
         if (e->button() == Qt::LeftButton) {
             if (checkMouseSelection(e) == true) {
                 print_debug(DEBUG_INTERFACE, "Deleting room.");
                 userland_parser->parse_user_input_line("mdelete");
             }
         }
-    } else {
-        /* Select rooms if not in map moving mode. */
+        break;
+    case SelectMode:
         if (e->button() == Qt::LeftButton) {
             if (checkMouseSelection(e) == true) {
                 print_debug(DEBUG_INTERFACE, "Registered object selection with left mouse button.");
@@ -439,6 +440,7 @@ void MainWindow::mousePressEvent( QMouseEvent *e )
                 createContextMenu(e);
             }
         }
+        break;
     }
 }
 
@@ -529,7 +531,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent *e )
     }
 
 #if QT_VERSION >= 0x040200
-    if (mapMoveMode)
+    if (toolMode == MoveMode)
         renderer->setCursor(Qt::OpenHandCursor);
 #endif
 }
@@ -547,7 +549,7 @@ void MainWindow::mouseMoveEvent( QMouseEvent *e)
       ON_OFF(LeftButtonPressed), ON_OFF(RightButtonPressed), dist_x, dist_y);
 */  
 
-    if (mapMoveMode) {
+    if (toolMode == MoveMode) {
         if (mouseState.LeftButtonPressed) {
             renderer->userx += (float) dist_x / 10.0;
             renderer->usery -= (float) dist_y / 10.0;
@@ -574,29 +576,39 @@ void MainWindow::wheelEvent(QWheelEvent *e)
     toggle_renderer_reaction();
 }
 
-void MainWindow::setMapMoveMode(bool b)
+void MainWindow::setMapMoveMode()
 {
-    if (mapMoveMode != b)
-        emit mapMoveValueChanged(b);
+    setToolMode(MoveMode);
+}
 
-    mapMoveMode = b;
+void MainWindow::setDeleteMode()
+{
+    setToolMode(DeleteMode);
+}
 
-    if (mapMoveMode) {
+void MainWindow::setSelectMode()
+{
+    setToolMode(SelectMode);
+}
+
+void MainWindow::setToolMode(ToolMode mode)
+{
+    toolMode = mode;
+
+    switch (mode) {
+    case MoveMode:
+        actionManager->mapMoveToolAct->setChecked(true);
 #if QT_VERSION >= 0x040200
         renderer->setCursor(Qt::OpenHandCursor);
 #endif
-    } else {
-        renderer->setCursor(Qt::ArrowCursor);
-    }
-}
-
-void MainWindow::setDeleteMode(bool b)
-{
-    deleteMode = b;
-
-    if (deleteMode) {
+        break;
+    case DeleteMode:
+        actionManager->deleteToolAct->setChecked(true);
         renderer->setCursor(Qt::CrossCursor);
-    } else {
+        break;
+    case SelectMode:
         renderer->setCursor(Qt::ArrowCursor);
+        actionManager->selectToolAct->setChecked(true);
+        break;
     }
 }
