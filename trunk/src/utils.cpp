@@ -68,9 +68,9 @@ const boolean_struct input_booleans[] = {
 char    timer_ken[MAX_INPUT_LENGTH];
 double  timer_now;
 
-size_t write_to_channel(int mode, const char *format, va_list args);
+int write_to_channel(int mode, const char *format, va_list args);
 
-size_t write_debug(unsigned int flag, const char *format, va_list args);
+int write_debug(unsigned int flag, const char *format, va_list args);
 
 
 int MIN(int a, int b)
@@ -79,10 +79,10 @@ int MIN(int a, int b)
 }
 
 
-size_t write_debug(unsigned int flag, const char *format, va_list args)
+int write_debug(unsigned int flag, const char *format, va_list args)
 {
     char txt[MAX_STR_LEN*2];
-    size_t size;
+    int size;
     int i;
     
 
@@ -319,10 +319,10 @@ void send_to_mud(const char *messg, ...)
 }
 
 /* mode 0 - to user, mode 1 to mud */
-size_t write_to_channel(int mode, const char *format, va_list args)
+int write_to_channel(int mode, const char *format, va_list args)
 {
   char txt[MAX_STR_LEN*2];
-  size_t size;
+  int size;
 
   size = vsnprintf(txt, sizeof(txt), format, args);
   if (mode == 0)
