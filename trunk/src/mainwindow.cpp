@@ -270,7 +270,11 @@ bool MainWindow::event(QEvent *event)
         if (renderer->doSelect( mousePosInRenderer( helpEvent->pos() ), id ))
             QToolTip::showText(helpEvent->globalPos(), Map.getRoom(id)->toolTip());
         else
+#if QT_VERSION >= 0x040200
             QToolTip::hideText();
+#else
+            QToolTip::showText(QPoint(), QString());
+#endif
     }
     return QWidget::event(event);
 }
@@ -405,7 +409,9 @@ void MainWindow::mousePressEvent( QMouseEvent *e )
         mouseState.RightButtonPressed = true;
 
     if (mapMoveMode) {
+#if QT_VERSION >= 0x040200
         renderer->setCursor(Qt::ClosedHandCursor);
+#endif
     } else if (deleteMode) {
         if (e->button() == Qt::LeftButton) {
             if (checkMouseSelection(e) == true) {
@@ -515,8 +521,10 @@ void MainWindow::mouseReleaseEvent( QMouseEvent *e )
         mouseState.RightButtonPressed = false;
     }
 
+#if QT_VERSION >= 0x040200
     if (mapMoveMode)
         renderer->setCursor(Qt::OpenHandCursor);
+#endif
 }
 
 void MainWindow::mouseMoveEvent( QMouseEvent *e)
@@ -567,7 +575,9 @@ void MainWindow::setMapMoveMode(bool b)
     mapMoveMode = b;
 
     if (mapMoveMode) {
+#if QT_VERSION >= 0x040200
         renderer->setCursor(Qt::OpenHandCursor);
+#endif
     } else {
         renderer->setCursor(Qt::ArrowCursor);
     }
