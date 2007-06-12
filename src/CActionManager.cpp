@@ -107,17 +107,17 @@ CActionManager::CActionManager(MainWindow *parentWindow)
     selectToolAct = new QAction(tr("Select tool"), this);
     selectToolAct->setStatusTip(tr("Select one or more rooms"));
     selectToolAct->setCheckable(true);
+    connect(selectToolAct, SIGNAL(triggered()), parent, SLOT(setSelectMode()));
 
     mapMoveToolAct = new QAction(tr("Move map"), this);
     mapMoveToolAct->setStatusTip(tr("Move map around"));
     mapMoveToolAct->setCheckable(true);
-    connect(mapMoveToolAct, SIGNAL(toggled(bool)), parent, SLOT(setMapMoveMode(bool)));
-    connect(parent, SIGNAL(mapMoveValueChanged(bool)), mapMoveToolAct, SLOT(setChecked(bool)));
+    connect(mapMoveToolAct, SIGNAL(triggered()), parent, SLOT(setMapMoveMode()));
  
     deleteToolAct = new QAction(tr("Delete tool"), this);
     deleteToolAct->setStatusTip(tr("Delete tool"));
     deleteToolAct->setCheckable(true);
-    connect(deleteToolAct, SIGNAL(toggled(bool)), parent, SLOT(setDeleteMode(bool)));
+    connect(deleteToolAct, SIGNAL(triggered()), parent, SLOT(setDeleteMode()));
 
     toolsGroup = new QActionGroup(this);
     toolsGroup->addAction(selectToolAct);

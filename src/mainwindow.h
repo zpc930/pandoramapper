@@ -46,6 +46,11 @@ class MainWindow : public QMainWindow
     QPoint mousePosInRenderer( QPoint pos );
     bool checkMouseSelection( QMouseEvent *e ); 
 
+    enum ToolMode {
+        SelectMode,
+        MoveMode,
+        DeleteMode
+    };
 
 
 public:
@@ -65,10 +70,10 @@ public:
 
     void update_status_bar();
     void editRoomDialog(unsigned int id);
+    void setToolMode(ToolMode mode);
 
 private:
-    bool mapMoveMode;
-    bool deleteMode;
+    ToolMode toolMode;
 
     void createContextMenu( QMouseEvent *e );
 
@@ -87,8 +92,9 @@ public slots:
   void hide();                              /* hide all extra widgets */
 
   void moveRoomDialog();
-  void setMapMoveMode(bool);
-  void setDeleteMode(bool);
+  void setMapMoveMode();
+  void setDeleteMode();
+  void setSelectMode();
 
 signals:
   void newLocationLabel(const QString &label);
