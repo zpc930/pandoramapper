@@ -13,6 +13,12 @@
 #include "forwarder.h"
 #include "CActionManager.h"
 
+#include "RoomEditDialog.h"
+#include "ConfigWidget.h"
+#include "SpellsDialog.h"
+#include "CMovementDialog.h"
+#include "CLogDialog.h"
+#include "finddialog.h"
 
 CActionManager::CActionManager(MainWindow *parentWindow) 
 {

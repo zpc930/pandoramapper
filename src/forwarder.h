@@ -1,6 +1,9 @@
 #ifndef FORWARDER_H 
 #define FORWARDER_H 
 
+#include <QMutex>
+#include <QThread>
+
 #if defined Q_OS_LINUX || defined Q_OS_MACX || defined Q_OS_FREEBSD
     #define SOCKET int
 #elif defined Q_OS_WIN32
@@ -35,10 +38,6 @@
 #define TN_EOF 236
 #define LAST_TN_CMD 236
 
-
-
-#include <QMutex>
-#include <QThread>
 
 class Cdispatcher;
 

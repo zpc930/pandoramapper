@@ -2,10 +2,6 @@
 #define ROOMEDITDIALOG_H 
 
 #include <QDialog>
-#include <QLineEdit>
-#include <QComboBox>
-#include <QCheckBox>
-#include <QString>
 
 #include "defines.h"
 #include "CRoom.h"

@@ -1,9 +1,10 @@
 #ifndef CACTIONMANAGER_H
 #define CACTIONMANAGER_H
 
-#include <QAction>
 #include <QMainWindow>
+
 class MainWindow;
+class QActionGroup;
 
 class CActionManager : public QObject {
     Q_OBJECT

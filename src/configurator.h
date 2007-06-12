@@ -2,8 +2,6 @@
 #define CONFIGURATOR_H 
 /* configurator */
 
-#include <QString>
-#include <QRegExp>
 #include <vector>
 #include <QXmlDefaultHandler>
 #include <QGLWidget>
