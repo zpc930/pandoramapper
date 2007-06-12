@@ -3,7 +3,6 @@
 
 
 #include <vector>
-#include <QString>
 #include "forwarder.h"
 #include "engine.h"
 

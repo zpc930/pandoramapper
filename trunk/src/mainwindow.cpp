@@ -8,6 +8,13 @@
 #include "forwarder.h"
 #include "CActionManager.h"
 
+#include "RoomEditDialog.h"
+#include "ConfigWidget.h"
+#include "SpellsDialog.h"
+#include "CMovementDialog.h"
+#include "CLogDialog.h"
+#include "finddialog.h"
+
 void toggle_renderer_reaction()
 {
     if (renderer_window->renderer->redraw == false) {

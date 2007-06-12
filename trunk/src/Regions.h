@@ -5,7 +5,7 @@
 #include <QByteArray>
 
 class CRegion {
-    QByteArray                      name;
+    QByteArray name;
     QMap<QByteArray, QByteArray> doors;
 public:
     CRegion();

@@ -1,5 +1,7 @@
 /* automapper/database module for powwow. Part of the Pandora Project (c) 2003 */
 
+#include <QApplication>
+
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>

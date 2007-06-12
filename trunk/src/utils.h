@@ -2,6 +2,8 @@
 #ifndef UTILS_H 
 #define UTILS_H 
 
+class QByteArray;
+
 #define log			basic_mud_log
 
 #define LOWER(c)   (((c)>='A'  && (c) <= 'Z') ? ((c)+('a'-'A')) : (c))

@@ -14,7 +14,6 @@
 
 #include "defines.h"
 #include "Regions.h"
-#include <QByteArray>
 
 //#define EXIT_UNDEFINED  (MAX_ROOMS+1)
 //#define EXIT_DEATH      (MAX_ROOMS+2)

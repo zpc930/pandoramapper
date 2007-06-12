@@ -3,15 +3,21 @@
 
 #include <QMainWindow>
 
-#include "RoomEditDialog.h"
-#include "ConfigWidget.h"
-#include "SpellsDialog.h"
-#include "CMovementDialog.h"
-#include "CLogDialog.h"
-#include "finddialog.h"
 #include "renderer.h"
-
 #include "CActionManager.h"
+#include "CSelectionManager.h"
+
+/* 
+ * Use forward declarations instead of including relevant header files to make
+ * compiling faster.
+ */
+class QLabel;
+class ConfigWidget;
+class RoomEditDialog;
+class SpellsDialog;
+class CMovementDialog;
+class CLogDialog;
+class FindDialog;
 
 
 void toggle_renderer_reaction();

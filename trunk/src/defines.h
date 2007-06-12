@@ -1,7 +1,7 @@
 #ifndef DEFINES_H 
 #define DEFINES_H 
 
-#include <Qt>
+class QString;
 
 #define MAX_ROOMS       30000		/* maximal amount of rooms */
 
