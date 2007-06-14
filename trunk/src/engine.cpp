@@ -123,7 +123,13 @@ void CEngine::tryDir()
         /* this means we have exactly one match */
 //        printf("nameMatch %i, descMatch %i\r\n", nameMatch, descMatch);
         if (nameMatch > 0) {
-            send_to_user("--[ not exact room match: %i errors. Use 'mrefresh' to fix it!\r\n", nameMatch);
+            /* Autorefresh only if case has been changed. */
+            if (conf->get_autorefresh() && event.name.toLower() == stacker.nextFirst()->getName().toLower()) {
+                send_to_user("--[ (AutoRefreshed) not exact room name match: %i errors.\r\n", nameMatch);
+                stacker.nextFirst()->setName(event.name);
+            } else {
+                send_to_user("--[ not exact room name match: %i errors. Use 'mrefresh' to fix it!\r\n", nameMatch);
+            }
         }
         if (conf->get_autorefresh() && descMatch > 0) {
             send_to_user("--[ (AutoRefreshed) not exact room desc match: %i errors.\r\n", descMatch);
