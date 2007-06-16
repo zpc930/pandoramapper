@@ -560,12 +560,19 @@ void CRoom::sendRoom()
 }
 
 
-
+/* Returns Levenshtein distance between two strings. */
 int Strings_Comparator::compare(QByteArray pattern, QByteArray text)
 {
   int n, m, i, j;
   int cost;
-  
+
+  if (pattern == text)
+    return 0;
+
+  /* Use char arrays for faster access. */
+  const char *s1 = pattern.constData();
+  const char *s2 = text.constData();
+
   n = pattern.length();
   m = text.length();
 
@@ -581,7 +588,7 @@ int Strings_Comparator::compare(QByteArray pattern, QByteArray text)
     for (j = 1; j <= m; j++) 
     {
       cost = D[i - 1][j - 1];
-      if (pattern[i] != text[j])
+      if (s1[i - 1] != s2[j - 1])
         cost += 1;
     
       D[ i ][ j ] = MIN( cost, MIN( D[i - 1][j ] + 1 , D[i][j - 1] + 1) );
