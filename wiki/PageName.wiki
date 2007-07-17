@@ -1,13 +1,34 @@
-#summary This is the Wiki of Pandora Mapper
+#summary FAQ and/or knowledge center.
 
-= Introduction =
+= How to start it? How to connect ? =
+_I downloaded the mapper, what do i do now?_
 
-All possible documentation and hints for users 
+You just have to unpack the mapper and click on/start the pandora.exe file. Then you start your client and connect to localhost 3000.
+JMC:
+#connect localhost 3000
+
+powwow/powtty
+#connect main localhost 3000
+
+Then you just log in the chareter of your choise and make sure you turn on the XML mode. You can do it by: change xml on.
+
+If the XML mode is already on you will see it in the first MUME room input. (Inn room)
 
 
-= Details =
+= Which shortkey are available? =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+F11 and F12 are very useful - you can turn on/off both statusbar and menubar. This makes mapper window smaller.
+
+spacebar - turn on the Movement tool. This means if you hold spacebar and click left or right mouse button you can change some settings of the camera.
+
+The following hotkeys also affect the camera:
+q,w
+a,s
+y,x
+pageUp, pageDown
+
+mouseWheel zooms in/out
+
+You can change your current layer (i.e. you can highlight the layers above or below the current one) just by pressing Plus/Minus on your numpad.
+
+
