@@ -97,3 +97,13 @@ Then right click the R2 room, change the flag of the western exit to UNDEFINED a
 
 Well, first off take a look around in the new area, to have a basic idea of the layout.
 Then mark old rooms with new fresh connections to the new area as undefined. This is important for automatic rooms binding.
+
+= Where is the room description gone?=
+
+_Where is the room description gone, there is no need for it for experienced player special in PK, but if a newbie come and start to play and get a hint to use your mapper, I think it's interesting for them to read all the room descriptions and the work of all the immortals which wrote all this is also not for nothing._
+
+The room descriptionstory got a bit more complicated. In addition to the MUME spam/brief settings there is a mapper built-in settings now. You just have to turn on/off the mbrief mode. You can do that either by using the 'mbrief' command or by setting a proper flag in configuration->general settings
+
+The other possibility would be to just use the 'minfo' command only when you want to read some special room description.
+
+ 
