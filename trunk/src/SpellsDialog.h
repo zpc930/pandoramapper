@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include "ui_spellsdialog.h"
-#include "configurator.h"
+#include "CConfigurator.h"
 
 class SpellsDialog : public QDialog, public Ui::SpellsDialog {
 Q_OBJECT

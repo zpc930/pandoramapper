@@ -3,17 +3,17 @@
 #include <cstring>
 #include <QMutex>
 
-#include "Map.h"
+#include "CRoomManager.h"
 #include "defines.h"
-#include "configurator.h"
-#include "dispatch.h"
-#include "stacks.h"
-#include "forwarder.h"
+#include "CConfigurator.h"
+#include "CDispatcher.h"
+#include "CStacksManager.h"
+#include "proxy.h"
 #include "utils.h"
 #include "userfunc.h"
 #include "xml2.h"
-#include "engine.h"
-#include "tree.h"
+#include "CEngine.h"
+#include "CTree.h"
 #include "mainwindow.h"
 #include "exits.h"
 

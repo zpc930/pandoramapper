@@ -4,15 +4,15 @@
 #include <QMutex>
 
 
-#include "Map.h"
-#include "configurator.h"
+#include "CRoomManager.h"
+#include "CConfigurator.h"
 #include "defines.h"
 #include "exits.h"
-#include "dispatch.h"
-#include "stacks.h"
-#include "forwarder.h"
+#include "CDispatcher.h"
+#include "CStacksManager.h"
+#include "proxy.h"
 #include "utils.h"
-#include "engine.h"
+#include "CEngine.h"
 
 
 void do_exits(const char *exits_line)

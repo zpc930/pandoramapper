@@ -12,10 +12,10 @@
 #include "defines.h"
 
 
-#include "configurator.h"
-#include "Map.h"
+#include "CConfigurator.h"
+#include "CRoomManager.h"
 #include "utils.h"
-#include "dispatch.h"
+#include "CDispatcher.h"
 
 
 #define XML_ROOMNAME    (1 << 0)

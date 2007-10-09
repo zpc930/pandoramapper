@@ -23,7 +23,7 @@ class FindDialog;
 void toggle_renderer_reaction();
 void notify_analyzer();
 
-class MainWindow : public QMainWindow
+class CMainWindow : public QMainWindow
 {
     Q_OBJECT
     
@@ -54,7 +54,7 @@ class MainWindow : public QMainWindow
 
 
 public:
-    MainWindow(QWidget *parent = 0);
+    CMainWindow(QWidget *parent = 0);
 
     RendererWidget *renderer;
     ConfigWidget      *generalSettingsDialog;
@@ -103,7 +103,7 @@ signals:
 };
 
 
-extern class MainWindow *renderer_window;
+extern class CMainWindow *renderer_window;
 
 
 

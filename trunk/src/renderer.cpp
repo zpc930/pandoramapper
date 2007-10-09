@@ -9,16 +9,16 @@
 #include <QKeyEvent>
 
 #include "renderer.h"
-#include "configurator.h"
-#include "engine.h"
+#include "CConfigurator.h"
+#include "CEngine.h"
 
 
-#include "stacks.h"
+#include "CStacksManager.h"
 #include "utils.h"
-#include "Map.h"
+#include "CRoomManager.h"
 #include "CSquare.h"
 
-#include "Frustum.h"
+#include "CFrustum.h"
 #include "userfunc.h"
 
 
@@ -32,7 +32,7 @@ GLfloat marker_colour[4] =  {1.0, 0.1, 0.1, 0.9};
 #define MARKER_SIZE           (ROOM_SIZE/1.85)
 #define PICK_TOL              50 
 
-class MainWindow *renderer_window;
+class CMainWindow *renderer_window;
 
 RendererWidget::RendererWidget( QWidget *parent )
      : QGLWidget( parent )

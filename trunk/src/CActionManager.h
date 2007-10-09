@@ -3,15 +3,15 @@
 
 #include <QMainWindow>
 
-class MainWindow;
+class CMainWindow;
 class QActionGroup;
 
 class CActionManager : public QObject {
     Q_OBJECT
 
-    MainWindow *parent;
+    CMainWindow *parent;
 public:
-    CActionManager(MainWindow *parent);
+    CActionManager(CMainWindow *parent);
 
     QAction       *newAct;
     QAction       *openAct;

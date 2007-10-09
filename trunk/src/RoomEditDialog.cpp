@@ -1,8 +1,8 @@
 #include <QMessageBox>
 
 #include "utils.h"
-#include "Map.h"
-#include "configurator.h"
+#include "CRoomManager.h"
+#include "CConfigurator.h"
 #include "RoomEditDialog.h"
 
 #define ROOMFLAG_UNDEFINED 0

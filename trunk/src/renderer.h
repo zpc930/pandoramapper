@@ -4,9 +4,9 @@
 
 #include "defines.h"
 #include "CRoom.h"
-#include "Map.h"
-#include "configurator.h"
-#include "Frustum.h"
+#include "CRoomManager.h"
+#include "CConfigurator.h"
+#include "CFrustum.h"
 
 class QFont;
 
@@ -25,7 +25,7 @@ class RendererWidget : public QGLWidget
     int           curx;
     int           cury;
     int           curz;			/* current rooms position */ 
-    Frustum       frustum;
+    CFrustum       frustum;
     QFont         textFont;
     
     int           lowerZ;
