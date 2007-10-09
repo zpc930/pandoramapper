@@ -3,7 +3,7 @@
 
 #include "defines.h"
 #include "CRoom.h"
-#include "Regions.h"
+#include "CRegion.h"
 #include "CSelectionManager.h"
 
 #include <QVector>
@@ -14,7 +14,7 @@ class CSquare;
 
 #define MAX_ROOMS       30000		/* maximal amount of rooms */
 
-class roommanager {
+class CRoomManager {
 
     QList<CRegion *>    regions;
 public:
@@ -34,7 +34,7 @@ public:
     void          removeFromPlane(CRoom *room);
     void          expandPlane(CPlane *plane, CRoom *room);
     
-    roommanager();
+    CRoomManager();
     void init();
     void reinit();			/* reinitializer/utilizer */
     
@@ -72,7 +72,7 @@ public:
     QList<int> searchExits(QString s, Qt::CaseSensitivity cs);
 };
 
-extern class roommanager Map;/* room manager */
+extern class CRoomManager Map;/* room manager */
 
 #endif
 

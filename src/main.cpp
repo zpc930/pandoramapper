@@ -15,18 +15,18 @@
 
 #include "defines.h"
 #include "CRoom.h"
-#include "configurator.h"
+#include "CConfigurator.h"
 
 
-#include "Map.h"
+#include "CRoomManager.h"
 #include "xml2.h"
 
-#include "dispatch.h"
+#include "CDispatcher.h"
 #include "mainwindow.h"
-#include "stacks.h"
-#include "forwarder.h"
+#include "CStacksManager.h"
+#include "proxy.h"
 #include "utils.h"
-#include "engine.h"
+#include "CEngine.h"
 
 
 #ifdef Q_OS_MACX
@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
         conf->set_window_rect( x, y, width, height);        
     }
 
-    renderer_window = new MainWindow( 0 );
+    renderer_window = new CMainWindow( 0 );
 
 
 

@@ -1,7 +1,7 @@
 
 
 
-class stackmanager {
+class CStacksManager {
 private:
 
   vector<CRoom *> stacka;
@@ -20,7 +20,7 @@ public:
   CRoom * nextFirst();
   
   void swap();
-  stackmanager();
+  CStacksManager();
   void reset();
   
   CRoom * get(unsigned int i);
@@ -39,6 +39,6 @@ public:
 
 };
 
-extern class stackmanager stacker;
+extern class CStacksManager stacker;
 
 

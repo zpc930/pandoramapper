@@ -7,22 +7,22 @@
 //using namespace std;
 
 #include "defines.h"
-#include "configurator.h"
+#include "CConfigurator.h"
 
-#include "Map.h"
+#include "CRoomManager.h"
 #include "utils.h"
-#include "tree.h"
-#include "stacks.h"
-#include "dispatch.h"
+#include "CTree.h"
+#include "CStacksManager.h"
+#include "CDispatcher.h"
 #include "mainwindow.h"
 
 
-class roommanager Map;
+class CRoomManager Map;
 
 
 
 /*------------ merge_rooms ------------------------- */
-int roommanager::tryMergeRooms(CRoom *r, CRoom *copy, int j)
+int CRoomManager::tryMergeRooms(CRoom *r, CRoom *copy, int j)
 {
   unsigned int i;
   CRoom *p;
@@ -58,7 +58,7 @@ int roommanager::tryMergeRooms(CRoom *r, CRoom *copy, int j)
 }
 
 /* ------------ fixfree ------------- */
-void roommanager::fixFreeRooms()
+void CRoomManager::fixFreeRooms()
 {
     unsigned int i;
 
@@ -73,7 +73,7 @@ void roommanager::fixFreeRooms()
 }
 
 /* ------------ addroom --------------*/
-void roommanager::addRoomNonsorted(CRoom *room)
+void CRoomManager::addRoomNonsorted(CRoom *room)
 {
     if (ids[room->id] != NULL) {
         print_debug(DEBUG_ROOMS, "Error while adding new element to database! This id already exists!\n");
@@ -93,20 +93,20 @@ void roommanager::addRoomNonsorted(CRoom *room)
     addToPlane(room);
 }
 
-void roommanager::addRoom(CRoom *room)
+void CRoomManager::addRoom(CRoom *room)
 {
   addRoomNonsorted(room);
 }
 /* ------------ addroom ENDS ---------- */
 
 /*------------- Constructor of the room manager ---------------*/
-roommanager::roommanager()
+CRoomManager::CRoomManager()
 {
     init();
 }
 
 
-void roommanager::init()
+void CRoomManager::init()
 {
     print_debug(DEBUG_ROOMS,"Roommanager INIT.\r\n");
 
@@ -132,7 +132,7 @@ void roommanager::init()
 
 /*------------- Constructor of the room manager ENDS  ---------------*/
 
-CRegion *roommanager::getRegionByName(QByteArray name)
+CRegion *CRoomManager::getRegionByName(QByteArray name)
 {
     CRegion    *region;
     for (int i=0; i < regions.size(); i++) {
@@ -143,7 +143,7 @@ CRegion *roommanager::getRegionByName(QByteArray name)
     return NULL;
 }
 
-bool roommanager::addRegion(QByteArray name)
+bool CRoomManager::addRegion(QByteArray name)
 {
     CRegion    *region;
     
@@ -158,14 +158,14 @@ bool roommanager::addRegion(QByteArray name)
     
 }
 
-void roommanager::addRegion(CRegion *reg)
+void CRoomManager::addRegion(CRegion *reg)
 {
     if (reg != NULL) 
         regions.push_back(reg);
 }
 
 
-void roommanager::sendRegionsList()
+void CRoomManager::sendRegionsList()
 {
     CRegion    *region;
     send_to_user( "Present regions: \r\n");
@@ -177,14 +177,14 @@ void roommanager::sendRegionsList()
 
 }
 
-QList<CRegion *> roommanager::getAllRegions()
+QList<CRegion *> CRoomManager::getAllRegions()
 {
     return regions;
 }
 
 
 /* -------------- reinit ---------------*/
-void roommanager::reinit()
+void CRoomManager::reinit()
 {
     next_free = 1;
     {
@@ -216,7 +216,7 @@ void roommanager::reinit()
 /* ------------ delete_room --------- */
 /* mode 0 - remove all links in other rooms together with exits and doors */
 /* mode 1 - keeps the doors and exits in other rooms, but mark them as undefined */
-void roommanager::deleteRoom(CRoom *r, int mode)
+void CRoomManager::deleteRoom(CRoom *r, int mode)
 {
     int k;
     int i;
@@ -244,7 +244,7 @@ void roommanager::deleteRoom(CRoom *r, int mode)
 /* --------- _delete_room ENDS --------- */
 
 /* ------------ small_delete_room --------- */
-void roommanager::smallDeleteRoom(CRoom *r)
+void CRoomManager::smallDeleteRoom(CRoom *r)
 {
     if (r->id == 1) {
 	print_debug(DEBUG_ROOMS,"ERROR (!!): Attempted to delete the base room!\n");
@@ -277,7 +277,7 @@ void roommanager::smallDeleteRoom(CRoom *r)
 }
 /* --------- small_delete_room ENDS --------- */
 
-void roommanager::removeFromPlane(CRoom *room)
+void CRoomManager::removeFromPlane(CRoom *room)
 {
     CPlane *p;
     
@@ -293,7 +293,7 @@ void roommanager::removeFromPlane(CRoom *room)
     p->squares->remove(room);
 }
 
-void roommanager::expandPlane(CPlane *plane, CRoom *room)
+void CRoomManager::expandPlane(CPlane *plane, CRoom *room)
 {
     CSquare *p, *new_root = NULL;
     int size;
@@ -335,7 +335,7 @@ void roommanager::expandPlane(CPlane *plane, CRoom *room)
 }
 
 
-void  roommanager::addToPlane(CRoom *room)
+void  CRoomManager::addToPlane(CRoom *room)
 {
     CPlane *p, *prev, *tmp;
 
@@ -372,7 +372,7 @@ void  roommanager::addToPlane(CRoom *room)
     prev->next = new CPlane(room);
 }
 
-QList<int> roommanager::searchNames(QString s, Qt::CaseSensitivity cs)
+QList<int> CRoomManager::searchNames(QString s, Qt::CaseSensitivity cs)
 {
     QList<int> results;
 
@@ -385,7 +385,7 @@ QList<int> roommanager::searchNames(QString s, Qt::CaseSensitivity cs)
     return results;
 }
 
-QList<int> roommanager::searchDescs(QString s, Qt::CaseSensitivity cs)
+QList<int> CRoomManager::searchDescs(QString s, Qt::CaseSensitivity cs)
 {
     QList<int> results;
 
@@ -398,7 +398,7 @@ QList<int> roommanager::searchDescs(QString s, Qt::CaseSensitivity cs)
     return results;
 }
 
-QList<int> roommanager::searchNotes(QString s, Qt::CaseSensitivity cs)
+QList<int> CRoomManager::searchNotes(QString s, Qt::CaseSensitivity cs)
 {
     QList<int> results;
 
@@ -411,7 +411,7 @@ QList<int> roommanager::searchNotes(QString s, Qt::CaseSensitivity cs)
     return results;
 }
 
-QList<int> roommanager::searchExits(QString s, Qt::CaseSensitivity cs)
+QList<int> CRoomManager::searchExits(QString s, Qt::CaseSensitivity cs)
 {
     QList<int> results;
 

@@ -3,8 +3,8 @@
 
 
 #include <vector>
-#include "forwarder.h"
-#include "engine.h"
+#include "proxy.h"
+#include "CEngine.h"
 
 using namespace std;
 

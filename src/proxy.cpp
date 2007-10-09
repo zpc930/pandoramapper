@@ -38,14 +38,14 @@
 
 
 #include "defines.h"
-#include "configurator.h"
-#include "dispatch.h"
-#include "Map.h"
+#include "CConfigurator.h"
+#include "CDispatcher.h"
+#include "CRoomManager.h"
 #include "mainwindow.h"
-#include "engine.h"
-#include "forwarder.h"
+#include "CEngine.h"
+#include "proxy.h"
 #include "utils.h"
-#include "stacks.h"
+#include "CStacksManager.h"
 
 class Proxy       *proxy;
 
