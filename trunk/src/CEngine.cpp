@@ -6,16 +6,16 @@
 #include <QMutex>
 #include <QTime>
 
-#include "configurator.h"
+#include "CConfigurator.h"
 #include "defines.h"
-#include "stacks.h"
-#include "dispatch.h"
+#include "CStacksManager.h"
+#include "CDispatcher.h"
 #include "exits.h"
-#include "forwarder.h"
+#include "proxy.h"
 #include "utils.h"
-#include "engine.h"
-#include "Map.h"
-#include "tree.h"
+#include "CEngine.h"
+#include "CRoomManager.h"
+#include "CTree.h"
 #include "userfunc.h"
 #include "CEvent.h"
 

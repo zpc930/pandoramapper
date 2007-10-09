@@ -3,7 +3,7 @@
 
 #include "CSquare.h"
 
-class Frustum {
+class CFrustum {
     float         m_Frustum[6][4];
     void          normalizePlane(float frustum[6][4], int side);
     int           square_frustum_checks;

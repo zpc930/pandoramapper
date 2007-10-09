@@ -1,6 +1,6 @@
 
 #include <QGLWidget>
-#include "Frustum.h"
+#include "CFrustum.h"
 #include "renderer.h"
 #include "mainwindow.h"
 #include <cmath>
@@ -8,14 +8,14 @@
 // We create an enum of the sides so we don't have to call each side 0 or 1.
 // This way it makes it more understandable and readable when dealing with frustum sides.
 
-float Frustum::distance(float dx, float dy, float dz) {
+float CFrustum::distance(float dx, float dy, float dz) {
     return   m_Frustum[FRONT][A] * dx +             
              m_Frustum[FRONT][B] * dy + 
              m_Frustum[FRONT][C] * dz +
              m_Frustum[FRONT][D];
 }
 
-void Frustum::normalizePlane(float frustum[6][4], int side)
+void CFrustum::normalizePlane(float frustum[6][4], int side)
 {
     // Here we calculate the magnitude of the normal to the plane (point A B C)
     // Remember that (A, B, C) is that same thing as the normal's (X, Y, Z).
@@ -32,7 +32,7 @@ void Frustum::normalizePlane(float frustum[6][4], int side)
     frustum[side][D] /= magnitude; 
 }
 
-void Frustum::calculateFrustum(int cx, int cy, int cz)
+void CFrustum::calculateFrustum(int cx, int cy, int cz)
 {    
     float   proj[16];                               // This will hold our projection matrix
     float   modl[16];                               // This will hold our modelview matrix
@@ -114,7 +114,7 @@ void Frustum::calculateFrustum(int cx, int cy, int cz)
     
 }
 
-bool Frustum::isPointInFrustum( float x, float y, float z )
+bool CFrustum::isPointInFrustum( float x, float y, float z )
 {
     // Go through all the sides of the frustum
     for(int i = 0; i < 6; i++ )
@@ -132,7 +132,7 @@ bool Frustum::isPointInFrustum( float x, float y, float z )
 }
 
 
-bool Frustum::isSquareInFrustum(CSquare *p)
+bool CFrustum::isSquareInFrustum(CSquare *p)
 {
     float x, y, z, size;
 

@@ -1,30 +1,31 @@
 
 #include "renderer.h"
 #include "defines.h"
-#include "dispatch.h"
-#include "forwarder.h"
+#include "CDispatcher.h"
+#include "proxy.h"
 #include "utils.h"
-#include "stacks.h"
+#include "CStacksManager.h"
 #include "mainwindow.h"
+#include "CRoomManager.h"
 
-class stackmanager stacker;
+class CStacksManager stacker;
 
 
-CRoom * stackmanager::first()  
+CRoom * CStacksManager::first()  
 { 
     if (sa->size() == 0)
         return NULL;
     return (*sa)[0]; 
 }
 
-CRoom * stackmanager::nextFirst()  
+CRoom * CStacksManager::nextFirst()  
 { 
     if (sb->size() == 0)
         return NULL;
     return (*sb)[0]; 
 }
 
-void stackmanager::getCurrent(char *str)
+void CStacksManager::getCurrent(char *str)
 {
   if (sa->size() == 0) {
     sprintf(str, "NO_SYNC");
@@ -40,7 +41,7 @@ void stackmanager::getCurrent(char *str)
 }
 
 
-void stackmanager::printStacks()
+void CStacksManager::printStacks()
 {
     unsigned int i;
 
@@ -52,7 +53,7 @@ void stackmanager::printStacks()
     }
 }
 
-void stackmanager::removeRoom(unsigned int id)
+void CStacksManager::removeRoom(unsigned int id)
 {
   unsigned int i;
 
@@ -62,7 +63,7 @@ void stackmanager::removeRoom(unsigned int id)
   stacker.swap();
 }
 
-void stackmanager::put(CRoom *r)
+void CStacksManager::put(CRoom *r)
 {
     if (mark[r->id] == turn)
 	return;
@@ -71,29 +72,29 @@ void stackmanager::put(CRoom *r)
 }
 
 
-void stackmanager::put(unsigned int id)
+void CStacksManager::put(unsigned int id)
 {
     put(Map.getRoom(id));
 }
 
 
-CRoom *stackmanager::get(unsigned int i)
+CRoom *CStacksManager::get(unsigned int i)
 {
     return (*sa)[i];
 }
 
-CRoom *stackmanager::getNext(unsigned int i)
+CRoom *CStacksManager::getNext(unsigned int i)
 {
     return (*sb)[i];
 }
 
 
-stackmanager::stackmanager()
+CStacksManager::CStacksManager()
 {
     reset();
 }
 
-void stackmanager::reset()
+void CStacksManager::reset()
 {
     sa = &stacka;
     sb = &stackb;
@@ -104,7 +105,7 @@ void stackmanager::reset()
     swap();
 }
 
-void stackmanager::swap()
+void CStacksManager::swap()
 {
     vector<CRoom *> *t;
 

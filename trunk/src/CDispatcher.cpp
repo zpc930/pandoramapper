@@ -14,17 +14,17 @@
 #include <QMutex>
 
 
-#include "configurator.h"
+#include "CConfigurator.h"
 
 #include "utils.h"
-#include "tree.h"
-#include "stacks.h"
+#include "CTree.h"
+#include "CStacksManager.h"
 #include "xml2.h"
-#include "dispatch.h"
-#include "engine.h"
+#include "CDispatcher.h"
+#include "CEngine.h"
 
 #include "userfunc.h"
-#include "forwarder.h"
+#include "proxy.h"
 
 
 Cdispatcher::Cdispatcher() 

@@ -4,7 +4,7 @@
 
 #include "defines.h"
 #include "utils.h"
-#include "tree.h"
+#include "CTree.h"
 
 class CTree NameMap;
 

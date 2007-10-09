@@ -5,7 +5,6 @@
 #include <vector>
 #include <QXmlDefaultHandler>
 #include <QGLWidget>
-#include <map>
 #include <QTime>
 
 #include "CRoom.h"
