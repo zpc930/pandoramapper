@@ -12,12 +12,12 @@
 #include <QByteArray>
 #include <QString>
 
-#include "forwarder.h"
-#include "engine.h"
+#include "proxy.h"
+#include "CEngine.h"
 #include "CRoom.h"
-#include "Map.h"
-#include "configurator.h"
-#include "tree.h"
+#include "CRoomManager.h"
+#include "CConfigurator.h"
+#include "CTree.h"
 #include "utils.h"
 
 Strings_Comparator comparator;

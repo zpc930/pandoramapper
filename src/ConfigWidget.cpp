@@ -1,6 +1,6 @@
 #include <QMessageBox>
 
-#include "configurator.h"
+#include "CConfigurator.h"
 #include "ConfigWidget.h"
 
 /* ----------------------- AnalyserConfigWidget -----------------------------*/

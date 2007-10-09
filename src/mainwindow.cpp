@@ -2,10 +2,10 @@
 
 #include "mainwindow.h"
 #include "utils.h"
-#include "stacks.h"
-#include "engine.h"
+#include "CStacksManager.h"
+#include "CEngine.h"
 #include "userfunc.h"
-#include "forwarder.h"
+#include "proxy.h"
 #include "CActionManager.h"
 
 #include "RoomEditDialog.h"
@@ -30,7 +30,7 @@ void notify_analyzer()
 
 /*  globals end */
 
-MainWindow::MainWindow(QWidget *parent)
+CMainWindow::CMainWindow(QWidget *parent)
     : QMainWindow( parent)
 {
     spells_dialog = NULL;
@@ -167,7 +167,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 
-void MainWindow::moveRoomDialog()
+void CMainWindow::moveRoomDialog()
 {
     print_debug(DEBUG_INTERFACE, "move room dialog action called");
 
@@ -192,7 +192,7 @@ void MainWindow::moveRoomDialog()
 
 
 
-void MainWindow::hide_status()
+void CMainWindow::hide_status()
 {
   print_debug(DEBUG_INTERFACE, "hide/show status called");
 
@@ -204,7 +204,7 @@ void MainWindow::hide_status()
   }
 }
 
-void MainWindow::editRoomDialog(unsigned int id)
+void CMainWindow::editRoomDialog(unsigned int id)
 {
     if (!edit_dialog) {
         edit_dialog = new RoomEditDialog(this);
@@ -219,7 +219,7 @@ void MainWindow::editRoomDialog(unsigned int id)
 }
 
 
-void MainWindow::hide()
+void CMainWindow::hide()
 {
   print_debug(DEBUG_INTERFACE, "hide/show all function");
   
@@ -231,7 +231,7 @@ void MainWindow::hide()
   hide_status_action->setChecked(true);
 }
 
-void MainWindow::hide_menu()
+void CMainWindow::hide_menu()
 {
   if (hide_menu_action->isChecked()) 
   {
@@ -242,7 +242,7 @@ void MainWindow::hide_menu()
 }
 
 
-void MainWindow::update_status_bar()
+void CMainWindow::update_status_bar()
 {
     char str[20];
         
@@ -267,7 +267,7 @@ void MainWindow::update_status_bar()
 }
 
 /* Reimplement main even handler to catch tooltip events. */
-bool MainWindow::event(QEvent *event)
+bool CMainWindow::event(QEvent *event)
 {
     unsigned int id;
 
@@ -285,7 +285,7 @@ bool MainWindow::event(QEvent *event)
     return QWidget::event(event);
 }
 
-void MainWindow::keyPressEvent( QKeyEvent *k )
+void CMainWindow::keyPressEvent( QKeyEvent *k )
 {
 
     print_debug(DEBUG_INTERFACE, "Processing events in keyPressEvent\r\n");
@@ -390,7 +390,7 @@ void MainWindow::keyPressEvent( QKeyEvent *k )
     print_debug(DEBUG_INTERFACE, "Done processing events at keyEventPress\r\n");
 }
 
-void MainWindow::keyReleaseEvent( QKeyEvent *k )
+void CMainWindow::keyReleaseEvent( QKeyEvent *k )
 {
 
     print_debug(DEBUG_INTERFACE, "Processing events in keyReleaseEvent\r\n");
@@ -403,7 +403,7 @@ void MainWindow::keyReleaseEvent( QKeyEvent *k )
     }
 }
 
-void MainWindow::mousePressEvent( QMouseEvent *e )
+void CMainWindow::mousePressEvent( QMouseEvent *e )
 {
 
     mouseState.oldPos = e->pos();
@@ -448,7 +448,7 @@ void MainWindow::mousePressEvent( QMouseEvent *e )
  * FIXME: The dialogs that pop up from context menu get rooms from selection.
  * If more than one room was previously selected, strange results may happen.
  */
-void MainWindow::createContextMenu( QMouseEvent *e )
+void CMainWindow::createContextMenu( QMouseEvent *e )
 {
     unsigned int id;
     QAction *roomNameAct;
@@ -485,7 +485,7 @@ void MainWindow::createContextMenu( QMouseEvent *e )
     menu.exec(e->globalPos());
 }
 
-QPoint MainWindow::mousePosInRenderer( QPoint pos ) {
+QPoint CMainWindow::mousePosInRenderer( QPoint pos ) {
 
     QPoint inFramePos = pos;
     
@@ -497,7 +497,7 @@ QPoint MainWindow::mousePosInRenderer( QPoint pos ) {
     return inFramePos;
 }
 
-bool MainWindow::checkMouseSelection( QMouseEvent *e ) 
+bool CMainWindow::checkMouseSelection( QMouseEvent *e ) 
 {
     unsigned int id;
 
@@ -521,7 +521,7 @@ bool MainWindow::checkMouseSelection( QMouseEvent *e )
     return false;
 }
 
-void MainWindow::mouseReleaseEvent( QMouseEvent *e )
+void CMainWindow::mouseReleaseEvent( QMouseEvent *e )
 {
 
     if (e->button() == Qt::LeftButton) {
@@ -536,7 +536,7 @@ void MainWindow::mouseReleaseEvent( QMouseEvent *e )
 #endif
 }
 
-void MainWindow::mouseMoveEvent( QMouseEvent *e)
+void CMainWindow::mouseMoveEvent( QMouseEvent *e)
 {
   QPoint pos;
   int dist_x, dist_y;
@@ -566,7 +566,7 @@ void MainWindow::mouseMoveEvent( QMouseEvent *e)
     }
 }
 
-void MainWindow::wheelEvent(QWheelEvent *e)
+void CMainWindow::wheelEvent(QWheelEvent *e)
 {
     int delta;
     
@@ -576,22 +576,22 @@ void MainWindow::wheelEvent(QWheelEvent *e)
     toggle_renderer_reaction();
 }
 
-void MainWindow::setMapMoveMode()
+void CMainWindow::setMapMoveMode()
 {
     setToolMode(MoveMode);
 }
 
-void MainWindow::setDeleteMode()
+void CMainWindow::setDeleteMode()
 {
     setToolMode(DeleteMode);
 }
 
-void MainWindow::setSelectMode()
+void CMainWindow::setSelectMode()
 {
     setToolMode(SelectMode);
 }
 
-void MainWindow::setToolMode(ToolMode mode)
+void CMainWindow::setToolMode(ToolMode mode)
 {
     toolMode = mode;
 

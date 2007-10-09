@@ -9,12 +9,12 @@
 
 #include "defines.h"
 #include "CRoom.h"
-#include "Map.h"
+#include "CRoomManager.h"
 #include "mainwindow.h"
 
-#include "configurator.h"
+#include "CConfigurator.h"
 #include "utils.h"
-#include "engine.h"
+#include "CEngine.h"
 //#include "renderer.h"
 
 class Cconfigurator *conf;

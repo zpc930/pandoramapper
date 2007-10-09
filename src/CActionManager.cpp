@@ -7,10 +7,10 @@
 
 #include "mainwindow.h"
 #include "utils.h"
-#include "stacks.h"
-#include "engine.h"
+#include "CStacksManager.h"
+#include "CEngine.h"
 #include "userfunc.h"
-#include "forwarder.h"
+#include "proxy.h"
 #include "CActionManager.h"
 
 #include "RoomEditDialog.h"
@@ -20,7 +20,7 @@
 #include "CLogDialog.h"
 #include "finddialog.h"
 
-CActionManager::CActionManager(MainWindow *parentWindow) 
+CActionManager::CActionManager(CMainWindow *parentWindow) 
 {
     parent = parentWindow;
 

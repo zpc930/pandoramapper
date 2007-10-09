@@ -5,9 +5,9 @@
 
 #include "CSelectionManager.h"
 #include "utils.h"
-#include "Map.h"
+#include "CRoomManager.h"
 #include "mainwindow.h"
-#include "forwarder.h"
+#include "proxy.h"
 
 void CSelectionManager::select(unsigned int id)
 {

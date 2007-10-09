@@ -2,11 +2,11 @@
 #include <QMessageBox>
 #include <QIntValidator>
 
-#include "configurator.h"
+#include "CConfigurator.h"
 #include "CMovementDialog.h"
-#include "Map.h"
+#include "CRoomManager.h"
 #include "utils.h"
-#include "stacks.h"
+#include "CStacksManager.h"
 
 CMovementDialog::CMovementDialog(QWidget *parent) : QDialog(parent)
 {

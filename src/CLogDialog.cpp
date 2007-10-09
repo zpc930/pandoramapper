@@ -1,11 +1,11 @@
 
 #include <QMessageBox>
 
-#include "configurator.h"
+#include "CConfigurator.h"
 #include "CMovementDialog.h"
 #include "Map.h"
 #include "utils.h"
-#include "stacks.h"
+#include "CStacksManager.h"
 #include "defines.h"
 #include "CLogDialog.h"
 

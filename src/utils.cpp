@@ -7,14 +7,14 @@
 #include <cstdlib>
 
 #include "defines.h"
-#include "configurator.h"
+#include "CConfigurator.h"
 
 #if defined Q_OS_WIN32
   #define vsnprintf _vsnprintf
 #endif
 
 #include "utils.h"
-#include "forwarder.h"
+#include "proxy.h"
 
 FILE *logfile = NULL;
 const char *exitnames[] = { "north", "east", "south", "west", "up", "down" };
