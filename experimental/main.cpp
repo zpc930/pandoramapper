@@ -48,6 +48,20 @@
 
 #include "squircle.h"
 #include "fboinsgrenderer.h"
+#include "qtbroker.h"
+
+#include "Proxy/proxy.h"
+
+
+static QObject *mapper_qobject_qtquickbroker_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+
+    QtQuickBroker *example = new QtQuickBroker(new Proxy());
+    return example;
+}
 
 //! [1]
 int main(int argc, char **argv)
@@ -63,6 +77,8 @@ int main(int argc, char **argv)
 
     qmlRegisterType<FboInSGRenderer>("SceneGraphRendering", 1, 0, "Renderer");
     qmlRegisterType<Squircle>("OpenGLUnderQML", 1, 0, "Squircle");
+
+    qmlRegisterSingletonType<QtQuickBroker>("QtQuickBroker", 1, 0, "QtBroker", mapper_qobject_qtquickbroker_provider);
 
     QQuickView view;
 

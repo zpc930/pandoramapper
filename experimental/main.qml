@@ -44,14 +44,15 @@ import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 //import OpenGLUnderQML 1.0
-import SceneGraphRendering 1.0
 
+import SceneGraphRendering 1.0
+import QtQuickBroker 1.0
 
 Item {
     id: mainItem
 
 
-    width: 540
+    width: 1400
     height: 900
 
     Rectangle {
@@ -60,6 +61,18 @@ Item {
         border.width: 1
         anchors.fill: mainItem
         anchors.margins: -3
+
+        Button {
+            id: connectButton
+            x: 20
+            y: 18
+            text: "Connect"
+
+            onClicked: {
+                console.log("Clicked!");
+                Broker.connect();
+            }
+        }
     }
 
 
@@ -144,7 +157,7 @@ Item {
 
 
     Rectangle {
-        color: "#b3848f8f"
+        color: "#848f8f"
         radius: 3
         border.color: "#0f0c0c"
         border.width: 2
