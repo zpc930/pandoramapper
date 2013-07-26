@@ -58,13 +58,17 @@
 
 #include "Proxy/CDispatcher.h"
 #include "Proxy/proxy.h"
+#include "qtbroker.h"
 
 #ifdef DEBUG
 #define DEBUG_FILE_NAME "completelog.txt"
 FILE *debug_file;
 #endif
 
-Proxy::Proxy() {
+Proxy::Proxy(QtQuickBroker *parent) :
+    m_parent( parent )
+{
+    mudEmulation = false;
 	mud = new ProxySocket(this, true);
 	user = new ProxySocket(this, false);
 }
@@ -189,6 +193,10 @@ int Proxy::loop(void) {
 				size = user->read();
 				if (size > 0) {
 					size = dispatcher->analyzeUserStream(*user);
+
+                    auto b = QByteArray(user->buffer, user->length);
+                    m_parent->newText( QString(b) );
+
 					if (!mudEmulation) {
 						mud->write(user->buffer, size);
 					}
@@ -209,6 +217,10 @@ int Proxy::loop(void) {
 				size = mud->read();
 				if (size > 0) {
 					size = dispatcher->analyzeMudStream(*mud);
+
+                    auto b = QByteArray(mud->buffer, mud->length);
+                    m_parent->newText( QString(b) );
+
 					user->write(mud->buffer, size);
 				} else {
 					if (WSAGetLastError() == WSAEWOULDBLOCK)
@@ -271,13 +283,17 @@ bool Proxy::connectToMud() {
 //	print_debug(DEBUG_PROXY, "Trying to connect to mud->..\r\n");
 //	emit log("MUD Proxy", "Trying to connect to MUD...");
 
-    if (mud->openConnection("mume.org", 4242) != true) {
+    if (mud->openConnection("mume.org", 443) != true) {
+        std::cout << "----[ Pandora: Failed to connect to remote host. See terminal log for details.\r\n" << std::endl;
+
 		user->send_line(
 				"----[ Pandora: Failed to connect to remote host. See terminal log for details.\r\n");
 		return false;
 	} else {
+        std::cout << "Connected to mud: turn on XML" << std::endl;
+
 		// turn XML on! enable withoit the <xml> message from the mud->
-		mud->send_line("~$#EX1\n1\n");
+//		mud->send_line("~$#EX1\n1\n");
 //		print_debug(DEBUG_PROXY, "Connected!\r\n");
 //		emit log("MUD Proxy", "Connected to MUD!");
 		return true;
@@ -288,6 +304,8 @@ void Proxy::incomingConnection() {
 	SOCKET newsock;
 	int size;
 	struct sockaddr_in networkName;
+
+    std::cout << "Incoming connection!" << std::endl;
 
 //	print_debug(DEBUG_PROXY, "Incoming connection!\r\n");
 //	emit log("MUD Proxy", "User connection incoming!");
@@ -310,6 +328,8 @@ void Proxy::incomingConnection() {
 		connectionEstablished();
 //		engine->clear(); /* clear event pipes */
 	} else {
+        std::cout << "Connection to user failed! New  socket is not valid.\r\n" << std::endl;
+
 		//        printf("Connection to user failed! New  socket is not valid.\r\n");
 		//          printf(".");
 		//        ::shutdown(newsock, 2);

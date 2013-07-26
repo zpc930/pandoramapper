@@ -44,22 +44,26 @@
 
 #include <QtQuick/QQuickView>
 
+#include <QtQml>
+
 #include <QQmlApplicationEngine>
 
 #include "squircle.h"
 #include "fboinsgrenderer.h"
 #include "qtbroker.h"
+#include "mudoutput.h"
 
 #include "Proxy/proxy.h"
 
+QQuickView *mainView;
 
-static QObject *mapper_qobject_qtquickbroker_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+static QObject *qtbroker_qobject_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
 
 
-    QtQuickBroker *example = new QtQuickBroker(new Proxy());
+    QtQuickBroker *example = new QtQuickBroker(mainView);
     return example;
 }
 
@@ -77,10 +81,10 @@ int main(int argc, char **argv)
 
     qmlRegisterType<FboInSGRenderer>("SceneGraphRendering", 1, 0, "Renderer");
     qmlRegisterType<Squircle>("OpenGLUnderQML", 1, 0, "Squircle");
+    qmlRegisterType<MudOutput>("MudOutput", 1, 0, "MudOutput");
 
-    qmlRegisterSingletonType<QtQuickBroker>("QtQuickBroker", 1, 0, "QtBroker", mapper_qobject_qtquickbroker_provider);
+    qmlRegisterSingletonType<QtQuickBroker>("Qt.QtBrokerSingleton", 1, 0, "QtBroker", qtbroker_qobject_singletontype_provider);
 
-    QQuickView view;
 
     // Rendering in a thread introduces a slightly more complicated cleanup
     // so we ensure that no cleanup of graphics resources happen until the
@@ -88,9 +92,14 @@ int main(int argc, char **argv)
     //view.setPersistentOpenGLContext(true);
     //view.setPersistentSceneGraph(true);
 
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
-    view.setSource(QUrl("qrc:///scenegraph/openglunderqml/main.qml"));
-    view.show();
+    mainView = new QQuickView();
+
+    mainView->setResizeMode(QQuickView::SizeRootObjectToView);
+    mainView->setSource(QUrl("qrc:///scenegraph/openglunderqml/main.qml"));
+
+
+
+    mainView->show();
 
 
     return app.exec();

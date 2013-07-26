@@ -1,7 +1,9 @@
 QT += qml quick widgets gui
 
-HEADERS += squircle.h logorenderer.h Proxy\proxy.h Proxy\CDispatcher.h qtbroker.h fboinsgrenderer.h
-SOURCES += squircle.cpp  logorenderer.cpp fboinsgrenderer.cpp Proxy\proxy.cpp Proxy\CDispatcher.cpp main.cpp
+QT += quick-private
+
+HEADERS += squircle.h logorenderer.h Proxy\proxy.h Proxy\CDispatcher.h qtbroker.h mudoutput.h fboinsgrenderer.h
+SOURCES += squircle.cpp  logorenderer.cpp fboinsgrenderer.cpp Proxy\proxy.cpp Proxy\CDispatcher.cpp mudoutput.cpp main.cpp
 RESOURCES += openglunderqml.qrc
 
 DEFINES += NOMINMAX

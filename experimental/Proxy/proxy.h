@@ -24,6 +24,7 @@
 #include <QMutex>
 #include <QThread>
 
+
 #if defined Q_OS_LINUX || defined Q_OS_MACX || defined Q_OS_FREEBSD
 #define SOCKET int
 #elif defined Q_OS_WIN32
@@ -58,6 +59,8 @@
 
 class Cdispatcher;
 class Proxy;
+class QtQuickBroker;
+
 
 
 
@@ -136,9 +139,11 @@ Q_OBJECT
 	void incomingConnection();
 	void sendMudEmulationGreeting();
 
+    QtQuickBroker       * m_parent;
+
 public:
 
-	Proxy();
+    Proxy(QtQuickBroker *parent);
 	~Proxy();
 
 	void run();
