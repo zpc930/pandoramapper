@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/">
+        <file>simple.frag</file>
+        <file>simple.vert</file>
+        <file>textures/cube.png</file>
+        <file>textures/exit_door.png</file>
+        <file>textures/exit_normal.png</file>
+        <file>textures/exit_secret.png</file>
+        <file>textures/exit_undef.png</file>
+        <file>textures/logo.png</file>
+        <file>textures/terrain0.png</file>
+        <file>textures/terrain1.png</file>
+        <file>textures/terrain2.png</file>
+        <file>textures/terrain3.png</file>
+        <file>textures/terrain4.png</file>
+        <file>textures/terrain5.png</file>
+        <file>textures/terrain6.png</file>
+        <file>textures/terrain7.png</file>
+        <file>textures/terrain8.png</file>
+        <file>textures/terrain9.png</file>
+        <file>textures/terrain10.png</file>
+        <file>textures/terrain11.png</file>
+        <file>textures/terrain12.png</file>
+        <file>textures/terrain13.png</file>
+        <file>textures/terrain14.png</file>
+        <file>textures/terrain15.png</file>
+        <file>textures/terrain16.png</file>
+        <file>images/side1.png</file>
+        <file>images/side2.png</file>
+        <file>images/side3.png</file>
+        <file>images/side4.png</file>
+        <file>images/side5.png</file>
+        <file>images/side6.png</file>
+    </qresource>
+</RCC>
