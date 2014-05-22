@@ -13,11 +13,11 @@ class CBillboardsCollection
 {
 
 public:
-    CBillboardsCollection();
+    CBillboardsCollection(QOpenGLShaderProgram &shader);
     ~CBillboardsCollection();
 
 
-    void draw(QOpenGLShaderProgram &shader);
+    void draw();
     void add(float x, float y, float z, std::string text, bool rebuild = true);
     void rebuild();
 
@@ -27,6 +27,8 @@ private:
 
 
 private:
+    QOpenGLShaderProgram    & shader;
+
     std::vector<float>       m_billboardVertices;
     std::vector<float>       m_billboardTexCoord;
     QOpenGLVertexArrayObject m_billboardVao;

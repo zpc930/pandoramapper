@@ -106,7 +106,7 @@ void GLWidget::initGL()
     }
 
 
-    m_billboards = new CBillboardsCollection;
+    m_billboards = new CBillboardsCollection(m_shader);
     m_billboards->add(4, 0, 0, "bla", false);
     m_billboards->add(-2, -2, 0, "bla");
 
@@ -138,7 +138,7 @@ void GLWidget::paintGL()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     QMatrix4x4 m;
-    m.perspective(60, 4.0/3.0, 0.1, 100.0);
+    m.perspective(60.0f, 4.0f/3.0f, 0.1f, 100.0f);
     m.translate(0, 0, -15);
 
 
@@ -156,7 +156,7 @@ void GLWidget::paintGL()
     m_shader.setUniformValue("matrix", m);
 
     terrain_textures[0]->bind();
-    m_billboards->draw(m_shader);
+    m_billboards->draw();
 
     m_shader.release();
 

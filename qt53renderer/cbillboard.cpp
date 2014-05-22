@@ -4,7 +4,8 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
-CBillboardsCollection::CBillboardsCollection()
+CBillboardsCollection::CBillboardsCollection(QOpenGLShaderProgram &_shader) :
+    shader(_shader)
 {
     m_billboardVao.create();
     m_billboardVao.bind();
@@ -18,6 +19,10 @@ CBillboardsCollection::CBillboardsCollection()
         return;
     }
 
+    shader.setAttributeBuffer( "texCoord", GL_FLOAT, 0, 2 );
+    shader.enableAttributeArray( "texCoord" );
+
+
     m_billboardTexCoordBuf.release();
 
     // vertices
@@ -28,6 +33,10 @@ CBillboardsCollection::CBillboardsCollection()
         qWarning() << "Could not bind vertex buffer to the context";
         return;
     }
+
+
+    shader.setAttributeBuffer( "vertex", GL_FLOAT, 0, 4 );
+    shader.enableAttributeArray( "vertex" );
 
     m_billboardVerticesBuf.release();
 
@@ -45,23 +54,14 @@ CBillboardsCollection::~CBillboardsCollection()
 }
 
 
-void CBillboardsCollection::draw(QOpenGLShaderProgram &shader)
+void CBillboardsCollection::draw()
 {
     //m.translate(0, 0, 0);
 
     // now draw billboards
     m_billboardVao.bind();
-
-    shader.setAttributeBuffer( "texCoord", GL_FLOAT, 0, 2 );
-    shader.enableAttributeArray( "texCoord" );
-    shader.setAttributeBuffer( "vertex", GL_FLOAT, 0, 4 );
-    shader.enableAttributeArray( "vertex" );
-
-
-
     glDrawArrays( GL_TRIANGLES, 0, m_billboardVertices.size() );
     m_billboardVao.release();
-
 }
 
 
