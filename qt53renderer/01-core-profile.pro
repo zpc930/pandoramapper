@@ -7,11 +7,15 @@ TEMPLATE = app
 SOURCES +=  \
             main.cpp \
             glwidget.cpp \
-    cbillboard.cpp
+    cbillboard.cpp \
+    croomrenderingelement.cpp \
+    crenderingelement.cpp
 
 HEADERS  += \
             glwidget.h \
-    cbillboard.h
+    cbillboard.h \
+    croomrenderingelement.h \
+    crenderingelement.h
 
 OTHER_FILES +=  \
                 simple.vert \

@@ -13,6 +13,7 @@
 #include <QOpenGLTexture>
 
 #include "cbillboard.h"
+#include "croomrenderingelement.h"
 
 class GLWidget : public QWindow, protected QOpenGLFunctions
 {
@@ -30,18 +31,15 @@ protected:
     virtual void resizeEvent(QResizeEvent *);
     virtual void keyPressEvent( QKeyEvent* e );
 
-private:
-    bool prepareShaderProgram( const QString& vertexShaderPath,
-                               const QString& fragmentShaderPath );
 
 private:
     QOpenGLContext  *           m_context;
     QOpenGLTexture*             terrain_textures[16];
 
     QOpenGLFunctions_3_3_Core * m_func330;
-    QOpenGLShaderProgram        m_shader;
 
     CBillboardsCollection   *   m_billboards;
+    CRoomCollectionRenderingElement * m_rooms;
 
     float                       xRot, yRot, zRot;
 

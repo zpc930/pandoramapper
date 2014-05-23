@@ -11,6 +11,8 @@ typedef void (*PglBindVertexArray) (GLuint array);
 GLWidget::GLWidget(QWindow *parent )
     : QWindow( parent ),
       m_context( 0 ),
+      m_billboards( 0 ),
+      m_rooms( 0 ),
       xRot(0.0), yRot(0.0), zRot(0.0)
 {
     setSurfaceType(QWindow::OpenGLSurface);
@@ -20,6 +22,8 @@ GLWidget::~GLWidget()
 {
     if (m_billboards)
         delete m_billboards;
+    if (m_rooms)
+        delete m_rooms;
 }
 
 
@@ -92,25 +96,16 @@ void GLWidget::initGL()
     // Set the clear color to black
     glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 
-
-    // Prepare a complete shader program...
-    if ( !prepareShaderProgram( ":/simple.vert", ":/simple.frag" ) )
-        return;
-
-    // Bind the shader program so that we can associate variables from
-    // our application to the shaders
-    if ( !m_shader.bind() )
-    {
-        qWarning() << "Could not bind shader program to context";
-        return;
-    }
-
-
-    m_billboards = new CBillboardsCollection(m_shader);
+    m_billboards = new CBillboardsCollection();
     m_billboards->add(4, 0, 0, "bla", false);
     m_billboards->add(-2, -2, 0, "bla");
 
-    m_shader.release();
+
+    m_rooms = new CRoomCollectionRenderingElement();
+//    m_rooms->add(0, 0, 0, 0, false);
+//    m_rooms->add(0, 2, 0, 0, false);
+    m_rooms->add(0, 0, 0, 0);
+
 
     resizeGL(width(), height());
 }
@@ -150,15 +145,12 @@ void GLWidget::paintGL()
     //    m.rotate(yRot / 16.0f, 0.0f, 1.0f, 0.0f);
     //    m.rotate(zRot / 16.0f, 0.0f, 0.0f, 1.0f);
 
-    if (!m_shader.bind()) {
-        qDebug() << "failed to bind shader";
-    }
-    m_shader.setUniformValue("matrix", m);
 
-    terrain_textures[0]->bind();
-    m_billboards->draw();
+//    terrain_textures[0]->bind();
+//    m_billboards->draw(m);
 
-    m_shader.release();
+    terrain_textures[1]->bind();
+    m_rooms->draw(m);
 
     m_context->swapBuffers(this);
     m_context->doneCurrent();
@@ -177,26 +169,3 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
     }
 }
 
-bool GLWidget::prepareShaderProgram( const QString& vertexShaderPath,
-                                     const QString& fragmentShaderPath )
-{
-    qDebug() << "Compiling shaders...";
-
-    // First we load and compile the vertex shader...
-    bool result = m_shader.addShaderFromSourceFile( QOpenGLShader::Vertex, vertexShaderPath );
-    if ( !result )
-        qWarning() << m_shader.log();
-
-
-    // ...now the fragment shader...
-    result = m_shader.addShaderFromSourceFile( QOpenGLShader::Fragment, fragmentShaderPath );
-    if ( !result )
-        qWarning() << m_shader.log();
-
-    // ...and finally we link them to resolve any references.
-    result = m_shader.link();
-    if ( !result )
-        qWarning() << "Could not link shader program:" << m_shader.log();
-
-    return result;
-}

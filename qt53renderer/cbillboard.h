@@ -6,20 +6,21 @@
 
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
-#include <QOpenGLShaderProgram>
+
+#include "crenderingelement.h"
 
 
-class CBillboardsCollection
+
+class CBillboardsCollection : public CRenderingElement
 {
-
 public:
-    CBillboardsCollection(QOpenGLShaderProgram &shader);
+    CBillboardsCollection();
     ~CBillboardsCollection();
 
+    virtual void draw(QMatrix4x4 &projMatrix);
+    virtual void rebuild();
 
-    void draw();
     void add(float x, float y, float z, std::string text, bool rebuild = true);
-    void rebuild();
 
 private:
     void addTriangleToVerticesVector(std::vector<float> &vec, const QVector3D &a, const QVector3D &b, const QVector3D &c);
@@ -27,14 +28,11 @@ private:
 
 
 private:
-    QOpenGLShaderProgram    & shader;
-
-    std::vector<float>       m_billboardVertices;
-    std::vector<float>       m_billboardTexCoord;
-    QOpenGLVertexArrayObject m_billboardVao;
-    QOpenGLBuffer            m_billboardVerticesBuf;
-    QOpenGLBuffer            m_billboardTexCoordBuf;
-
+    std::vector<float>       m_vertices;
+    std::vector<float>       m_texCoord;
+    QOpenGLVertexArrayObject m_vao;
+    QOpenGLBuffer            m_verticesBuf;
+    QOpenGLBuffer            m_texCoordBuf;
 };
 
 #endif // CBILLBOARD_H

@@ -4,64 +4,74 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
-CBillboardsCollection::CBillboardsCollection(QOpenGLShaderProgram &_shader) :
-    shader(_shader)
+CBillboardsCollection::CBillboardsCollection() :
+    CRenderingElement(":/simple.vert", ":/simple.frag")
 {
-    m_billboardVao.create();
-    m_billboardVao.bind();
+    m_vao.create();
+    m_vao.bind();
 
     // texture coordinates
-    m_billboardTexCoordBuf.create();
-    m_billboardTexCoordBuf.setUsagePattern( QOpenGLBuffer::StaticDraw );
-    if ( !m_billboardTexCoordBuf.bind() )
+    m_texCoordBuf.create();
+    m_texCoordBuf.setUsagePattern( QOpenGLBuffer::StaticDraw );
+    if ( !m_texCoordBuf.bind() )
     {
         qWarning() << "Could not bind vertex buffer to the context";
         return;
     }
 
-    shader.setAttributeBuffer( "texCoord", GL_FLOAT, 0, 2 );
-    shader.enableAttributeArray( "texCoord" );
+    m_shader.setAttributeBuffer( "texCoord", GL_FLOAT, 0, 2 );
+    m_shader.enableAttributeArray( "texCoord" );
 
 
-    m_billboardTexCoordBuf.release();
+    m_texCoordBuf.release();
 
     // vertices
-    m_billboardVerticesBuf.create();
-    m_billboardVerticesBuf.setUsagePattern( QOpenGLBuffer::StaticDraw );
-    if ( !m_billboardVerticesBuf.bind() )
+    m_verticesBuf.create();
+    m_verticesBuf.setUsagePattern( QOpenGLBuffer::StaticDraw );
+    if ( !m_verticesBuf.bind() )
     {
         qWarning() << "Could not bind vertex buffer to the context";
         return;
     }
 
 
-    shader.setAttributeBuffer( "vertex", GL_FLOAT, 0, 4 );
-    shader.enableAttributeArray( "vertex" );
+    m_shader.setAttributeBuffer( "vertex", GL_FLOAT, 0, 4 );
+    m_shader.enableAttributeArray( "vertex" );
 
-    m_billboardVerticesBuf.release();
+    m_verticesBuf.release();
 
-    m_billboardVao.release();
+    m_vao.release();
+
+    m_shader.release();
 }
 
 
 CBillboardsCollection::~CBillboardsCollection()
 {
-    m_billboardTexCoordBuf.destroy();
-    m_billboardVerticesBuf.destroy();
-
-    m_billboardVertices.clear();
-    m_billboardTexCoord.clear();
+	m_vertices.clear();
+	m_texCoord.clear();
+    
+	m_texCoordBuf.destroy();
+    m_verticesBuf.destroy();
 }
 
 
-void CBillboardsCollection::draw()
+void CBillboardsCollection::draw(QMatrix4x4 &projMatrix)
 {
     //m.translate(0, 0, 0);
 
+    if (!m_shader.bind()) {
+        qDebug() << "failed to bind shader";
+    }
+    m_shader.setUniformValue("matrix", projMatrix);
+
+
     // now draw billboards
-    m_billboardVao.bind();
-    glDrawArrays( GL_TRIANGLES, 0, m_billboardVertices.size() );
-    m_billboardVao.release();
+    m_vao.bind();
+    glDrawArrays( GL_TRIANGLES, 0, m_vertices.size() );
+    m_vao.release();
+
+    m_shader.release();
 }
 
 
@@ -74,23 +84,23 @@ void CBillboardsCollection::add(float x, float y, float z, std::string text, boo
 
 void CBillboardsCollection::rebuild()
 {
-    m_billboardVao.bind();
+    m_vao.bind();
 
-    if ( !m_billboardTexCoordBuf.bind() )
+    if ( !m_texCoordBuf.bind() )
     {
         qWarning() << "Could not bind vertex buffer to the context";
         return;
-    }    m_billboardTexCoordBuf.allocate( &m_billboardTexCoord[0], m_billboardTexCoord.size() * 2 * sizeof( float ) );
-    m_billboardTexCoordBuf.release();
+    }    m_texCoordBuf.allocate( &m_texCoord[0], m_texCoord.size() * 2 * sizeof( float ) );
+    m_texCoordBuf.release();
 
-    if ( !m_billboardVerticesBuf.bind() )
+    if ( !m_verticesBuf.bind() )
     {
         qWarning() << "Could not bind vertex buffer to the context";
         return;
     }
-    m_billboardVerticesBuf.allocate( &m_billboardVertices[0], m_billboardVertices.size() * 4 * sizeof( float ) );
-    m_billboardVerticesBuf.release();
-    m_billboardVao.release();
+    m_verticesBuf.allocate( &m_vertices[0], m_vertices.size() * 4 * sizeof( float ) );
+    m_verticesBuf.release();
+    m_vao.release();
 }
 
 
@@ -121,26 +131,26 @@ void CBillboardsCollection::addBillboardQuad(float x, float y, float z, float wi
     QVector3D rightUpper(x + width, y, z);
     QVector3D rightLower(x + width, y + height, z);
 
-    addTriangleToVerticesVector(m_billboardVertices, leftLower, rightLower, leftUpper);
-    addTriangleToVerticesVector(m_billboardVertices, leftUpper, rightLower, rightUpper);
+    addTriangleToVerticesVector(m_vertices, leftLower, rightLower, leftUpper);
+    addTriangleToVerticesVector(m_vertices, leftUpper, rightLower, rightUpper);
 
     // push texture coordinates for 6 vertices
-    m_billboardTexCoord.push_back(0.0f); // leftLower
-    m_billboardTexCoord.push_back(1.0f); // leftLower
+    m_texCoord.push_back(0.0f); // leftLower
+    m_texCoord.push_back(1.0f); // leftLower
 
-    m_billboardTexCoord.push_back(1.0f); // rightLower
-    m_billboardTexCoord.push_back(1.0f); // rightLower
+    m_texCoord.push_back(1.0f); // rightLower
+    m_texCoord.push_back(1.0f); // rightLower
 
-    m_billboardTexCoord.push_back(0.0f); // leftUpper
-    m_billboardTexCoord.push_back(0.0f); // leftUpper
+    m_texCoord.push_back(0.0f); // leftUpper
+    m_texCoord.push_back(0.0f); // leftUpper
 
-    m_billboardTexCoord.push_back(0.0f); // leftUpper
-    m_billboardTexCoord.push_back(0.0f); // leftUpper
+    m_texCoord.push_back(0.0f); // leftUpper
+    m_texCoord.push_back(0.0f); // leftUpper
 
-    m_billboardTexCoord.push_back(1.0f); // rightLower
-    m_billboardTexCoord.push_back(1.0f); // rightLower
+    m_texCoord.push_back(1.0f); // rightLower
+    m_texCoord.push_back(1.0f); // rightLower
 
-    m_billboardTexCoord.push_back(1.0f); // rightUpper
-    m_billboardTexCoord.push_back(0.0f); // rightUpper
+    m_texCoord.push_back(1.0f); // rightUpper
+    m_texCoord.push_back(0.0f); // rightUpper
 }
 
