@@ -10,11 +10,11 @@
 struct VertexData
 {
 public:
-    VertexData(const QVector4D &pos, const QVector3D &tex) :
+    VertexData(const QVector3D &pos, const QVector3D &tex) :
         position(pos), texCoord(tex)
     {}
 
-    QVector4D position;
+    QVector3D position;
     QVector2D texCoord;
 };
 
@@ -35,14 +35,11 @@ private:
     void addQuad(float x, float y, float z, float width, float height);
 
 private:
-//    std::vector<VertexData>    m_vertices;
-    std::vector<float>       m_vertices;
-
+    std::vector<VertexData>    m_vertices;
 //    std::vector<float>       m_vertices;
-//    std::vector<float>       m_texCoord;
+
     QOpenGLVertexArrayObject m_vao;
     QOpenGLBuffer            m_verticesBuf;
-//    QOpenGLBuffer            m_texCoordBuf;
 };
 
 #endif // CROOMRENDERINGELEMENT_H

@@ -12,6 +12,8 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLTexture>
 
+#include <QBasicTimer>
+
 #include "cbillboard.h"
 #include "croomrenderingelement.h"
 
@@ -26,14 +28,17 @@ public:
     void resizeGL( int w, int h );
     void paintGL();
 
+
 protected:
     virtual void exposeEvent(QExposeEvent *);
     virtual void resizeEvent(QResizeEvent *);
     virtual void keyPressEvent( QKeyEvent* e );
-
+    void mousePressEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
+    void timerEvent(QTimerEvent *e);
 
 private:
-    QOpenGLContext  *           m_context;
+    QOpenGLContext             *m_context;
     QOpenGLTexture*             terrain_textures[16];
 
     QOpenGLFunctions_3_3_Core * m_func330;
@@ -43,11 +48,15 @@ private:
 
     float                       xRot, yRot, zRot;
 
+    QMatrix4x4                  m_projection;
 
 
-    GLuint                      _positionAttr;
-    GLuint                      _colourAttr;
-    GLuint                      _matrixAttr;
+    QBasicTimer                 timer;
+
+    QVector2D mousePressPosition;
+    QVector3D rotationAxis;
+    qreal angularSpeed;
+    QQuaternion rotation;
 };
 
 #endif // GLWIDGET_H

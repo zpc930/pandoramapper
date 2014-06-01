@@ -10,7 +10,7 @@ int main( int argc, char* argv[] )
     QGuiApplication a( argc, argv );
 
     GLWidget w;
-    w.resize(400, 400);
+    w.resize(400, 300);
     w.show();
 
     return a.exec();

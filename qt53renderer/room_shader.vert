@@ -1,14 +1,15 @@
 #version 330
 
+uniform mat4 mvp_matrix;
+
 in vec4 vertex;
 in vec2 texCoord;
 out vec2 texc;
 
-uniform highp mat4 matrix;
 
 
 void main( void )
 {
-    gl_Position = matrix * vertex;
+    gl_Position = mvp_matrix * vertex;
     texc = texCoord;
 }
