@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GroupManagerSettings</class>
+ <widget class="QDialog" name="GroupManagerSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>490</width>
+    <height>321</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>GroupManager Settings</string>
+  </property>
+  <layout class="QVBoxLayout">
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Charecter Name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_charName"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_changeColour">
+       <property name="text">
+        <string>Change Colour</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Remote Host</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_remoteHost"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Remote Port</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_remotePort"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Local Port</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_localPort"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkBox_showSelf">
+     <property name="text">
+      <string>Show your own char entry in GroupManager</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>GTell Notifications</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox_notifyArm">
+        <property name="text">
+         <string>Notify if your armour spell drops/gets up</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBox_notifySanc">
+        <property name="text">
+         <string>Notify if your sanc spell drops/gets up</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkBox_notifyBash">
+        <property name="text">
+         <string>Notify if your char gets bashed</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEdit_charName</tabstop>
+  <tabstop>lineEdit_remoteHost</tabstop>
+  <tabstop>lineEdit_remotePort</tabstop>
+  <tabstop>lineEdit_localPort</tabstop>
+  <tabstop>pushButton_changeColour</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>GroupManagerSettings</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>433</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>GroupManagerSettings</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>433</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
